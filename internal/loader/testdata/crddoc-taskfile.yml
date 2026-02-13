@@ -1,0 +1,167 @@
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+  # Output folder for all build artifacts
+  BUILD_DIR: '{{ list .ROOT_DIR "build" | join "/" | osClean }}'
+
+  # Output folder for generated samples
+  SAMPLES_DIR: '{{ list .ROOT_DIR "samples" | join "/" | osClean }}'
+
+  # Folder containing tools we can use
+  TOOLS_DIR: '{{ list .ROOT_DIR "tools" | join "/" | osClean }}'
+
+run: once
+
+output: prefixed
+
+tasks:
+  default:
+    desc: Run all tasks
+    deps:
+      - ci
+      - docs
+
+  build:
+    desc: Build everything
+    deps:
+      - build.bin
+      - build.dir
+
+  build.bin:
+    desc: Build the crddoc binary
+    deps:
+      - build.dir
+    cmds:
+      - go build -o "{{.BUILD_DIR}}/crddoc"
+
+  build.sbom:
+    desc: Generate a software-bill-of-materials (SBOM)
+    deps:
+      - build.bin
+    cmds:
+      - "sbom-tool generate -BuildDropPath {{.BUILD_DIR}} -BuildComponentPath {{.ROOT_DIR}} -PackageName crddoc -PackageVersion latest -PackageSupplier https://github.com/theunrepentantgeek/crddoc -NamespaceUriBase https://github.com/theunrepentantgeek/crddoc"
+
+  build.dir:
+    desc: Ensure our output folder exists
+    cmds:
+      - mkdir -p {{.BUILD_DIR}}
+
+  test:
+    desc: Run tests and checks
+    deps:
+      - unit-test
+      - lint
+
+  unit-test:
+    desc: Run unit tests
+    deps:
+      - build
+    cmds:
+      - go test ./... -json | go-testreport -output {{.REPORT}}
+    vars:
+      REPORT: '{{.GITHUB_STEP_SUMMARY | default "test-report.md" }}'
+
+  lint:
+    desc: Run golangci-lint to check for linting issues
+    cmds:
+      - golangci-lint-custom run --verbose
+
+  ci:
+    desc: Run continuous integration tasks
+    deps:
+      - test
+
+  docs:
+    desc: Build documentation
+    deps:
+      - docs.config
+      - docs.aso
+      - docs.capz
+      - docs.model
+
+  docs.config:
+    desc: Build documentation of config options
+    deps:
+      - build
+    cmds:
+      - "{{.BUILD_DIR}}/crddoc document crds {{.PACKAGE}} --output {{.OUTPUT}} --config {{.CONFIG}} --class-diagrams"
+    vars:
+      DST_DIR: '{{joinPath .ROOT_DIR "docs" "config"}}'
+      PACKAGE: '{{joinPath .ROOT_DIR "internal" "config" | shellQuote}}'
+      OUTPUT: '{{joinPath .DST_DIR "config.md" | shellQuote}}'
+      CONFIG: '{{joinPath .DST_DIR "crddoc-config.yaml" | shellQuote}}'
+
+  docs.aso:
+    desc: Build example showing documentation for Azure Service Operator
+    deps:
+      - build
+    status:
+      # Skip if the package isn't available
+      - test ! -d {{.PACKAGE}}
+    cmds:
+      - "{{.BUILD_DIR}}/crddoc document crds {{.PACKAGE}} --output {{.OUTPUT}} --config {{.CONFIG}} --class-diagrams"
+    vars:
+      DST_DIR: '{{joinPath .SAMPLES_DIR "azure-service-operator"}}'
+      PACKAGE: '{{joinPath .ROOT_DIR "../azure-service-operator/v2/api/containerservice/v1api20210501" | shellQuote}}'
+      OUTPUT: '{{joinPath .DST_DIR "containerservice.md" | shellQuote}}'
+      CONFIG: '{{joinPath .DST_DIR "aso.yaml" | shellQuote}}'
+
+  docs.capz:
+    desc: Build example showing documentation for Cluster API Provider Azure
+    deps:
+      - build
+    status:
+      # Skip if the package isn't available
+      - test ! -d {{.PACKAGE}}
+    cmds:
+      - "{{.BUILD_DIR}}/crddoc document crds {{.PACKAGE}} --output {{.OUTPUT}} --config {{.CONFIG}} --class-diagrams"
+    vars:
+      CRD: "containerservice"
+      DST_DIR: '{{joinPath .SAMPLES_DIR "cluster-api-provider-azure"}}'
+      PACKAGE: '{{joinPath .ROOT_DIR "../cluster-api-provider-azure/api/v1beta1" | shellQuote}}'
+      OUTPUT: '{{joinPath .DST_DIR "capz.md" | shellQuote}}'
+      CONFIG: '{{joinPath .DST_DIR "capz.yaml" | shellQuote}}'
+
+  docs.model:
+    desc: Build example showing documentation for CRD model
+    deps:
+      - build
+    status:
+      # Skip if the package isn't available
+      - test ! -d {{.PACKAGE}}
+    cmds:
+      - "{{.BUILD_DIR}}/crddoc document crds {{.PACKAGE}} --output {{.OUTPUT}} --config {{.CONFIG}} --class-diagrams --include-functions"
+    vars:
+      DST_DIR: '{{joinPath .ROOT_DIR "docs" "model" | shellQuote}}'
+      PACKAGE: '{{joinPath .ROOT_DIR "internal" "model" | shellQuote}}'
+      OUTPUT: '{{joinPath .DST_DIR "model.md" | shellQuote}}'
+      CONFIG: '{{joinPath .DST_DIR "crddoc-model.yaml" | shellQuote}}'
+
+  tidy:
+    desc: "Tidy up source"
+    cmds:
+      - task: tidy.gofumpt
+      - task: tidy.mod
+      - task: tidy.lint
+
+  tidy.gofumpt:
+    desc: "Run gofumpt"
+    cmds:
+      - gofumpt -l -w .
+
+  tidy.mod:
+    desc: "Run go mod tidy"
+    cmds:
+      - go mod tidy
+
+  tidy.lint:
+    desc: "Run golangci-lint in fix mode"
+    cmds:
+      - golangci-lint-custom run --fix --verbose
+
+  gremlins:
+    desc: "Use gremlins to check the quality of our tests"
+    cmds:
+      - gremlins unleash ./internal
