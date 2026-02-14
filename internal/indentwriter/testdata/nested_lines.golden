@@ -1,5 +1,4 @@
-root
+line 1
   child 1
-    grandchild 1
-    grandchild 2
   child 2
+line 2

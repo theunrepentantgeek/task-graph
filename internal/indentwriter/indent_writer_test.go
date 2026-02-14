@@ -35,11 +35,10 @@ func TestIndentWriter_WriteTo_NestedLines_WritesIndentedStructure(t *testing.T) 
 
 	// Arrange
 	iw := New()
-	iw.text = "root"
-	firstChild := iw.Add("child 1")
-	firstChild.Add("grandchild 1")
-	firstChild.Addf("grandchild %d", 2)
-	iw.Add("child 2")
+	firstLine := iw.Add("line 1")
+	firstLine.Add("child 1")
+	firstLine.Addf("child %d", 2)
+	iw.Add("line 2")
 
 	var buf bytes.Buffer
 
