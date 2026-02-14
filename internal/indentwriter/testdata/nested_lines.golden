@@ -1,0 +1,5 @@
+root
+  child 1
+    grandchild 1
+    grandchild 2
+  child 2
