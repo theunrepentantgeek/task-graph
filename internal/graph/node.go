@@ -34,3 +34,8 @@ func (n *Node) AddEdge(to *Node) *Edge {
 	n.edges = append(n.edges, edge)
 	return edge
 }
+
+// Edges returns the outgoing edges for this node.
+func (n *Node) Edges() []*Edge {
+	return n.edges
+}

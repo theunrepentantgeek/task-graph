@@ -1,0 +1,10 @@
+digraph {
+  "alpha"
+    "alpha" -> "beta"
+    "alpha" -> "gamma"
+
+  "beta"
+    "beta" -> "gamma" [label="next"]
+
+  "gamma"
+}
