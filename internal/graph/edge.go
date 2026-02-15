@@ -4,6 +4,7 @@ package graph
 // with an optional label.
 type Edge struct {
 	label string
+	class string
 	from  *Node
 	to    *Node
 }
@@ -24,6 +25,17 @@ func (e *Edge) Label() string {
 // SetLabel sets the label of the edge to the given value.
 func (e *Edge) SetLabel(label string) {
 	e.label = label
+}
+
+// Class returns the class of the edge.
+// The class can be used to categorize edges into different types or groups.
+func (e *Edge) Class() string {
+	return e.class
+}
+
+// SetClass sets the class of the edge
+func (e *Edge) SetClass(class string) {
+	e.class = class
 }
 
 // From returns the source node of the edge.
