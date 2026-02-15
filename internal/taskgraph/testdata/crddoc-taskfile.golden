@@ -1,0 +1,60 @@
+digraph {
+  "build"
+    "build" -> "build.bin"
+    "build" -> "build.dir"
+  
+  "build.bin"
+    "build.bin" -> "build.dir"
+  
+  "build.dir"
+  
+  "build.sbom"
+    "build.sbom" -> "build.bin"
+  
+  "ci"
+    "ci" -> "test"
+  
+  "default"
+    "default" -> "ci"
+    "default" -> "docs"
+  
+  "docs"
+    "docs" -> "docs.config"
+    "docs" -> "docs.aso"
+    "docs" -> "docs.capz"
+    "docs" -> "docs.model"
+  
+  "docs.aso"
+    "docs.aso" -> "build"
+  
+  "docs.capz"
+    "docs.capz" -> "build"
+  
+  "docs.config"
+    "docs.config" -> "build"
+  
+  "docs.model"
+    "docs.model" -> "build"
+  
+  "gremlins"
+  
+  "lint"
+  
+  "test"
+    "test" -> "unit-test"
+    "test" -> "lint"
+  
+  "tidy"
+    "tidy" -> "tidy.gofumpt"
+    "tidy" -> "tidy.mod"
+    "tidy" -> "tidy.lint"
+  
+  "tidy.gofumpt"
+  
+  "tidy.lint"
+  
+  "tidy.mod"
+  
+  "unit-test"
+    "unit-test" -> "build"
+}

@@ -1,0 +1,43 @@
+digraph {
+  "build"
+    "build" -> "build.bin"
+  
+  "build.bin"
+    "build.bin" -> "build.dir"
+  
+  "build.dir"
+  
+  "build.sbom"
+    "build.sbom" -> "build.bin"
+  
+  "ci"
+    "ci" -> "build"
+    "ci" -> "test"
+    "ci" -> "build.sbom"
+  
+  "default"
+    "default" -> "build"
+    "default" -> "test"
+  
+  "gremlins"
+  
+  "lint"
+  
+  "test"
+    "test" -> "unit-test"
+    "test" -> "lint"
+  
+  "tidy"
+    "tidy" -> "tidy.gofumpt"
+    "tidy" -> "tidy.mod"
+    "tidy" -> "tidy.lint"
+  
+  "tidy.gofumpt"
+  
+  "tidy.lint"
+  
+  "tidy.mod"
+  
+  "unit-test"
+    "unit-test" -> "build"
+}
