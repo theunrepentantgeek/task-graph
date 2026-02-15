@@ -1,36 +1,36 @@
 digraph {
   "build"
-    "build" -> "build.bin"
+  "build" -> "build.bin"
   
   "build.bin"
-    "build.bin" -> "build.dir"
+  "build.bin" -> "build.dir"
   
   "build.dir"
   
   "build.sbom"
-    "build.sbom" -> "build.bin"
+  "build.sbom" -> "build.bin"
   
   "ci"
-    "ci" -> "build"
-    "ci" -> "test"
-    "ci" -> "build.sbom"
+  "ci" -> "build"
+  "ci" -> "test"
+  "ci" -> "build.sbom"
   
   "default"
-    "default" -> "build"
-    "default" -> "test"
+  "default" -> "build"
+  "default" -> "test"
   
   "gremlins"
   
   "lint"
   
   "test"
-    "test" -> "unit-test"
-    "test" -> "lint"
+  "test" -> "unit-test"
+  "test" -> "lint"
   
   "tidy"
-    "tidy" -> "tidy.gofumpt"
-    "tidy" -> "tidy.mod"
-    "tidy" -> "tidy.lint"
+  "tidy" -> "tidy.gofumpt"
+  "tidy" -> "tidy.mod"
+  "tidy" -> "tidy.lint"
   
   "tidy.gofumpt"
   
@@ -39,5 +39,5 @@ digraph {
   "tidy.mod"
   
   "unit-test"
-    "unit-test" -> "build"
+  "unit-test" -> "build"
 }

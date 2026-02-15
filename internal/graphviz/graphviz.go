@@ -46,15 +46,15 @@ func WriteTo(
 	root := iw.Add("digraph {")
 
 	for i, node := range nodes {
-		nodeLine := root.Addf("\"%s\"", node.ID())
+		root.Addf("\"%s\"", node.ID())
 
 		for _, edge := range node.Edges() {
 			if edge.Label() == "" {
-				nodeLine.Addf("\"%s\" -> \"%s\"", edge.From().ID(), edge.To().ID())
+				root.Addf("\"%s\" -> \"%s\"", edge.From().ID(), edge.To().ID())
 				continue
 			}
 
-			nodeLine.Addf("\"%s\" -> \"%s\" [label=\"%s\"]", edge.From().ID(), edge.To().ID(), edge.Label())
+			root.Addf("\"%s\" -> \"%s\" [label=\"%s\"]", edge.From().ID(), edge.To().ID(), edge.Label())
 		}
 
 		if i < len(nodes)-1 {
@@ -66,5 +66,4 @@ func WriteTo(
 
 	_, err := iw.WriteTo(w, indent)
 	return err
-
 }

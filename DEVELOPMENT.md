@@ -36,3 +36,6 @@ case iteration uses `for name, c := range cases`.
 **Always use `task lint` to run the linter.** Never run `golangci-lint` directly, as the project uses a custom build 
 with `nilaway` integration that requires special configuration.
 
+## Focus
+
+If any other changes are identified while working on a given task, add them to TODO.md at the root of the repo for later action.
