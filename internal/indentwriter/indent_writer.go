@@ -13,7 +13,7 @@ type IndentWriter struct {
 	lines []*Line
 }
 
-// New creates a new instance of IndentWriter
+// New creates a new instance of IndentWriter.
 func New() *IndentWriter {
 	return &IndentWriter{}
 }
@@ -40,7 +40,7 @@ func (iw *IndentWriter) WriteTo(
 }
 
 // Add adds a new line with the provided text
-// text is the content of the line to be added.
+// is the content of the line to be added.
 // It returns a pointer to the newly added line.
 func (iw *IndentWriter) Add(text string) *Line {
 	result := &Line{
@@ -52,10 +52,9 @@ func (iw *IndentWriter) Add(text string) *Line {
 	return result
 }
 
-// Addf adds a new line with the provided formatted text 
+// Addf adds a new line with the provided formatted text
 // It uses fmt.Sprintf to format the text with the provided arguments.
 // It returns a pointer to the newly added line.
 func (iw *IndentWriter) Addf(format string, args ...any) *Line {
 	return iw.Add(fmt.Sprintf(format, args...))
 }
-

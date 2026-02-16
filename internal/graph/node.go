@@ -28,10 +28,11 @@ func (n *Node) ID() string {
 	return n.id
 }
 
-// Edges returns a slice of all outgoing edges from this node.
+// AddEdge creates a new edge from this node to the specified node and returns it.
 func (n *Node) AddEdge(to *Node) *Edge {
 	edge := newEdge(n, to)
 	n.edges = append(n.edges, edge)
+
 	return edge
 }
 

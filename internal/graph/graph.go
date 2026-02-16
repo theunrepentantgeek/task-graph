@@ -5,7 +5,7 @@ import (
 	"maps"
 )
 
-// Graph represents an abstraction for a directed graph structure
+// Graph represents an abstraction for a directed graph structure.
 type Graph struct {
 	nodes map[string]*Node
 }
@@ -23,6 +23,7 @@ func New() *Graph {
 func (g *Graph) AddNode(id string) *Node {
 	node := newNode(id)
 	g.nodes[id] = node
+
 	return node
 }
 
@@ -30,6 +31,7 @@ func (g *Graph) AddNode(id string) *Node {
 // otherwise it returns false.
 func (g *Graph) Node(id string) (*Node, bool) {
 	node, exists := g.nodes[id]
+
 	return node, exists
 }
 

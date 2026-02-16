@@ -77,8 +77,10 @@ func TestGraph_Nodes_WithMultipleNodes_IteratesAllNodes(t *testing.T) {
 	graph.AddNode("gamma")
 
 	var ids []string
+
 	graph.Nodes()(func(n *Node) bool {
 		ids = append(ids, n.ID())
+
 		return true
 	})
 

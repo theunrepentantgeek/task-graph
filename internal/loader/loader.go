@@ -18,6 +18,7 @@ func Load(
 	// the file regardless of the current working directory.
 	if !filepath.IsAbs(resolvedPath) {
 		var err error
+
 		resolvedPath, err = filepath.Abs(filename)
 		if err != nil {
 			return nil, err
@@ -38,6 +39,7 @@ func Load(
 	}
 
 	reader := taskfile.NewReader()
+
 	graph, err := reader.Read(ctx, node)
 	if err != nil {
 		return nil, err

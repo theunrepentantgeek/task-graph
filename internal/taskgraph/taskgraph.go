@@ -4,6 +4,7 @@ import (
 	"slices"
 
 	"github.com/go-task/task/v3/taskfile/ast"
+
 	"github.com/theunrepentantgeek/task-graph/internal/graph"
 )
 
@@ -66,6 +67,7 @@ func (b *TaskGraphBuilder) Build() *graph.Graph {
 				if !ok {
 					continue
 				}
+
 				edge := fromNode.AddEdge(toNode)
 				edge.SetClass("call")
 			}
@@ -76,8 +78,9 @@ func (b *TaskGraphBuilder) Build() *graph.Graph {
 }
 
 // alphaNumeric sorts the slice into alphanumeric order.
-// Copied from an internal function in the tasks package
+// Copied from an internal function in the tasks package.
 func alphaNumeric(items []string, namespaces []string) []string {
 	slices.Sort(items)
+
 	return items
 }

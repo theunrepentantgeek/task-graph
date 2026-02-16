@@ -33,7 +33,7 @@ func (e *Edge) Class() string {
 	return e.class
 }
 
-// SetClass sets the class of the edge
+// SetClass sets the class of the edge.
 func (e *Edge) SetClass(class string) {
 	e.class = class
 }

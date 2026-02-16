@@ -1,7 +1,7 @@
 package graphviz
 
 import (
-	"fmt"
+	"errors"
 	"io"
 	"os"
 	"sort"
@@ -30,7 +30,7 @@ func WriteTo(
 	const indent = "  "
 
 	if g == nil {
-		return fmt.Errorf("graphviz: graph is nil")
+		return errors.New("graphviz: graph is nil")
 	}
 
 	nodes := make([]*graph.Node, 0)
@@ -51,6 +51,7 @@ func WriteTo(
 		for _, edge := range node.Edges() {
 			if edge.Label() == "" {
 				root.Addf("\"%s\" -> \"%s\"", edge.From().ID(), edge.To().ID())
+
 				continue
 			}
 
@@ -65,5 +66,6 @@ func WriteTo(
 	iw.Add("}")
 
 	_, err := iw.WriteTo(w, indent)
+
 	return err
 }

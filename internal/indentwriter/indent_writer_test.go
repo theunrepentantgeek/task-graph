@@ -8,13 +8,14 @@ import (
 	"github.com/sebdah/goldie/v2"
 )
 
-// WriteTo
+// WriteTo.
 func TestIndentWriter_WriteTo_EmptyWriter_WritesBlankLine(t *testing.T) {
 	t.Parallel()
 	g := gomega.NewWithT(t)
 
 	// Arrange
 	iw := New()
+
 	var buf bytes.Buffer
 
 	// Act
