@@ -26,7 +26,8 @@ func TestIndentWriter_WriteTo_EmptyWriter_WritesBlankLine(t *testing.T) {
 	g.Expect(bytesWritten).To(gomega.Equal(int64(buf.Len())))
 
 	gg := goldie.New(t)
-	gg.WithFixtureDir("testdata")
+	g.Expect(gg.WithFixtureDir("testdata")).To(gomega.Succeed())
+
 	gg.Assert(t, "empty_writer", buf.Bytes())
 }
 
@@ -51,6 +52,7 @@ func TestIndentWriter_WriteTo_NestedLines_WritesIndentedStructure(t *testing.T) 
 	g.Expect(bytesWritten).To(gomega.Equal(int64(buf.Len())))
 
 	gg := goldie.New(t)
-	gg.WithFixtureDir("testdata")
+	g.Expect(gg.WithFixtureDir("testdata")).To(gomega.Succeed())
+
 	gg.Assert(t, "nested_lines", buf.Bytes())
 }

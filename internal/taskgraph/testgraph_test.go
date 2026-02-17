@@ -51,7 +51,8 @@ func TestTaskGraphBuilder_Graphviz(t *testing.T) {
 			g.Expect(err).NotTo(HaveOccurred())
 
 			gg := goldie.New(t)
-			gg.WithFixtureDir("testdata")
+			g.Expect(gg.WithFixtureDir("testdata")).To(Succeed())
+
 			gg.Assert(t, c.goldenName, buf.Bytes())
 		})
 	}

@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-task/task/v3/taskfile"
 	"github.com/go-task/task/v3/taskfile/ast"
+	"github.com/rotisserie/eris"
 )
 
 func Load(
@@ -21,7 +22,7 @@ func Load(
 
 		resolvedPath, err = filepath.Abs(filename)
 		if err != nil {
-			return nil, err
+			return nil, eris.Wrapf(err, "failed to resolve path: %s", filename)
 		}
 	}
 
@@ -35,19 +36,19 @@ func Load(
 		0,          // Task execution timeout
 	)
 	if err != nil {
-		return nil, err
+		return nil, eris.Wrapf(err, "failed to create root node for taskfile: %s", entrypoint)
 	}
 
 	reader := taskfile.NewReader()
 
 	graph, err := reader.Read(ctx, node)
 	if err != nil {
-		return nil, err
+		return nil, eris.Wrapf(err, "failed to read taskfile: %s", entrypoint)
 	}
 
 	result, err := graph.Merge()
 	if err != nil {
-		return nil, err
+		return nil, eris.Wrapf(err, "failed to merge taskfile graph: %s", entrypoint)
 	}
 
 	return result, nil

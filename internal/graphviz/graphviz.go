@@ -6,6 +6,8 @@ import (
 	"os"
 	"sort"
 
+	"github.com/rotisserie/eris"
+
 	"github.com/theunrepentantgeek/task-graph/internal/graph"
 	"github.com/theunrepentantgeek/task-graph/internal/indentwriter"
 )
@@ -16,8 +18,9 @@ func SaveTo(
 ) error {
 	f, err := os.Create(path)
 	if err != nil {
-		return err
+		return eris.Wrapf(err, "failed to create file: %s", path)
 	}
+
 	defer f.Close()
 
 	return WriteTo(f, gr)
@@ -46,17 +49,7 @@ func WriteTo(
 	root := iw.Add("digraph {")
 
 	for i, node := range nodes {
-		root.Addf("\"%s\"", node.ID())
-
-		for _, edge := range node.Edges() {
-			if edge.Label() == "" {
-				root.Addf("\"%s\" -> \"%s\"", edge.From().ID(), edge.To().ID())
-
-				continue
-			}
-
-			root.Addf("\"%s\" -> \"%s\" [label=\"%s\"]", edge.From().ID(), edge.To().ID(), edge.Label())
-		}
+		writeNodeTo(root, node)
 
 		if i < len(nodes)-1 {
 			root.Add("") // blank line between nodes
@@ -66,6 +59,33 @@ func WriteTo(
 	iw.Add("}")
 
 	_, err := iw.WriteTo(w, indent)
+	if err != nil {
+		return eris.Wrap(err, "failed to write graphviz output")
+	}
 
-	return err
+	return nil
+}
+
+func writeNodeTo(
+	root *indentwriter.Line,
+	node *graph.Node,
+) {
+	root.Addf("\"%s\"", node.ID())
+
+	for _, edge := range node.Edges() {
+		if edge.Label() == "" {
+			root.Addf(
+				"\"%s\" -> \"%s\"",
+				edge.From().ID(),
+				edge.To().ID())
+
+			continue
+		}
+
+		root.Addf(
+			"\"%s\" -> \"%s\" [label=\"%s\"]",
+			edge.From().ID(),
+			edge.To().ID(),
+			edge.Label())
+	}
 }

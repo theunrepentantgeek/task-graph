@@ -26,14 +26,15 @@ func (iw *IndentWriter) WriteTo(
 	w io.Writer,
 	indent string,
 ) (n int64, err error) {
-	var bytesWritten int64 = 0
+	var bytesWritten int64
 
 	for _, line := range iw.lines {
-		if n, err := line.writeTo(w, indent, 0); err != nil {
+		n, err := line.writeTo(w, indent, 0)
+		if err != nil {
 			return bytesWritten, err
-		} else {
-			bytesWritten += n
 		}
+
+		bytesWritten += n
 	}
 
 	return bytesWritten, nil

@@ -17,14 +17,15 @@ func TestWriteTo_WithNodesAndEdges_WritesSortedGraphviz(t *testing.T) {
 	g := gomega.NewWithT(t)
 
 	buf := bytes.Buffer{}
-	graph := buildSampleGraph(t)
+	gr := buildSampleGraph(t)
 
-	err := WriteTo(&buf, graph)
+	err := WriteTo(&buf, gr)
 
 	g.Expect(err).NotTo(gomega.HaveOccurred())
 
 	gg := goldie.New(t)
-	gg.WithFixtureDir("testdata")
+	g.Expect(gg.WithFixtureDir("testdata")).To(gomega.Succeed())
+
 	gg.Assert(t, "sample_graph", buf.Bytes())
 }
 
@@ -54,7 +55,8 @@ func TestSaveTo_WritesFileToDisk(t *testing.T) {
 	g.Expect(readErr).NotTo(gomega.HaveOccurred())
 
 	gg := goldie.New(t)
-	gg.WithFixtureDir("testdata")
+	g.Expect(gg.WithFixtureDir("testdata")).To(gomega.Succeed())
+
 	gg.Assert(t, "sample_graph", content)
 }
 
