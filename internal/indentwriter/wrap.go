@@ -9,17 +9,15 @@ import "strings"
 
 // WordWrap applies word wrapping to the specified string, returning a slice containing the lines.
 func WordWrap(text string, width int) []string {
-	if len(text) <= width {
-		return []string{text}
-	}
-
-	expectedLines := len(text)/width + 1
-	result := make([]string, 0, expectedLines)
-
 	if width == 0 && text == "" {
 		return []string{}
 	}
 
+	if len(text) <= width {
+		return []string{text}
+	}
+
+	var result []string
 	start := 0
 	for start < len(text) {
 		finish := findBreakPoint(text, start, width)

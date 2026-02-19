@@ -1,10 +1,19 @@
 digraph {
-  "alpha"
+  "alpha" [
+    label="{alpha}"
+    shape="Mrecord"
+  ]
   "alpha" -> "beta"
   "alpha" -> "gamma"
   
-  "beta"
+  "beta" [
+    label="{beta}"
+    shape="Mrecord"
+  ]
   "beta" -> "gamma" [label="next"]
   
-  "gamma"
+  "gamma" [
+    label="{gamma}"
+    shape="Mrecord"
+  ]
 }

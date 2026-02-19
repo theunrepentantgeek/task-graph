@@ -1,60 +1,117 @@
 digraph {
-  "build"
+  "build" [
+    label="{build | Build everything}"
+    shape="Mrecord"
+  ]
   "build" -> "build.bin"
   "build" -> "build.dir"
   
-  "build.bin"
+  "build.bin" [
+    label="{build.bin | Build the crddoc \nbinary}"
+    shape="Mrecord"
+  ]
   "build.bin" -> "build.dir"
   
-  "build.dir"
+  "build.dir" [
+    label="{build.dir | Ensure our output folder \nexists}"
+    shape="Mrecord"
+  ]
   
-  "build.sbom"
+  "build.sbom" [
+    label="{build.sbom | Generate a \nsoftware-bill-of-materials (SBOM)}"
+    shape="Mrecord"
+  ]
   "build.sbom" -> "build.bin"
   
-  "ci"
+  "ci" [
+    label="{ci | Run continuous integration \ntasks}"
+    shape="Mrecord"
+  ]
   "ci" -> "test"
   
-  "default"
+  "default" [
+    label="{default | Run all tasks}"
+    shape="Mrecord"
+  ]
   "default" -> "ci"
   "default" -> "docs"
   
-  "docs"
+  "docs" [
+    label="{docs | Build documentation}"
+    shape="Mrecord"
+  ]
   "docs" -> "docs.config"
   "docs" -> "docs.aso"
   "docs" -> "docs.capz"
   "docs" -> "docs.model"
   
-  "docs.aso"
+  "docs.aso" [
+    label="{docs.aso | Build example showing documentation for \nAzure Service Operator}"
+    shape="Mrecord"
+  ]
   "docs.aso" -> "build"
   
-  "docs.capz"
+  "docs.capz" [
+    label="{docs.capz | Build example showing documentation for \nCluster API Provider Azure}"
+    shape="Mrecord"
+  ]
   "docs.capz" -> "build"
   
-  "docs.config"
+  "docs.config" [
+    label="{docs.config | Build documentation of \nconfig options}"
+    shape="Mrecord"
+  ]
   "docs.config" -> "build"
   
-  "docs.model"
+  "docs.model" [
+    label="{docs.model | Build example showing \ndocumentation for CRD model}"
+    shape="Mrecord"
+  ]
   "docs.model" -> "build"
   
-  "gremlins"
+  "gremlins" [
+    label="{gremlins | Use gremlins to check the quality \nof our tests}"
+    shape="Mrecord"
+  ]
   
-  "lint"
+  "lint" [
+    label="{lint | Run golangci-lint to check for \nlinting issues}"
+    shape="Mrecord"
+  ]
   
-  "test"
+  "test" [
+    label="{test | Run tests and checks}"
+    shape="Mrecord"
+  ]
   "test" -> "unit-test"
   "test" -> "lint"
   
-  "tidy"
+  "tidy" [
+    label="{tidy | Tidy up source}"
+    shape="Mrecord"
+  ]
   "tidy" -> "tidy.gofumpt"
   "tidy" -> "tidy.mod"
   "tidy" -> "tidy.lint"
   
-  "tidy.gofumpt"
+  "tidy.gofumpt" [
+    label="{tidy.gofumpt | Run gofumpt}"
+    shape="Mrecord"
+  ]
   
-  "tidy.lint"
+  "tidy.lint" [
+    label="{tidy.lint | Run golangci-lint in fix \nmode}"
+    shape="Mrecord"
+  ]
   
-  "tidy.mod"
+  "tidy.mod" [
+    label="{tidy.mod | Run go mod tidy}"
+    shape="Mrecord"
+  ]
   
-  "unit-test"
+  "unit-test" [
+    label="{unit-test | Run unit tests}"
+    shape="Mrecord"
+  ]
   "unit-test" -> "build"
 }
