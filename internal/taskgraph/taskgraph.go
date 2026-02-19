@@ -27,8 +27,9 @@ func (b *Builder) Build() *graph.Graph {
 	g := graph.New()
 
 	// Create nodes for each task
-	for taskName := range b.taskfile.Tasks.All(alphaNumeric) {
-		g.AddNode(taskName)
+	for taskName, task := range b.taskfile.Tasks.All(alphaNumeric) {
+		node := g.AddNode(taskName)
+		node.Description = task.Desc
 	}
 
 	// Create edges for task dependencies and calls

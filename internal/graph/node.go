@@ -9,8 +9,12 @@ type NodeID struct {
 // Node represents a vertex in the graph, containing a unique identifier.
 type Node struct {
 	NodeID
+
 	// Label returns the label of the node.
 	Label string
+
+	// Description returns the description of the node.
+	Description string
 
 	// Edges holds the outgoing edges from this node to other nodes in the graph.
 	edges []*Edge
