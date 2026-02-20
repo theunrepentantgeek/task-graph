@@ -2,11 +2,9 @@ package graphviz
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"os"
 	"sort"
-	"strings"
 
 	"github.com/rotisserie/eris"
 
@@ -96,29 +94,17 @@ func writeNodeDefinitionTo(
 	root *indentwriter.Line,
 	node *graph.Node,
 ) {
-	label := nodeLabel(node)
-	description := nodeDescription(node)
+	margin := min((len(node.Description)+20)/2, 40)
 
-	var parts []string
-	if label != "" {
-		parts = append(parts, label)
-	}
+	rec := newRecord()
+	rec.add(nodeLabel(node))
+	rec.addWrapped(margin, node.Description)
 
-	if description != "" {
-		parts = append(parts, description)
-	}
+	props := newProperties()
+	props.Addf("shape", "Mrecord")
+	props.Add("label", rec.String())
 
-	if len(parts) == 0 {
-		// No explicit label, so we just use the node ID as the label
-		parts = append(parts, node.ID())
-	}
-
-	content := fmt.Sprintf("{%s}", strings.Join(parts, " | "))
-
-	nested := root.Addf("%q [", node.ID())
-	nested.Addf("label=%q", content)
-	nested.Addf("shape=%q", "Mrecord")
-	root.Add("]")
+	props.WriteTo(node.ID(), root)
 }
 
 func nodeLabel(node *graph.Node) string {
@@ -127,19 +113,4 @@ func nodeLabel(node *graph.Node) string {
 	}
 
 	return node.ID()
-}
-
-func nodeDescription(node *graph.Node) string {
-	if node.Description == "" {
-		return ""
-	}
-
-	margin := min((len(node.Description)+20)/2, 40)
-
-	desc := strings.ReplaceAll(node.Description, "{", "&lbrace;")
-	desc = strings.ReplaceAll(desc, "}", "&rbrace;")
-
-	lines := indentwriter.WordWrap(desc, margin)
-
-	return strings.Join(lines, "\n")
 }
