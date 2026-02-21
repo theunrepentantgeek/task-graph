@@ -1,5 +1,6 @@
 digraph {
   "alpha" [
+    color="black"
     label="alpha"
     shape="Mrecord"
   ]
@@ -7,12 +8,16 @@ digraph {
   "alpha" -> "gamma"
   
   "beta" [
+    color="black"
     label="beta"
     shape="Mrecord"
   ]
-  "beta" -> "gamma" [label="next"]
+  "beta" -> "gamma" [
+    label="next"
+  ]
   
   "gamma" [
+    color="black"
     label="gamma"
     shape="Mrecord"
   ]

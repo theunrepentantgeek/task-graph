@@ -1,117 +1,220 @@
 digraph {
   "build" [
+    color="black"
     label="{build | Build everything}"
     shape="Mrecord"
   ]
-  "build" -> "build.bin"
-  "build" -> "build.dir"
+  "build" -> "build.bin" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  "build" -> "build.dir" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
   
   "build.bin" [
+    color="black"
     label="{build.bin | Build the crddoc \nbinary}"
     shape="Mrecord"
   ]
-  "build.bin" -> "build.dir"
+  "build.bin" -> "build.dir" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
   
   "build.dir" [
+    color="black"
     label="{build.dir | Ensure our output folder \nexists}"
     shape="Mrecord"
   ]
   
   "build.sbom" [
+    color="black"
     label="{build.sbom | Generate a \nsoftware-bill-of-materials (SBOM)}"
     shape="Mrecord"
   ]
-  "build.sbom" -> "build.bin"
+  "build.sbom" -> "build.bin" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
   
   "ci" [
+    color="black"
     label="{ci | Run continuous integration \ntasks}"
     shape="Mrecord"
   ]
-  "ci" -> "test"
+  "ci" -> "test" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
   
   "default" [
+    color="black"
     label="{default | Run all tasks}"
     shape="Mrecord"
   ]
-  "default" -> "ci"
-  "default" -> "docs"
+  "default" -> "ci" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  "default" -> "docs" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
   
   "docs" [
+    color="black"
     label="{docs | Build documentation}"
     shape="Mrecord"
   ]
-  "docs" -> "docs.config"
-  "docs" -> "docs.aso"
-  "docs" -> "docs.capz"
-  "docs" -> "docs.model"
+  "docs" -> "docs.config" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  "docs" -> "docs.aso" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  "docs" -> "docs.capz" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  "docs" -> "docs.model" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
   
   "docs.aso" [
+    color="black"
     label="{docs.aso | Build example showing documentation for \nAzure Service Operator}"
     shape="Mrecord"
   ]
-  "docs.aso" -> "build"
+  "docs.aso" -> "build" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
   
   "docs.capz" [
+    color="black"
     label="{docs.capz | Build example showing documentation for \nCluster API Provider Azure}"
     shape="Mrecord"
   ]
-  "docs.capz" -> "build"
+  "docs.capz" -> "build" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
   
   "docs.config" [
+    color="black"
     label="{docs.config | Build documentation of \nconfig options}"
     shape="Mrecord"
   ]
-  "docs.config" -> "build"
+  "docs.config" -> "build" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
   
   "docs.model" [
+    color="black"
     label="{docs.model | Build example showing \ndocumentation for CRD model}"
     shape="Mrecord"
   ]
-  "docs.model" -> "build"
+  "docs.model" -> "build" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
   
   "gremlins" [
+    color="black"
     label="{gremlins | Use gremlins to check the quality \nof our tests}"
     shape="Mrecord"
   ]
   
   "lint" [
+    color="black"
     label="{lint | Run golangci-lint to check for \nlinting issues}"
     shape="Mrecord"
   ]
   
   "test" [
+    color="black"
     label="{test | Run tests and checks}"
     shape="Mrecord"
   ]
-  "test" -> "unit-test"
-  "test" -> "lint"
+  "test" -> "unit-test" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  "test" -> "lint" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
   
   "tidy" [
+    color="black"
     label="{tidy | Tidy up source}"
     shape="Mrecord"
   ]
-  "tidy" -> "tidy.gofumpt"
-  "tidy" -> "tidy.mod"
-  "tidy" -> "tidy.lint"
+  "tidy" -> "tidy.gofumpt" [
+    color="blue"
+    penwidth="1"
+    style="dashed"
+  ]
+  "tidy" -> "tidy.mod" [
+    color="blue"
+    penwidth="1"
+    style="dashed"
+  ]
+  "tidy" -> "tidy.lint" [
+    color="blue"
+    penwidth="1"
+    style="dashed"
+  ]
   
   "tidy.gofumpt" [
+    color="black"
     label="{tidy.gofumpt | Run gofumpt}"
     shape="Mrecord"
   ]
   
   "tidy.lint" [
+    color="black"
     label="{tidy.lint | Run golangci-lint in fix \nmode}"
     shape="Mrecord"
   ]
   
   "tidy.mod" [
+    color="black"
     label="{tidy.mod | Run go mod tidy}"
     shape="Mrecord"
   ]
   
   "unit-test" [
+    color="black"
     label="{unit-test | Run unit tests}"
     shape="Mrecord"
   ]
-  "unit-test" -> "build"
+  "unit-test" -> "build" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
 }

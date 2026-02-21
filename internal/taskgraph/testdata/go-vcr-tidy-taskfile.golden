@@ -1,85 +1,155 @@
 digraph {
   "build" [
+    color="black"
     label="{build | Build everything}"
     shape="Mrecord"
   ]
-  "build" -> "build.bin"
+  "build" -> "build.bin" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
   
   "build.bin" [
+    color="black"
     label="{build.bin | Build the go-vcr-tidy \nbinary}"
     shape="Mrecord"
   ]
-  "build.bin" -> "build.dir"
+  "build.bin" -> "build.dir" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
   
   "build.dir" [
+    color="black"
     label="{build.dir | Ensure our output folder exists \nand is empty}"
     shape="Mrecord"
   ]
   
   "build.sbom" [
+    color="black"
     label="{build.sbom | Generate a \nsoftware-bill-of-materials (SBOM)}"
     shape="Mrecord"
   ]
-  "build.sbom" -> "build.bin"
+  "build.sbom" -> "build.bin" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
   
   "ci" [
+    color="black"
     label="{ci | Run continuous integration \ntasks}"
     shape="Mrecord"
   ]
-  "ci" -> "build"
-  "ci" -> "test"
-  "ci" -> "build.sbom"
+  "ci" -> "build" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  "ci" -> "test" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  "ci" -> "build.sbom" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
   
   "default" [
+    color="black"
     label="{default | Run all tasks}"
     shape="Mrecord"
   ]
-  "default" -> "build"
-  "default" -> "test"
+  "default" -> "build" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  "default" -> "test" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
   
   "gremlins" [
+    color="black"
     label="{gremlins | Use gremlins to check the quality \nof our tests}"
     shape="Mrecord"
   ]
   
   "lint" [
+    color="black"
     label="{lint | Run golangci-lint to check for \nlinting issues}"
     shape="Mrecord"
   ]
   
   "test" [
+    color="black"
     label="{test | Run tests and checks}"
     shape="Mrecord"
   ]
-  "test" -> "unit-test"
-  "test" -> "lint"
+  "test" -> "unit-test" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  "test" -> "lint" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
   
   "tidy" [
+    color="black"
     label="{tidy | Tidy up source}"
     shape="Mrecord"
   ]
-  "tidy" -> "tidy.gofumpt"
-  "tidy" -> "tidy.mod"
-  "tidy" -> "tidy.lint"
+  "tidy" -> "tidy.gofumpt" [
+    color="blue"
+    penwidth="1"
+    style="dashed"
+  ]
+  "tidy" -> "tidy.mod" [
+    color="blue"
+    penwidth="1"
+    style="dashed"
+  ]
+  "tidy" -> "tidy.lint" [
+    color="blue"
+    penwidth="1"
+    style="dashed"
+  ]
   
   "tidy.gofumpt" [
+    color="black"
     label="{tidy.gofumpt | Run gofumpt to reformat \nsource code}"
     shape="Mrecord"
   ]
   
   "tidy.lint" [
+    color="black"
     label="{tidy.lint | Run golangci-lint in fix \nmode}"
     shape="Mrecord"
   ]
   
   "tidy.mod" [
+    color="black"
     label="{tidy.mod | Run go mod tidy}"
     shape="Mrecord"
   ]
   
   "unit-test" [
+    color="black"
     label="{unit-test | Run unit tests}"
     shape="Mrecord"
   ]
-  "unit-test" -> "build"
+  "unit-test" -> "build" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
 }
