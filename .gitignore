@@ -31,8 +31,15 @@ go.work.sum
 # .idea/
 # .vscode/
 
-# Build output
+# Build output directory
 build/
+
+# Local executable if built with go build
+task-graph 
 
 # Task metadata cache
 .task/
+
+# Test report
+test-report.md
+
