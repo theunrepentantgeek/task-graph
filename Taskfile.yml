@@ -56,7 +56,9 @@ tasks:
     deps:
       - build
     cmds:
-      - go test ./... -json | go-testreport -output {{.REPORT}}
+      # If GITHUB_STEP_SUMMARY is not set, remove the output file so it only contains our results
+      - '[ -z "{{.GITHUB_STEP_SUMMARY}}" ] && rm -f {{.REPORT}}'
+      - "go test ./... -json | go-testreport -output {{.REPORT}}"
     vars:
       REPORT: '{{.GITHUB_STEP_SUMMARY | default "test-report.md" }}'
 
@@ -103,4 +105,16 @@ tasks:
     desc: "Update golden files with current output"
     cmds:
       - GOLDIE_UPDATE=true go test ./...
-      
+
+  samples:
+    desc: "Generate graphs and images for the sample taskfiles"
+    deps:
+      - build
+    sources: 
+      - "samples/*-taskfile.yml"
+    cmds:
+      - for: sources
+        cmd: '{{.BUILD_DIR}}/task-graph {{.ITEM}} -o {{.ITEM | replace "-taskfile.yml" ".dot" | osClean }}'
+      - for: sources
+        cmd: 'dot -Tpng {{.ITEM | replace "-taskfile.yml" ".dot" | osClean }} -o {{.ITEM | replace "-taskfile.yml" ".png" | osClean }}'
+

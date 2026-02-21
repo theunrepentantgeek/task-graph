@@ -39,7 +39,7 @@ func TestTaskGraphBuilder_Graphviz(t *testing.T) {
 			t.Parallel()
 			g := NewWithT(t)
 
-			taskfilePath := filepath.Join("testdata", c.taskfile)
+			taskfilePath := filepath.Join("..", "..", "samples", c.taskfile)
 
 			tf, err := loader.Load(t.Context(), taskfilePath)
 			g.Expect(err).NotTo(HaveOccurred())
