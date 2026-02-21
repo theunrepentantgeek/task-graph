@@ -15,12 +15,19 @@ func main() {
 
 	log := cli.CreateLogger()
 
+	cfg, err := cli.CreateConfig()
+	if err != nil {
+		log.Error("Error loading config", "error", err)
+		ctx.Exit(1)
+	}
+
 	flags := &cmd.Flags{
 		Verbose: cli.Verbose,
 		Log:     log,
+		Config:  cfg,
 	}
 
-	err := ctx.Run(flags)
+	err = ctx.Run(flags)
 	if err != nil {
 		flags.Log.Error("Error executing command", "error", err)
 		ctx.Exit(1)
