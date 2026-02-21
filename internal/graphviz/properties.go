@@ -62,14 +62,14 @@ func (p properties) WriteTo(
 	label string,
 	root *indentwriter.Line,
 ) {
-	nested := root.Addf("%q [", label)
+	nested := root.Addf("\"%s\" [", label)
 
 	keys := slices.Collect(maps.Keys(p))
 	sort.Strings(keys)
 
 	for _, key := range keys {
 		value := p[key]
-		nested.Addf("%s=%q", key, value)
+		nested.Addf("%s=\"%s\"", key, value)
 	}
 
 	root.Add("]")
