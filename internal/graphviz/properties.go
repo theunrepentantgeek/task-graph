@@ -62,6 +62,13 @@ func (p properties) WriteTo(
 	label string,
 	root *indentwriter.Line,
 ) {
+	if len(p) == 0 {
+		// No properties to write, so just write the node label.
+		root.Addf("\"%s\"", label)
+
+		return
+	}
+
 	nested := root.Addf("\"%s\" [", label)
 
 	keys := slices.Collect(maps.Keys(p))

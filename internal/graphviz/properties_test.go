@@ -179,5 +179,5 @@ func TestWriteTo_NoProperties_WritesLabelWithEmptyBlock(t *testing.T) {
 
 	// Assert
 	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(buf.String()).To(Equal("root\n  \"node\" [\n  ]\n"))
+	g.Expect(buf.String()).To(Equal("root\n  \"node\"\n"))
 }
