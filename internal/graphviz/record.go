@@ -40,6 +40,12 @@ func (r *record) addWrappedf(width int, format string, args ...any) {
 	r.addWrapped(width, fmt.Sprintf(format, args...))
 }
 
+var escapings = map[string]string{
+	`{`: `\{`,
+	`}`: `\}`,
+	`"`: `\"`,
+}
+
 // String returns the string representation of the record, which is the parts joined by " | ".
 func (r *record) String() string {
 	if len(r.parts) == 1 {
@@ -47,8 +53,9 @@ func (r *record) String() string {
 	}
 
 	content := strings.Join(r.parts, " | ")
-	content = strings.ReplaceAll(content, "{", "&lbrace;")
-	content = strings.ReplaceAll(content, "}", "&rbrace;")
+	for s, r := range escapings {
+		content = strings.ReplaceAll(content, s, r)
+	}
 
 	return fmt.Sprintf("{%s}", content)
 }
