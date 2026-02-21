@@ -1,11 +1,11 @@
 digraph {
   "asoctl:build" [
-    label="{asoctl:build | Generate the \n&lbrace;&lbrace;.ASOCTL_APP&rbrace;&rbrace; \nbinary.}"
+    label="{asoctl:build | Generate the \{\{.ASOCTL_APP\}\} \nbinary.}"
     shape="Mrecord"
   ]
   
   "asoctl:ci" [
-    label="{asoctl:ci}"
+    label="asoctl:ci"
     shape="Mrecord"
   ]
   "asoctl:ci" -> "asoctl:unit-tests-cover"
@@ -23,7 +23,7 @@ digraph {
   ]
   
   "asoctl:lint" [
-    label="{asoctl:lint | Run \n&lbrace;&lbrace;.ASOCTL_APP&rbrace;&rbrace; \nfast lint checks.}"
+    label="{asoctl:lint | Run \{\{.ASOCTL_APP\}\} fast \nlint checks.}"
     shape="Mrecord"
   ]
   
@@ -39,7 +39,7 @@ digraph {
   "asoctl:make-release-artifacts" -> "asoctl:build"
   
   "asoctl:quick-checks" [
-    label="{asoctl:quick-checks}"
+    label="asoctl:quick-checks"
     shape="Mrecord"
   ]
   "asoctl:quick-checks" -> "asoctl:unit-tests"
@@ -47,13 +47,13 @@ digraph {
   "asoctl:quick-checks" -> "asoctl:lint"
   
   "asoctl:unit-tests" [
-    label="{asoctl:unit-tests | Run \n&lbrace;&lbrace;.ASOCTL_APP&rbrace;&rbrace; \nunit tests.}"
+    label="{asoctl:unit-tests | Run \{\{.ASOCTL_APP\}\} unit \ntests.}"
     shape="Mrecord"
   ]
   "asoctl:unit-tests" -> "controller:generate-crds"
   
   "asoctl:unit-tests-cover" [
-    label="{asoctl:unit-tests-cover | Run \n&lbrace;&lbrace;.ASOCTL_APP&rbrace;&rbrace; \nunit tests and output coverage.}"
+    label="{asoctl:unit-tests-cover | Run \{\{.ASOCTL_APP\}\} unit tests and \noutput coverage.}"
     shape="Mrecord"
   ]
   "asoctl:unit-tests-cover" -> "setup"
@@ -66,14 +66,14 @@ digraph {
   ]
   
   "basic-checks" [
-    label="{basic-checks}"
+    label="basic-checks"
     shape="Mrecord"
   ]
   "basic-checks" -> "header-check"
   "basic-checks" -> "specifier-check"
   
   "build-docs-site" [
-    label="{build-docs-site}"
+    label="build-docs-site"
     shape="Mrecord"
   ]
   "build-docs-site" -> "doc:build-site"
@@ -144,7 +144,7 @@ digraph {
   "controller:aks-delete" -> "az-login"
   
   "controller:build" [
-    label="{controller:build | Generate the \n&lbrace;&lbrace;.CONTROLLER_APP&rbrace;&rbrace; \nbinary.}"
+    label="{controller:build | Generate the \n\{\{.CONTROLLER_APP\}\} binary.}"
     shape="Mrecord"
   ]
   "controller:build" -> "controller:generate-crds"
@@ -162,7 +162,7 @@ digraph {
   "controller:check-crd-size" -> "controller:generate-crds"
   
   "controller:ci" [
-    label="{controller:ci}"
+    label="controller:ci"
     shape="Mrecord"
   ]
   "controller:ci" -> "controller:verify-samples"
@@ -173,7 +173,7 @@ digraph {
   "controller:ci" -> "controller:lint"
   
   "controller:ci-integration-tests" [
-    label="{controller:ci-integration-tests}"
+    label="controller:ci-integration-tests"
     shape="Mrecord"
   ]
   "controller:ci-integration-tests" -> "cleanup-old-live-azure-resources"
@@ -182,7 +182,7 @@ digraph {
   "controller:ci-integration-tests" -> "cleanup-old-live-azure-resources"
   
   "controller:ci-live" [
-    label="{controller:ci-live}"
+    label="controller:ci-live"
     shape="Mrecord"
   ]
   "controller:ci-live" -> "controller:test-integration-ci-live"
@@ -207,13 +207,13 @@ digraph {
   ]
   
   "controller:docker-build" [
-    label="{controller:docker-build | Builds the \n&lbrace;&lbrace;.CONTROLLER_APP&rbrace;&rbrace; \nDocker image.}"
+    label="{controller:docker-build | Builds the \{\{.CONTROLLER_APP\}\} \nDocker image.}"
     shape="Mrecord"
   ]
   "controller:docker-build" -> "controller:bundle-crds"
   
   "controller:docker-build-and-save" [
-    label="{controller:docker-build-and-save | Builds the \n&lbrace;&lbrace;.CONTROLLER_APP&rbrace;&rbrace; \nDocker image and saves it using docker \nsave.}"
+    label="{controller:docker-build-and-save | Builds the \{\{.CONTROLLER_APP\}\} Docker \nimage and saves it using docker save.}"
     shape="Mrecord"
   ]
   "controller:docker-build-and-save" -> "controller:docker-build"
@@ -237,31 +237,31 @@ digraph {
   ]
   
   "controller:gen-crd-docs" [
-    label="{controller:gen-crd-docs}"
+    label="controller:gen-crd-docs"
     shape="Mrecord"
   ]
   "controller:gen-crd-docs" -> "doc:crd-api"
   
   "controller:generate-crds" [
-    label="{controller:generate-crds | Run controller-gen to generate \n&lbrace;&lbrace;.CONTROLLER_APP&rbrace;&rbrace; \nCRD files.}"
+    label="{controller:generate-crds | Run controller-gen to generate \n\{\{.CONTROLLER_APP\}\} CRD files.}"
     shape="Mrecord"
   ]
   "controller:generate-crds" -> "controller:generate-types"
   "controller:generate-crds" -> "controller:generate-genruntime-deepcopy"
   
   "controller:generate-genruntime-deepcopy" [
-    label="{controller:generate-genruntime-deepcopy | Run controller-gen to generate \n&lbrace;&lbrace;.CONTROLLER_APP&rbrace;&rbrace; \nCRD files.}"
+    label="{controller:generate-genruntime-deepcopy | Run controller-gen to generate \n\{\{.CONTROLLER_APP\}\} CRD files.}"
     shape="Mrecord"
   ]
   
   "controller:generate-kustomize" [
-    label="{controller:generate-kustomize | Run \n&lbrace;&lbrace;.GENERATOR_APP&rbrace;&rbrace; \nto generate the Kustomize file for \nregistering CRDs.}"
+    label="{controller:generate-kustomize | Run \{\{.GENERATOR_APP\}\} to generate the \nKustomize file for registering CRDs.}"
     shape="Mrecord"
   ]
   "controller:generate-kustomize" -> "controller:generate-crds"
   
   "controller:generate-types" [
-    label="{controller:generate-types | Run \n&lbrace;&lbrace;.GENERATOR_APP&rbrace;&rbrace; \nto generate input files for \ncontroller-gen for \n&lbrace;&lbrace;.CONTROLLER_APP&rbrace;&rbrace;.}"
+    label="{controller:generate-types | Run \{\{.GENERATOR_APP\}\} to generate input \nfiles for controller-gen for \n\{\{.CONTROLLER_APP\}\}.}"
     shape="Mrecord"
   ]
   "controller:generate-types" -> "generator:build"
@@ -395,7 +395,7 @@ digraph {
   "controller:package-helm-manifest" -> "controller:validate-helm"
   
   "controller:quick-checks" [
-    label="{controller:quick-checks}"
+    label="controller:quick-checks"
     shape="Mrecord"
   ]
   "controller:quick-checks" -> "controller:test"
@@ -423,7 +423,7 @@ digraph {
   "controller:scan-image" -> "controller:docker-build"
   
   "controller:test" [
-    label="{controller:test | Run \n&lbrace;&lbrace;.CONTROLLER_APP&rbrace;&rbrace; \nunit tests.}"
+    label="{controller:test | Run \{\{.CONTROLLER_APP\}\} \nunit tests.}"
     shape="Mrecord"
   ]
   "controller:test" -> "controller:generate-crds"
@@ -431,7 +431,7 @@ digraph {
   "controller:test" -> "controller:bundle-crds"
   
   "controller:test-cover" [
-    label="{controller:test-cover | Run \n&lbrace;&lbrace;.CONTROLLER_APP&rbrace;&rbrace; \nunit tests and output coverage.}"
+    label="{controller:test-cover | Run \{\{.CONTROLLER_APP\}\} unit tests \nand output coverage.}"
     shape="Mrecord"
   ]
   "controller:test-cover" -> "setup"
@@ -507,7 +507,7 @@ digraph {
   "controller:test-multitenant-integration-kind-ci" -> "controller:kind-delete"
   
   "controller:test-upgrade" [
-    label="{controller:test-upgrade | Test upgrading \n&lbrace;&lbrace;.CONTROLLER_APP&rbrace;&rbrace; \nand helm chart for new release}"
+    label="{controller:test-upgrade | Test upgrading \{\{.CONTROLLER_APP\}\} and \nhelm chart for new release}"
     shape="Mrecord"
   ]
   "controller:test-upgrade" -> "controller:test-upgrade-setup"
@@ -515,7 +515,7 @@ digraph {
   "controller:test-upgrade" -> "controller:test-upgrade-post"
   
   "controller:test-upgrade-apply-prerelease-chart" [
-    label="{controller:test-upgrade-apply-prerelease-chart | Apply the \n&lbrace;&lbrace;.CONTROLLER_APP&rbrace;&rbrace; \nprerelease chart for new release}"
+    label="{controller:test-upgrade-apply-prerelease-chart | Apply the \{\{.CONTROLLER_APP\}\} prerelease \nchart for new release}"
     shape="Mrecord"
   ]
   "controller:test-upgrade-apply-prerelease-chart" -> "controller:docker-push-local"
@@ -523,14 +523,14 @@ digraph {
   "controller:test-upgrade-apply-prerelease-chart" -> "controller:install-helm-wi"
   
   "controller:test-upgrade-post" [
-    label="{controller:test-upgrade-post | Test upgrading \n&lbrace;&lbrace;.CONTROLLER_APP&rbrace;&rbrace; \nand helm chart for new release}"
+    label="{controller:test-upgrade-post | Test upgrading \{\{.CONTROLLER_APP\}\} and \nhelm chart for new release}"
     shape="Mrecord"
   ]
   "controller:test-upgrade-post" -> "controller:test-upgrade-apply-prerelease-chart"
   "controller:test-upgrade-post" -> "controller:kind-delete"
   
   "controller:test-upgrade-pre" [
-    label="{controller:test-upgrade-pre | Test upgrading \n&lbrace;&lbrace;.CONTROLLER_APP&rbrace;&rbrace; \nand helm chart for new release}"
+    label="{controller:test-upgrade-pre | Test upgrading \{\{.CONTROLLER_APP\}\} and \nhelm chart for new release}"
     shape="Mrecord"
   ]
   "controller:test-upgrade-pre" -> "controller:test-upgrade-pre-setup"
@@ -569,39 +569,39 @@ digraph {
   ]
   
   "crossplane:ci" [
-    label="{crossplane:ci}"
+    label="crossplane:ci"
     shape="Mrecord"
   ]
   "crossplane:ci" -> "basic-checks"
   "crossplane:ci" -> "crossplane:generate-crds"
   
   "crossplane:generate-crds" [
-    label="{crossplane:generate-crds | Run controller-gen to generate \n&lbrace;&lbrace;.CROSSPLANE_APP&rbrace;&rbrace; \nCRD files.}"
+    label="{crossplane:generate-crds | Run controller-gen to generate \n\{\{.CROSSPLANE_APP\}\} CRD files.}"
     shape="Mrecord"
   ]
   "crossplane:generate-crds" -> "crossplane:generate-types"
   
   "crossplane:generate-types" [
-    label="{crossplane:generate-types | Run \n&lbrace;&lbrace;.GENERATOR_APP&rbrace;&rbrace; \nto generate input files for \ncontroller-gen for \n&lbrace;&lbrace;.CROSSPLANE_APP&rbrace;&rbrace;.}"
+    label="{crossplane:generate-types | Run \{\{.GENERATOR_APP\}\} to generate input \nfiles for controller-gen for \n\{\{.CROSSPLANE_APP\}\}.}"
     shape="Mrecord"
   ]
   "crossplane:generate-types" -> "generator:build"
   
   "crossplane:quick-checks" [
-    label="{crossplane:quick-checks}"
+    label="crossplane:quick-checks"
     shape="Mrecord"
   ]
   "crossplane:quick-checks" -> "basic-checks"
   
   "default" [
-    label="{default}"
+    label="default"
     shape="Mrecord"
   ]
   "default" -> "format-code"
   "default" -> "quick-checks"
   
   "doc:build-site" [
-    label="{doc:build-site}"
+    label="doc:build-site"
     shape="Mrecord"
   ]
   "doc:build-site" -> "doc:frontmatter-check"
@@ -642,17 +642,17 @@ digraph {
   "format-code" -> "controller:format-code"
   
   "frontmatter-check" [
-    label="{frontmatter-check}"
+    label="frontmatter-check"
     shape="Mrecord"
   ]
   
   "generator:build" [
-    label="{generator:build | Generate the \n&lbrace;&lbrace;.GENERATOR_APP&rbrace;&rbrace; \nbinary.}"
+    label="{generator:build | Generate the \n\{\{.GENERATOR_APP\}\} binary.}"
     shape="Mrecord"
   ]
   
   "generator:ci" [
-    label="{generator:ci}"
+    label="generator:ci"
     shape="Mrecord"
   ]
   "generator:ci" -> "generator:unit-tests-cover"
@@ -660,7 +660,7 @@ digraph {
   "generator:ci" -> "generator:lint"
   
   "generator:diagrams" [
-    label="{generator:diagrams}"
+    label="generator:diagrams"
     shape="Mrecord"
   ]
   "generator:diagrams" -> "doc:render-diagrams"
@@ -676,12 +676,12 @@ digraph {
   ]
   
   "generator:lint" [
-    label="{generator:lint | Run \n&lbrace;&lbrace;.GENERATOR_APP&rbrace;&rbrace; \nlint checks.}"
+    label="{generator:lint | Run \{\{.GENERATOR_APP\}\} lint \nchecks.}"
     shape="Mrecord"
   ]
   
   "generator:quick-checks" [
-    label="{generator:quick-checks}"
+    label="generator:quick-checks"
     shape="Mrecord"
   ]
   "generator:quick-checks" -> "generator:unit-tests"
@@ -689,19 +689,19 @@ digraph {
   "generator:quick-checks" -> "generator:lint"
   
   "generator:unit-tests" [
-    label="{generator:unit-tests | Run \n&lbrace;&lbrace;.GENERATOR_APP&rbrace;&rbrace; \nunit tests.}"
+    label="{generator:unit-tests | Run \{\{.GENERATOR_APP\}\} unit \ntests.}"
     shape="Mrecord"
   ]
   
   "generator:unit-tests-cover" [
-    label="{generator:unit-tests-cover | Run \n&lbrace;&lbrace;.GENERATOR_APP&rbrace;&rbrace; \nunit tests and output coverage.}"
+    label="{generator:unit-tests-cover | Run \{\{.GENERATOR_APP\}\} unit tests and \noutput coverage.}"
     shape="Mrecord"
   ]
   "generator:unit-tests-cover" -> "setup"
   "generator:unit-tests-cover" -> "produce-markdown-summary"
   
   "generator:update-golden-tests" [
-    label="{generator:update-golden-tests | Update \n&lbrace;&lbrace;.GENERATOR_APP&rbrace;&rbrace; \ngolden test outputs.}"
+    label="{generator:update-golden-tests | Update \{\{.GENERATOR_APP\}\} golden \ntest outputs.}"
     shape="Mrecord"
   ]
   
@@ -732,7 +732,7 @@ digraph {
   ]
   
   "mangle-test:quick-checks" [
-    label="{mangle-test:quick-checks}"
+    label="mangle-test:quick-checks"
     shape="Mrecord"
   ]
   "mangle-test:quick-checks" -> "mangle-test:lint"
