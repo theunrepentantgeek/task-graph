@@ -158,10 +158,10 @@ func TestWriteTo_UnsortedKeys_WritesKeysInAscendingOrder(t *testing.T) {
 	// Assert
 	g.Expect(err).NotTo(HaveOccurred())
 	g.Expect(buf.String()).
-		To(Equal("root\n  \"node\" [\n    alpha=\"one\"\n    beta=\"two\"\n    gamma=\"three\"\n  ]\n"))
+		To(Equal("root\n  node [\n    alpha=\"one\"\n    beta=\"two\"\n    gamma=\"three\"\n  ]\n"))
 }
 
-func TestWriteTo_NoProperties_WritesLabelWithEmptyBlock(t *testing.T) {
+func TestWriteTo_NoProperties_WritesLabelWithoutBlock(t *testing.T) {
 	t.Parallel()
 	g := NewWithT(t)
 
@@ -179,5 +179,5 @@ func TestWriteTo_NoProperties_WritesLabelWithEmptyBlock(t *testing.T) {
 
 	// Assert
 	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(buf.String()).To(Equal("root\n  \"node\"\n"))
+	g.Expect(buf.String()).To(Equal("root\n  node\n"))
 }

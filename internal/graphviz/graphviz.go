@@ -101,7 +101,8 @@ func writeNodeDefinitionTo(
 		props.AddAttributes(cfg.Graphviz.TaskNodes)
 	}
 
-	props.WriteTo(node.ID(), root)
+	id := fmt.Sprintf("\"%s\"", node.ID())
+	props.WriteTo(id, root)
 }
 
 func writeEdgeTo(

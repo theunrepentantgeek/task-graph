@@ -64,12 +64,12 @@ func (p properties) WriteTo(
 ) {
 	if len(p) == 0 {
 		// No properties to write, so just write the node label.
-		root.Addf("\"%s\"", label)
+		root.Add(label)
 
 		return
 	}
 
-	nested := root.Addf("\"%s\" [", label)
+	nested := root.Addf("%s [", label)
 
 	keys := slices.Collect(maps.Keys(p))
 	sort.Strings(keys)
