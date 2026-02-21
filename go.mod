@@ -9,6 +9,7 @@ require (
 	github.com/phsym/console-slog v0.3.1
 	github.com/rotisserie/eris v0.5.4
 	github.com/sebdah/goldie/v2 v2.8.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
