@@ -2,12 +2,14 @@ package graphviz
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"sort"
 
 	"github.com/rotisserie/eris"
 
+	"github.com/theunrepentantgeek/task-graph/internal/config"
 	"github.com/theunrepentantgeek/task-graph/internal/graph"
 	"github.com/theunrepentantgeek/task-graph/internal/indentwriter"
 )
@@ -15,6 +17,7 @@ import (
 func SaveTo(
 	path string,
 	gr *graph.Graph,
+	cfg *config.Config,
 ) error {
 	f, err := os.Create(path)
 	if err != nil {
@@ -23,12 +26,13 @@ func SaveTo(
 
 	defer f.Close()
 
-	return WriteTo(f, gr)
+	return WriteTo(f, gr, cfg)
 }
 
 func WriteTo(
 	w io.Writer,
 	g *graph.Graph,
+	cfg *config.Config,
 ) error {
 	const indent = "  "
 
@@ -49,7 +53,7 @@ func WriteTo(
 	root := iw.Add("digraph {")
 
 	for i, node := range nodes {
-		writeNodeTo(root, node)
+		writeNodeTo(root, node, cfg)
 
 		if i < len(nodes)-1 {
 			root.Add("") // blank line between nodes
@@ -69,30 +73,19 @@ func WriteTo(
 func writeNodeTo(
 	root *indentwriter.Line,
 	node *graph.Node,
+	cfg *config.Config,
 ) {
-	writeNodeDefinitionTo(root, node)
+	writeNodeDefinitionTo(root, node, cfg)
 
 	for _, edge := range node.Edges() {
-		if edge.Label() == "" {
-			root.Addf(
-				"\"%s\" -> \"%s\"",
-				edge.From().ID(),
-				edge.To().ID())
-
-			continue
-		}
-
-		root.Addf(
-			"\"%s\" -> \"%s\" [label=\"%s\"]",
-			edge.From().ID(),
-			edge.To().ID(),
-			edge.Label())
+		writeEdgeTo(root, edge, cfg)
 	}
 }
 
 func writeNodeDefinitionTo(
 	root *indentwriter.Line,
 	node *graph.Node,
+	cfg *config.Config,
 ) {
 	margin := min((len(node.Description)+20)/2, 40)
 
@@ -100,11 +93,45 @@ func writeNodeDefinitionTo(
 	rec.add(nodeLabel(node))
 	rec.addWrapped(margin, node.Description)
 
-	props := newProperties()
+	props := newNodeProperties()
 	props.Addf("shape", "Mrecord")
 	props.Add("label", rec.String())
 
+	if cfg != nil && cfg.Graphviz != nil {
+		props.AddAttributes(cfg.Graphviz.TaskNodes)
+	}
+
 	props.WriteTo(node.ID(), root)
+}
+
+func writeEdgeTo(
+	root *indentwriter.Line,
+	edge *graph.Edge,
+	cfg *config.Config,
+) {
+	props := newEdgeProperties()
+
+	if edge.Label() != "" {
+		props.Add("label", edge.Label())
+	}
+
+	if cfg != nil && cfg.Graphviz != nil {
+		switch edge.Class() {
+		case "dep":
+			props.AddAttributes(cfg.Graphviz.DependencyEdges)
+		case "call":
+			props.AddAttributes(cfg.Graphviz.CallEdges)
+		default:
+			// Nothing
+		}
+	}
+
+	props.WriteTo(
+		fmt.Sprintf(
+			"\"%s\" -> \"%s\"",
+			edge.From().ID(),
+			edge.To().ID()),
+		root)
 }
 
 func nodeLabel(node *graph.Node) string {

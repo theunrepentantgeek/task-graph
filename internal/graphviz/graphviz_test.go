@@ -9,6 +9,7 @@ import (
 	"github.com/onsi/gomega"
 	"github.com/sebdah/goldie/v2"
 
+	"github.com/theunrepentantgeek/task-graph/internal/config"
 	"github.com/theunrepentantgeek/task-graph/internal/graph"
 )
 
@@ -19,7 +20,8 @@ func TestWriteTo_WithNodesAndEdges_WritesSortedGraphviz(t *testing.T) {
 	buf := bytes.Buffer{}
 	gr := buildSampleGraph(t)
 
-	err := WriteTo(&buf, gr)
+	cfg := config.New()
+	err := WriteTo(&buf, gr, cfg)
 
 	g.Expect(err).NotTo(gomega.HaveOccurred())
 
@@ -34,8 +36,9 @@ func TestWriteTo_NilGraph_ReturnsError(t *testing.T) {
 	g := gomega.NewWithT(t)
 
 	buf := bytes.Buffer{}
+	cfg := config.New()
 
-	err := WriteTo(&buf, nil)
+	err := WriteTo(&buf, nil, cfg)
 
 	g.Expect(err).To(gomega.MatchError(gomega.ContainSubstring("graphviz: graph is nil")))
 }
@@ -46,8 +49,9 @@ func TestSaveTo_WritesFileToDisk(t *testing.T) {
 
 	dir := t.TempDir()
 	path := filepath.Join(dir, "graph.dot")
+	cfg := config.New()
 
-	err := SaveTo(path, buildSampleGraph(t))
+	err := SaveTo(path, buildSampleGraph(t), cfg)
 
 	g.Expect(err).NotTo(gomega.HaveOccurred())
 

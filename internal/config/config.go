@@ -2,13 +2,13 @@ package config
 
 type Config struct {
 	// Graphviz is the configuration for the Graphviz output.
-	Graphviz Graphviz `json:"graphviz"`
+	Graphviz *Graphviz `json:"graphviz"`
 }
 
 // New creates a new Config with default values.
 func New() *Config {
 	return &Config{
-		Graphviz: Graphviz{
+		Graphviz: &Graphviz{
 			Font:     "Verdana",
 			FontSize: 16,
 			DependencyEdges: &GraphvizEdge{
