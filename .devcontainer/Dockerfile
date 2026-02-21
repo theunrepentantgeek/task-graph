@@ -9,7 +9,7 @@ ARG TARGETARCH
 # APT dependencies
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
-    && apt-get -y install --no-install-recommends bash-completion lsb-release
+    && apt-get -y install --no-install-recommends bash-completion lsb-release graphviz
 
 COPY install-dependencies.sh oh-my-posh.json .custom-gcl.template.yml .
 RUN ./install-dependencies.sh devcontainer 
