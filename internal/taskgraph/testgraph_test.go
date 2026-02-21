@@ -9,6 +9,7 @@ import (
 
 	"github.com/sebdah/goldie/v2"
 
+	"github.com/theunrepentantgeek/task-graph/internal/config"
 	"github.com/theunrepentantgeek/task-graph/internal/graphviz"
 	"github.com/theunrepentantgeek/task-graph/internal/loader"
 )
@@ -47,7 +48,9 @@ func TestTaskGraphBuilder_Graphviz(t *testing.T) {
 			gr := New(tf).Build()
 
 			buf := bytes.Buffer{}
-			err = graphviz.WriteTo(&buf, gr)
+			cfg := config.New()
+
+			err = graphviz.WriteTo(&buf, gr, cfg)
 			g.Expect(err).NotTo(HaveOccurred())
 
 			gg := goldie.New(t)
