@@ -98,3 +98,9 @@ tasks:
     desc: "Use gremlins to check the quality of our tests"
     cmds:
       - gremlins unleash ./internal
+
+  update-golden-files:
+    desc: "Update golden files with current output"
+    cmds:
+      - GOLDIE_UPDATE=true go test ./...
+      
