@@ -13,6 +13,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/theunrepentantgeek/task-graph/internal/config"
+	"github.com/theunrepentantgeek/task-graph/internal/dot"
 	"github.com/theunrepentantgeek/task-graph/internal/graphviz"
 	"github.com/theunrepentantgeek/task-graph/internal/loader"
 	"github.com/theunrepentantgeek/task-graph/internal/taskgraph"
@@ -20,10 +21,11 @@ import (
 
 //nolint:tagalign // Not useful here because different members have different tags.
 type CLI struct {
-	Taskfile string `arg:"" help:"Path to the taskfile to process."`
-	Output   string `help:"Path to the output file." long:"output" required:"true" short:"o"`
-	Config   string `help:"Path to a config file (YAML or JSON)." long:"config" short:"c"`
-	Verbose  bool   `help:"Enable verbose logging."`
+	Taskfile    string `arg:"" help:"Path to the taskfile to process."`
+	Output      string `help:"Path to the output file." long:"output" required:"true" short:"o"`
+	Config      string `help:"Path to a config file (YAML or JSON)." long:"config" short:"c"`
+	RenderImage string `help:"Render the graph as an image using graphviz dot. Specify the file type (e.g. png, svg)." long:"render-image"`
+	Verbose     bool   `help:"Enable verbose logging."`
 }
 
 // Run executes the CLI command with the given flags.
@@ -52,6 +54,39 @@ func (c *CLI) Run(
 	flags.Log.Info(
 		"Saved graph",
 		"output", c.Output,
+	)
+
+	if c.RenderImage != "" {
+		if err = c.renderImage(flags); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (c *CLI) renderImage(flags *Flags) error {
+	dotPath := ""
+	if flags.Config != nil {
+		dotPath = flags.Config.DotPath
+	}
+
+	dotExe, err := dot.FindExecutable(dotPath)
+	if err != nil {
+		return eris.Wrap(err, "failed to find dot executable")
+	}
+
+	ext := filepath.Ext(c.Output)
+	imageFile := strings.TrimSuffix(c.Output, ext) + "." + c.RenderImage
+
+	err = dot.RenderImage(dotExe, c.Output, imageFile, c.RenderImage)
+	if err != nil {
+		return eris.Wrap(err, "failed to render image")
+	}
+
+	flags.Log.Info(
+		"Rendered image",
+		"output", imageFile,
 	)
 
 	return nil
