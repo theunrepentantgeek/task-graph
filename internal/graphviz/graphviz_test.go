@@ -31,6 +31,29 @@ func TestWriteTo_WithNodesAndEdges_WritesSortedGraphviz(t *testing.T) {
 	gg.Assert(t, "sample_graph", buf.Bytes())
 }
 
+func TestWriteTo_WithStyleRules_AppliesMatchingStyles(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	gr := buildSampleGraph(t)
+
+	cfg := config.New()
+	cfg.Graphviz.StyleRules = []config.GraphvizStyleRule{
+		{Match: "alpha", Color: "red", FillColor: "lightyellow", Style: "filled"},
+		{Match: "b*", FontColor: "blue"},
+	}
+
+	err := WriteTo(&buf, gr, cfg)
+
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+
+	gg := goldie.New(t)
+	g.Expect(gg.WithFixtureDir("testdata")).To(gomega.Succeed())
+
+	gg.Assert(t, "sample_graph_with_style_rules", buf.Bytes())
+}
+
 func TestWriteTo_NilGraph_ReturnsError(t *testing.T) {
 	t.Parallel()
 	g := gomega.NewWithT(t)
