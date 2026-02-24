@@ -9,6 +9,9 @@ vars:
   # Folder containing tools we can use
   TOOLS_DIR: '{{ list .ROOT_DIR "tools" | join "/" | osClean }}'
 
+  # Folder containing our documentation
+  DOCS_DIR: '{{ list .ROOT_DIR "docs" | join "/" | osClean }}'
+
 run: once
 
 output: prefixed
@@ -99,7 +102,7 @@ tasks:
   gremlins:
     desc: "Use gremlins to check the quality of our tests"
     cmds:
-      - gremlins unleash ./internal
+      - gremlins unleash ./internal --invert-assignments --invert-bitwise --invert-bwassign --invert-logical --invert-loopctrl --remove-self-assignments 
 
   update-golden-files:
     desc: "Update golden files with current output"
@@ -118,3 +121,18 @@ tasks:
       - for: sources
         cmd: 'dot -Tpng {{.ITEM | replace "-taskfile.yml" ".dot" | osClean }} -o {{.ITEM | replace "-taskfile.yml" ".png" | osClean }}'
 
+  docs:
+    desc: "Generate documentation"
+    deps:
+      - docs.build
+
+  docs.build:
+    desc: "Document the Taskfile graph and generate an image"
+    deps:
+      - build
+    sources:
+      - '{{.BUILD_DIR}}/task-graph'
+      - 'Taskfile.yml'
+    cmds:
+      - '{{.BUILD_DIR}}/task-graph {{.ROOT_DIR}}/Taskfile.yml -o {{.DOCS_DIR}}/taskfile.dot'
+      - 'dot -Tpng {{.DOCS_DIR}}/taskfile.dot -o {{.DOCS_DIR}}/taskfile.png'
