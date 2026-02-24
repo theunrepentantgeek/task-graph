@@ -1,0 +1,40 @@
+digraph {
+  "build" [
+    color="black"
+    label="build"
+    shape="Mrecord"
+  ]
+  subgraph cluster_cmd {
+    label="cmd"
+    "cmd:build" [
+      color="black"
+      label="cmd:build"
+      shape="Mrecord"
+    ]
+    subgraph cluster_cmd_test {
+      label="cmd:test"
+      "cmd:test:golden" [
+        color="black"
+        label="cmd:test:golden"
+        shape="Mrecord"
+      ]
+      "cmd:test:unit" [
+        color="black"
+        label="cmd:test:unit"
+        shape="Mrecord"
+      ]
+    }
+  }
+  
+  "cmd:build" -> "build"
+  "cmd:build" -> "cmd:test:unit" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  "cmd:build" -> "cmd:test:golden" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+}

@@ -66,3 +66,30 @@ func TestCreateConfig_MissingFileReturnsError(t *testing.T) {
 	g.Expect(cfg).To(BeNil())
 	g.Expect(err).To(MatchError(ContainSubstring("failed to read config file")))
 }
+
+func TestCreateConfig_GroupByNamespaceFlagSetsConfig(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{GroupByNamespace: true}
+
+	cfg, err := cli.CreateConfig()
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.GroupByNamespace).To(BeTrue())
+}
+
+func TestCreateConfig_GroupByNamespaceFlagOverridesConfigFile(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{
+		Config:           filepath.Join("testdata", "config.yaml"),
+		GroupByNamespace: true,
+	}
+
+	cfg, err := cli.CreateConfig()
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.GroupByNamespace).To(BeTrue())
+}

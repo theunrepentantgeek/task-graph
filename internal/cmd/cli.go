@@ -20,10 +20,11 @@ import (
 
 //nolint:tagalign // Not useful here because different members have different tags.
 type CLI struct {
-	Taskfile string `arg:"" help:"Path to the taskfile to process."`
-	Output   string `help:"Path to the output file." long:"output" required:"true" short:"o"`
-	Config   string `help:"Path to a config file (YAML or JSON)." long:"config" short:"c"`
-	Verbose  bool   `help:"Enable verbose logging."`
+	Taskfile           string `arg:"" help:"Path to the taskfile to process."`
+	Output             string `help:"Path to the output file." long:"output" required:"true" short:"o"`
+	Config             string `help:"Path to a config file (YAML or JSON)." long:"config" short:"c"`
+	GroupByNamespace   bool   `help:"Group tasks in the same namespace together in the output." long:"group-by-namespace"`
+	Verbose            bool   `help:"Enable verbose logging."`
 }
 
 // Run executes the CLI command with the given flags.
@@ -75,13 +76,23 @@ func (c *CLI) CreateLogger() *slog.Logger {
 func (c *CLI) CreateConfig() (*config.Config, error) {
 	cfg := config.New()
 
-	if c.Config == "" {
-		return cfg, nil
+	if c.Config != "" {
+		if err := c.loadConfigFile(cfg); err != nil {
+			return nil, err
+		}
 	}
 
+	if c.GroupByNamespace {
+		cfg.GroupByNamespace = true
+	}
+
+	return cfg, nil
+}
+
+func (c *CLI) loadConfigFile(cfg *config.Config) error {
 	raw, err := os.ReadFile(c.Config)
 	if err != nil {
-		return nil, eris.Wrapf(err, "failed to read config file: %s", c.Config)
+		return eris.Wrapf(err, "failed to read config file: %s", c.Config)
 	}
 
 	ext := strings.ToLower(filepath.Ext(c.Config))
@@ -94,15 +105,15 @@ func (c *CLI) CreateConfig() (*config.Config, error) {
 	default:
 		// Attempt YAML first, then JSON, for unknown extensions.
 		if yamlErr := yaml.Unmarshal(raw, cfg); yamlErr == nil {
-			return cfg, nil
+			return nil
 		}
 
 		err = json.Unmarshal(raw, cfg)
 	}
 
 	if err != nil {
-		return nil, eris.Wrapf(err, "failed to parse config file: %s", c.Config)
+		return eris.Wrapf(err, "failed to parse config file: %s", c.Config)
 	}
 
-	return cfg, nil
+	return nil
 }

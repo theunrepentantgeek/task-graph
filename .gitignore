@@ -42,3 +42,6 @@ task-graph
 
 # Test report
 test-report.md
+
+# Local tools
+tools/

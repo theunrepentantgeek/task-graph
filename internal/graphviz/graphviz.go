@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"sort"
+	"strings"
 
 	"github.com/rotisserie/eris"
 
@@ -52,11 +53,21 @@ func WriteTo(
 	iw := indentwriter.New()
 	root := iw.Add("digraph {")
 
-	for i, node := range nodes {
-		writeNodeTo(root, node, cfg)
+	if cfg != nil && cfg.GroupByNamespace {
+		writeGroupedNodesTo(root, nodes, cfg)
+		root.Add("")
+		for _, node := range nodes {
+			for _, edge := range node.Edges() {
+				writeEdgeTo(root, edge, cfg)
+			}
+		}
+	} else {
+		for i, node := range nodes {
+			writeNodeTo(root, node, cfg)
 
-		if i < len(nodes)-1 {
-			root.Add("") // blank line between nodes
+			if i < len(nodes)-1 {
+				root.Add("") // blank line between nodes
+			}
 		}
 	}
 
@@ -68,6 +79,109 @@ func WriteTo(
 	}
 
 	return nil
+}
+
+// writeGroupedNodesTo writes nodes organized into namespace subgraph clusters.
+func writeGroupedNodesTo(
+	root *indentwriter.Line,
+	nodes []*graph.Node,
+	cfg *config.Config,
+) {
+	// Build map: namespace -> nodes directly in that namespace
+	nsToNodes := make(map[string][]*graph.Node)
+	for _, node := range nodes {
+		ns := nodeNamespace(node.ID())
+		nsToNodes[ns] = append(nsToNodes[ns], node)
+	}
+
+	// Collect all unique namespaces, including intermediate ones
+	allNS := make(map[string]bool)
+	for ns := range nsToNodes {
+		for current := ns; current != ""; current = parentNamespace(current) {
+			allNS[current] = true
+		}
+	}
+
+	// Write root-level nodes (no namespace) first
+	for _, node := range nsToNodes[""] {
+		writeNodeDefinitionTo(root, node, cfg)
+	}
+
+	// Find and sort top-level namespaces (those with no parent)
+	topLevel := make([]string, 0, len(allNS))
+	for ns := range allNS {
+		if parentNamespace(ns) == "" {
+			topLevel = append(topLevel, ns)
+		}
+	}
+	sort.Strings(topLevel)
+
+	// Write a subgraph cluster for each top-level namespace
+	for _, ns := range topLevel {
+		writeNamespaceSubgraphTo(root, ns, nsToNodes, allNS, cfg)
+	}
+}
+
+// writeNamespaceSubgraphTo writes a subgraph cluster for the given namespace, recursively
+// handling child namespaces.
+func writeNamespaceSubgraphTo(
+	parent *indentwriter.Line,
+	ns string,
+	nsToNodes map[string][]*graph.Node,
+	allNS map[string]bool,
+	cfg *config.Config,
+) {
+	subgraph := parent.Addf("subgraph %s {", clusterID(ns))
+	subgraph.Addf("label=%q", ns)
+
+	// Write nodes directly in this namespace
+	for _, node := range nsToNodes[ns] {
+		writeNodeDefinitionTo(subgraph, node, cfg)
+	}
+
+	// Find and sort child namespaces
+	children := make([]string, 0, len(allNS))
+	for candidate := range allNS {
+		if parentNamespace(candidate) == ns {
+			children = append(children, candidate)
+		}
+	}
+	sort.Strings(children)
+
+	// Recursively write child namespace subgraphs
+	for _, child := range children {
+		writeNamespaceSubgraphTo(subgraph, child, nsToNodes, allNS, cfg)
+	}
+
+	parent.Add("}")
+}
+
+// nodeNamespace returns the namespace portion of a node ID (everything before the last colon).
+// Returns an empty string if the ID has no colon.
+func nodeNamespace(id string) string {
+	idx := strings.LastIndex(id, ":")
+	if idx < 0 {
+		return ""
+	}
+
+	return id[:idx]
+}
+
+// parentNamespace returns the parent namespace of a namespace.
+// Returns an empty string if the namespace has no parent (i.e., no colon).
+func parentNamespace(ns string) string {
+	idx := strings.LastIndex(ns, ":")
+	if idx < 0 {
+		return ""
+	}
+
+	return ns[:idx]
+}
+
+// clusterID converts a namespace string into a valid Graphviz cluster subgraph identifier.
+// Colons are replaced with underscores to ensure the ID is valid.
+func clusterID(ns string) string {
+	return "cluster_" + strings.ReplaceAll(ns, ":", "_")
 }
 
 func writeNodeTo(
