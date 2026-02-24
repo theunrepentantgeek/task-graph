@@ -1,0 +1,138 @@
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+  # Output folder for all build artifacts
+  BUILD_DIR: '{{ list .ROOT_DIR "build" | join "/" | osClean }}'
+
+  # Folder containing tools we can use
+  TOOLS_DIR: '{{ list .ROOT_DIR "tools" | join "/" | osClean }}'
+
+  # Folder containing our documentation
+  DOCS_DIR: '{{ list .ROOT_DIR "docs" | join "/" | osClean }}'
+
+run: once
+
+output: prefixed
+
+tasks:
+  default:
+    desc: Run all tasks
+    deps:
+      - build
+      - test
+
+  build:
+    desc: Build everything
+    deps:
+      - build.bin
+
+  build.bin:
+    desc: Build the task-graph binary
+    deps:
+      - build.dir
+    cmds:
+      - go build -o "{{.BUILD_DIR}}/task-graph"
+
+  build.sbom:
+    desc: Generate a software-bill-of-materials (SBOM)
+    deps:
+      - build.bin
+    cmds:
+      - "sbom-tool generate -BuildDropPath {{.BUILD_DIR}} -BuildComponentPath {{.ROOT_DIR}} -PackageName task-graph -PackageVersion latest -PackageSupplier https://github.com/theunrepentantgeek/task-graph -NamespaceUriBase https://github.com/theunrepentantgeek/task-graph -DeleteManifestDirIfPresent true -FetchLicenseInformation true -Verbosity Information"
+
+  build.dir:
+    desc: Ensure our output folder exists and is empty
+    cmds:
+      - rm -rf {{.BUILD_DIR}}
+      - mkdir -p {{.BUILD_DIR}}
+
+  test:
+    desc: Run tests and checks
+    deps:
+      - unit-test
+      - lint
+
+  unit-test:
+    desc: Run unit tests
+    deps:
+      - build
+    cmds:
+      # If GITHUB_STEP_SUMMARY is not set, remove the output file so it only contains our results
+      - '[ -z "{{.GITHUB_STEP_SUMMARY}}" ] && rm -f {{.REPORT}}'
+      - "go test ./... -json | go-testreport -output {{.REPORT}}"
+    vars:
+      REPORT: '{{.GITHUB_STEP_SUMMARY | default "test-report.md" }}'
+
+  lint:
+    desc: Run golangci-lint to check for linting issues
+    cmds:
+      - golangci-lint-custom run --verbose
+
+  ci:
+    desc: Run continuous integration tasks
+    deps:
+      - build
+      - test
+      - build.sbom
+
+  tidy:
+    desc: "Tidy up source"
+    cmds:
+      - task: tidy.gofumpt
+      - task: tidy.mod
+      - task: tidy.lint
+
+  tidy.gofumpt:
+    desc: "Run gofumpt to reformat source code"
+    cmds:
+      - gofumpt -l -w .
+
+  tidy.mod:
+    desc: "Run go mod tidy"
+    cmds:
+      - go mod tidy
+
+  tidy.lint:
+    desc: "Run golangci-lint in fix mode"
+    cmds:
+      - golangci-lint-custom run --fix --verbose
+
+  gremlins:
+    desc: "Use gremlins to check the quality of our tests"
+    cmds:
+      - gremlins unleash ./internal --invert-assignments --invert-bitwise --invert-bwassign --invert-logical --invert-loopctrl --remove-self-assignments 
+
+  update-golden-files:
+    desc: "Update golden files with current output"
+    cmds:
+      - GOLDIE_UPDATE=true go test ./...
+
+  samples:
+    desc: "Generate graphs and images for the sample taskfiles"
+    deps:
+      - build
+    sources: 
+      - "samples/*-taskfile.yml"
+    cmds:
+      - for: sources
+        cmd: '{{.BUILD_DIR}}/task-graph {{.ITEM}} -o {{.ITEM | replace "-taskfile.yml" ".dot" | osClean }}'
+      - for: sources
+        cmd: 'dot -Tpng {{.ITEM | replace "-taskfile.yml" ".dot" | osClean }} -o {{.ITEM | replace "-taskfile.yml" ".png" | osClean }}'
+
+  docs:
+    desc: "Generate documentation"
+    deps:
+      - docs.build
+
+  docs.build:
+    desc: "Document the Taskfile graph and generate an image"
+    deps:
+      - build
+    sources:
+      - '{{.BUILD_DIR}}/task-graph'
+      - 'Taskfile.yml'
+    cmds:
+      - '{{.BUILD_DIR}}/task-graph {{.ROOT_DIR}}/Taskfile.yml -o {{.DOCS_DIR}}/taskfile.dot'
+      - 'dot -Tpng {{.DOCS_DIR}}/taskfile.dot -o {{.DOCS_DIR}}/taskfile.png'

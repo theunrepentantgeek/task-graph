@@ -1,0 +1,5 @@
+graphviz:
+  font: "Fira Code"
+  fontSize: 12
+  callEdges:
+    color: "red"

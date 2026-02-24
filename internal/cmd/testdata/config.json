@@ -1,0 +1,8 @@
+{
+  "graphviz": {
+    "font": "JetBrains Mono",
+    "dependencyEdges": {
+      "color": "green"
+    }
+  }
+}

@@ -1,0 +1,177 @@
+version: "2"
+run:
+  allow-parallel-runners: true
+linters:
+  enable:
+    - asasalint
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - contextcheck
+    - copyloopvar
+    - cyclop
+    - dupl
+    - dupword
+    - durationcheck
+    - errchkjson
+    - errname
+    - errorlint
+    - exhaustive
+    - exptostd
+    - fatcontext
+    - funlen
+    - ginkgolinter
+    - gocheckcompilerdirectives
+    - gochecksumtype
+    - gocognit
+    - goconst
+    - gocritic
+    - godoclint
+    - godot
+    - godox
+    - gosec
+    - gosmopolitan
+    - iface
+    - inamedparam
+    - intrange
+    - loggercheck
+    - maintidx
+    - makezero
+    - mirror
+    - misspell
+    - modernize
+    - nakedret
+    - nestif
+    - nilaway
+    - nilerr
+    - nilnesserr
+    - nilnil
+    - nlreturn
+    - noctx
+    - nolintlint
+    - paralleltest
+    - perfsprint
+    - prealloc
+    - predeclared
+    - protogetter
+    - reassign
+    - recvcheck
+    - revive
+    - rowserrcheck
+    - spancheck
+    - sqlclosecheck
+    - staticcheck
+    - tagalign
+    - tagliatelle
+    - testifylint
+    - thelper
+    - tparallel
+    - unconvert
+    - unparam
+    - usestdlibvars
+    - usetesting
+    - wastedassign
+    - whitespace
+    - wrapcheck
+    - wsl_v5
+    - zerologlint
+  disable:
+    - musttag # Extremely slow, at least on CI machines
+  settings:
+    cyclop:
+      max-complexity: 10
+    exhaustive:
+      default-signifies-exhaustive: true
+    funlen:
+      lines: 60
+      ignore-comments: true
+    govet:
+      disable:
+        - fieldalignment
+      enable-all: true
+    maintidx:
+      under: 30
+    nolintlint:
+      require-explanation: true
+      require-specific: true
+      allow-unused: false
+    prealloc:
+      simple: false
+      for-loops: true
+    revive:
+      enable-all-rules: true
+      rules:
+        - name: add-constant
+          disabled: true
+        - name: dot-imports
+          arguments:
+            - allowedPackages:
+                - github.com/onsi/ginkgo/v2
+                - github.com/onsi/gomega
+        - name: function-length
+          disabled: true
+        - name: line-length-limit
+          arguments:
+            - 120
+        - name: unhandled-error
+          disabled: true
+    staticcheck:
+      checks:
+        - -S1002
+        - -S1016
+        - all
+    unused:
+      generated-is-used: true
+    varnamelen:
+      ignore-decls:
+        - "g *github.com/onsi/gomega/internal.Gomega"
+    wrapcheck:
+      extra-ignore-sigs:
+        - eris.New(
+        - eris.Wrap(
+        - eris.Wrapf(
+    wsl-v5:
+      allow-cuddle-declarations: true
+    custom:
+      nilaway:
+        type: module
+        description: Static analysis tool to detect potential nil panics in Go code.
+        settings:
+          include-pkgs: github.com/theunrepentantgeek/crddoc, github.com/onsi/gomega
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      # Exclude specific linters from tests
+      - linters:
+          - cyclop
+        path: (.+)_test\.go
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+issues:
+  max-issues-per-linter: 10
+formatters:
+  enable:
+    - gci
+    - gofmt
+  settings:
+    gci:
+      sections:
+        - standard
+        - dot
+        - alias
+        - default
+        - localmodule
+      custom-order: true
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
