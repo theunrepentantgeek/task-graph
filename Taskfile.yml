@@ -60,8 +60,9 @@ tasks:
       - build
     cmds:
       # If GITHUB_STEP_SUMMARY is not set, remove the output file so it only contains our results
-      - '[ -z "{{.GITHUB_STEP_SUMMARY}}" ] && rm -f {{.REPORT}}'
-      - "go test ./... -json | go-testreport -output {{.REPORT}}"
+      - 'rm -f {{.REPORT}} || true'
+      # - "go test ./... -json | go-testreport -output {{.REPORT}}"
+      - go test ./...
     vars:
       REPORT: '{{.GITHUB_STEP_SUMMARY | default "test-report.md" }}'
 
