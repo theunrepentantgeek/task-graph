@@ -21,9 +21,11 @@ import (
 
 //nolint:tagalign // Not useful here because different members have different tags.
 type CLI struct {
-	Taskfile    string `arg:"" help:"Path to the taskfile to process."`
-	Output      string `help:"Path to the output file." long:"output" required:"true" short:"o"`
-	Config      string `help:"Path to a config file (YAML or JSON)." long:"config" short:"c"`
+	Taskfile string `arg:"" help:"Path to the taskfile to process."`
+	Output   string `help:"Path to the output file." long:"output" required:"true" short:"o"`
+	Config   string `help:"Path to a config file (YAML or JSON)." long:"config" short:"c"`
+
+	//nolint:revive // Intentially long name for clarity in the CLI help.
 	RenderImage string `help:"Render the graph as an image using graphviz dot. Specify the file type (e.g. png, svg)." long:"render-image"`
 	Verbose     bool   `help:"Enable verbose logging."`
 }

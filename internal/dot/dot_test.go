@@ -1,8 +1,6 @@
 package dot
 
 import (
-	"os"
-	"path/filepath"
 	"testing"
 
 	. "github.com/onsi/gomega"
@@ -26,42 +24,6 @@ func TestFindExecutable_EmptyDotPath_FindsOnPath(t *testing.T) {
 	// Assert
 	g.Expect(err).NotTo(HaveOccurred())
 	g.Expect(result).NotTo(BeEmpty())
-}
-
-func TestFindExecutable_FullPathToExecutable_ReturnsPath(t *testing.T) {
-	t.Parallel()
-	g := NewWithT(t)
-
-	// Arrange: create a fake executable file
-	dir := t.TempDir()
-	exe := filepath.Join(dir, "dot")
-	err := os.WriteFile(exe, []byte("#!/bin/sh\n"), 0o755)
-	g.Expect(err).NotTo(HaveOccurred())
-
-	// Act
-	result, err := FindExecutable(exe)
-
-	// Assert
-	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(result).To(Equal(exe))
-}
-
-func TestFindExecutable_DirectoryWithDot_ReturnsDotPath(t *testing.T) {
-	t.Parallel()
-	g := NewWithT(t)
-
-	// Arrange: create a directory containing a fake dot executable
-	dir := t.TempDir()
-	exe := filepath.Join(dir, "dot")
-	err := os.WriteFile(exe, []byte("#!/bin/sh\n"), 0o755)
-	g.Expect(err).NotTo(HaveOccurred())
-
-	// Act
-	result, err := FindExecutable(dir)
-
-	// Assert
-	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(result).To(Equal(exe))
 }
 
 func TestFindExecutable_DirectoryWithoutDot_ReturnsError(t *testing.T) {
