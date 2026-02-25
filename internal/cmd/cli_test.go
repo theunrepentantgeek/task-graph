@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"context"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -103,7 +102,7 @@ func TestRenderImage_WithFakeDot_CreatesImageFile(t *testing.T) {
 	}
 
 	// Act
-	err = cli.renderImage(context.Background(), flags)
+	err = cli.renderImage(t.Context(), flags)
 
 	// Assert
 	g.Expect(err).NotTo(HaveOccurred())
@@ -130,7 +129,7 @@ func TestRenderImage_DotNotFound_ReturnsError(t *testing.T) {
 	}
 
 	// Act
-	err := cli.renderImage(context.Background(), flags)
+	err := cli.renderImage(t.Context(), flags)
 
 	// Assert
 	g.Expect(err).To(HaveOccurred())
@@ -169,7 +168,7 @@ func TestRenderImage_ImagePathDerivedFromOutput(t *testing.T) {
 	}
 
 	// Act
-	err = cli.renderImage(context.Background(), flags)
+	err = cli.renderImage(t.Context(), flags)
 
 	// Assert
 	g.Expect(err).NotTo(HaveOccurred())
