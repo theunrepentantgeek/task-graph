@@ -43,13 +43,5 @@ task-graph
 # Test report
 test-report.md
 
-# Tool binaries
-tools/go-testreport
-tools/gofumpt
-tools/golangci-lint
-tools/golangci-lint-custom
-tools/gremlins
-tools/oh-my-posh
-tools/oh-my-posh.json
-tools/sbom-tool
-tools/task
+# Local tools
+tools/
