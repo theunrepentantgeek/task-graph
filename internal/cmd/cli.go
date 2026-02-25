@@ -34,7 +34,9 @@ func (c *CLI) Run(
 ) error {
 	flags.Log.Info("Done")
 
-	tf, err := loader.Load(context.Background(), c.Taskfile)
+	ctx := context.Background()
+
+	tf, err := loader.Load(ctx, c.Taskfile)
 	if err != nil {
 		return eris.Wrap(err, "failed to load taskfile")
 	}
@@ -57,7 +59,7 @@ func (c *CLI) Run(
 	)
 
 	if c.RenderImage != "" {
-		if err = c.renderImage(flags); err != nil {
+		if err = c.renderImage(ctx, flags); err != nil {
 			return err
 		}
 	}
@@ -65,7 +67,7 @@ func (c *CLI) Run(
 	return nil
 }
 
-func (c *CLI) renderImage(flags *Flags) error {
+func (c *CLI) renderImage(ctx context.Context, flags *Flags) error {
 	dotPath := ""
 	if flags.Config != nil {
 		dotPath = flags.Config.DotPath
@@ -79,7 +81,7 @@ func (c *CLI) renderImage(flags *Flags) error {
 	ext := filepath.Ext(c.Output)
 	imageFile := strings.TrimSuffix(c.Output, ext) + "." + c.RenderImage
 
-	err = dot.RenderImage(dotExe, c.Output, imageFile, c.RenderImage)
+	err = dot.RenderImage(ctx, dotExe, c.Output, imageFile, c.RenderImage)
 	if err != nil {
 		return eris.Wrap(err, "failed to render image")
 	}

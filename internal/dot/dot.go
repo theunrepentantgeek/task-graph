@@ -1,6 +1,7 @@
 package dot
 
 import (
+	"context"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -47,8 +48,8 @@ func FindExecutable(dotPath string) (string, error) {
 
 // RenderImage runs the dot executable to render dotFile to imageFile using the given fileType.
 // The fileType is passed to dot as -T<fileType> (e.g. "png", "svg").
-func RenderImage(dotExecutable, dotFile, imageFile, fileType string) error {
-	cmd := exec.Command(dotExecutable, "-T"+fileType, dotFile, "-o", imageFile) //nolint:gosec // dotExecutable is resolved from a trusted config path or system PATH
+func RenderImage(ctx context.Context, dotExecutable, dotFile, imageFile, fileType string) error {
+	cmd := exec.CommandContext(ctx, dotExecutable, "-T"+fileType, dotFile, "-o", imageFile) //nolint:gosec // dotExecutable is resolved from a trusted config path or system PATH
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return eris.Wrapf(err, "dot command failed: %s", string(output))
