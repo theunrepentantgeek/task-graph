@@ -55,12 +55,6 @@ func WriteTo(
 
 	if cfg != nil && cfg.GroupByNamespace {
 		writeGroupedNodesTo(root, nodes, cfg)
-		root.Add("")
-		for _, node := range nodes {
-			for _, edge := range node.Edges() {
-				writeEdgeTo(root, edge, cfg)
-			}
-		}
 	} else {
 		for i, node := range nodes {
 			writeNodeTo(root, node, cfg)
@@ -102,11 +96,6 @@ func writeGroupedNodesTo(
 		}
 	}
 
-	// Write root-level nodes (no namespace) first
-	for _, node := range nsToNodes[""] {
-		writeNodeDefinitionTo(root, node, cfg)
-	}
-
 	// Find and sort top-level namespaces (those with no parent)
 	topLevel := make([]string, 0, len(allNS))
 	for ns := range allNS {
@@ -116,9 +105,23 @@ func writeGroupedNodesTo(
 	}
 	sort.Strings(topLevel)
 
-	// Write a subgraph cluster for each top-level namespace
+	// Write root-level nodes (no namespace) first, then top-level namespace subgraphs
+	needsBlankLine := false
+
+	for _, node := range nsToNodes[""] {
+		if needsBlankLine {
+			root.Add("")
+		}
+		writeNodeTo(root, node, cfg)
+		needsBlankLine = true
+	}
+
 	for _, ns := range topLevel {
+		if needsBlankLine {
+			root.Add("")
+		}
 		writeNamespaceSubgraphTo(root, ns, nsToNodes, allNS, cfg)
+		needsBlankLine = true
 	}
 }
 
@@ -134,11 +137,6 @@ func writeNamespaceSubgraphTo(
 	subgraph := parent.Addf("subgraph %s {", clusterID(ns))
 	subgraph.Addf("label=%q", ns)
 
-	// Write nodes directly in this namespace
-	for _, node := range nsToNodes[ns] {
-		writeNodeDefinitionTo(subgraph, node, cfg)
-	}
-
 	// Find and sort child namespaces
 	children := make([]string, 0, len(allNS))
 	for candidate := range allNS {
@@ -148,9 +146,23 @@ func writeNamespaceSubgraphTo(
 	}
 	sort.Strings(children)
 
-	// Recursively write child namespace subgraphs
+	// Write nodes directly in this namespace, then child subgraphs, with blank lines between items
+	needsBlankLine := false
+
+	for _, node := range nsToNodes[ns] {
+		if needsBlankLine {
+			subgraph.Add("")
+		}
+		writeNodeTo(subgraph, node, cfg)
+		needsBlankLine = true
+	}
+
 	for _, child := range children {
+		if needsBlankLine {
+			subgraph.Add("")
+		}
 		writeNamespaceSubgraphTo(subgraph, child, nsToNodes, allNS, cfg)
+		needsBlankLine = true
 	}
 
 	parent.Add("}")
@@ -213,6 +225,10 @@ func writeNodeDefinitionTo(
 
 	if cfg != nil && cfg.Graphviz != nil {
 		props.AddAttributes(cfg.Graphviz.TaskNodes)
+
+		for _, rule := range cfg.Graphviz.StyleRules {
+			props.AddStyleRuleAttributes(node.ID(), rule)
+		}
 	}
 
 	id := fmt.Sprintf("\"%s\"", node.ID())

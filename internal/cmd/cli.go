@@ -13,6 +13,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/theunrepentantgeek/task-graph/internal/config"
+	"github.com/theunrepentantgeek/task-graph/internal/dot"
 	"github.com/theunrepentantgeek/task-graph/internal/graphviz"
 	"github.com/theunrepentantgeek/task-graph/internal/loader"
 	"github.com/theunrepentantgeek/task-graph/internal/taskgraph"
@@ -20,11 +21,15 @@ import (
 
 //nolint:tagalign // Not useful here because different members have different tags.
 type CLI struct {
-	Taskfile           string `arg:"" help:"Path to the taskfile to process."`
-	Output             string `help:"Path to the output file." long:"output" required:"true" short:"o"`
-	Config             string `help:"Path to a config file (YAML or JSON)." long:"config" short:"c"`
-	GroupByNamespace   bool   `help:"Group tasks in the same namespace together in the output." long:"group-by-namespace"`
-	Verbose            bool   `help:"Enable verbose logging."`
+	Taskfile string `arg:"" help:"Path to the taskfile to process."`
+	Output   string `help:"Path to the output file." long:"output" required:"true" short:"o"`
+	Config   string `help:"Path to a config file (YAML or JSON)." long:"config" short:"c"`
+
+	GroupByNamespace bool `help:"Group tasks in the same namespace together in the output." long:"group-by-namespace"`
+
+	//nolint:revive // Intentially long name for clarity in the CLI help.
+	RenderImage string `help:"Render the graph as an image using graphviz dot. Specify the file type (e.g. png, svg)." long:"render-image"`
+	Verbose     bool   `help:"Enable verbose logging."`
 }
 
 // Run executes the CLI command with the given flags.
@@ -33,7 +38,9 @@ func (c *CLI) Run(
 ) error {
 	flags.Log.Info("Done")
 
-	tf, err := loader.Load(context.Background(), c.Taskfile)
+	ctx := context.Background()
+
+	tf, err := loader.Load(ctx, c.Taskfile)
 	if err != nil {
 		return eris.Wrap(err, "failed to load taskfile")
 	}
@@ -53,6 +60,39 @@ func (c *CLI) Run(
 	flags.Log.Info(
 		"Saved graph",
 		"output", c.Output,
+	)
+
+	if c.RenderImage != "" {
+		if err = c.renderImage(ctx, flags); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (c *CLI) renderImage(ctx context.Context, flags *Flags) error {
+	dotPath := ""
+	if flags.Config != nil {
+		dotPath = flags.Config.DotPath
+	}
+
+	dotExe, err := dot.FindExecutable(dotPath)
+	if err != nil {
+		return eris.Wrap(err, "failed to find dot executable")
+	}
+
+	ext := filepath.Ext(c.Output)
+	imageFile := strings.TrimSuffix(c.Output, ext) + "." + c.RenderImage
+
+	err = dot.RenderImage(ctx, dotExe, c.Output, imageFile, c.RenderImage)
+	if err != nil {
+		return eris.Wrap(err, "failed to render image")
+	}
+
+	flags.Log.Info(
+		"Rendered image",
+		"output", imageFile,
 	)
 
 	return nil
@@ -82,11 +122,16 @@ func (c *CLI) CreateConfig() (*config.Config, error) {
 		}
 	}
 
+	c.applyConfigOverrides(cfg)
+
+	return cfg, nil
+}
+
+// applyConfigOverrides applies CLI flag overrides to the configuration.
+func (c *CLI) applyConfigOverrides(cfg *config.Config) {
 	if c.GroupByNamespace {
 		cfg.GroupByNamespace = true
 	}
-
-	return cfg, nil
 }
 
 func (c *CLI) loadConfigFile(cfg *config.Config) error {
