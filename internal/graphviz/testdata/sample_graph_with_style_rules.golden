@@ -1,0 +1,27 @@
+digraph {
+  "alpha" [
+    color="red"
+    fillcolor="lightyellow"
+    label="alpha"
+    shape="Mrecord"
+    style="filled"
+  ]
+  "alpha" -> "beta"
+  "alpha" -> "gamma"
+  
+  "beta" [
+    color="black"
+    fontcolor="blue"
+    label="beta"
+    shape="Mrecord"
+  ]
+  "beta" -> "gamma" [
+    label="next"
+  ]
+  
+  "gamma" [
+    color="black"
+    label="gamma"
+    shape="Mrecord"
+  ]
+}

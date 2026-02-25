@@ -99,6 +99,10 @@ func writeNodeDefinitionTo(
 
 	if cfg != nil && cfg.Graphviz != nil {
 		props.AddAttributes(cfg.Graphviz.TaskNodes)
+
+		for _, rule := range cfg.Graphviz.StyleRules {
+			props.AddStyleRuleAttributes(node.ID(), rule)
+		}
 	}
 
 	id := fmt.Sprintf("\"%s\"", node.ID())
