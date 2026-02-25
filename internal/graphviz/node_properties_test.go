@@ -220,8 +220,8 @@ func TestNodePropertiesAddStyleRuleAttributes_WhenPatternUsesWildcard_MatchesMul
 		"wildcard matches suffix":          {nodeID: "build-test", pattern: "*-test", matches: true},
 		"wildcard matches full name":       {nodeID: "anything", pattern: "*", matches: true},
 		"wildcard does not match mismatch": {nodeID: "deploy", pattern: "test-*", matches: false},
-		"question mark matches one char":  {nodeID: "ab", pattern: "a?", matches: true},
-		"question mark no match":          {nodeID: "abc", pattern: "a?", matches: false},
+		"question mark matches one char":   {nodeID: "ab", pattern: "a?", matches: true},
+		"question mark no match":           {nodeID: "abc", pattern: "a?", matches: false},
 	}
 
 	for name, c := range cases {
