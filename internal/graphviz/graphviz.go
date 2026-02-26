@@ -76,19 +76,10 @@ func writeGroupedNodesTo(
 	cfg *config.Config,
 ) {
 	// Build map: namespace -> nodes directly in that namespace
-	nsToNodes := make(map[string][]*graph.Node)
-	for _, node := range nodes {
-		ns := nodeNamespace(node.ID())
-		nsToNodes[ns] = append(nsToNodes[ns], node)
-	}
+	nsToNodes := indexNodesByNamespace(nodes)
 
 	// Collect all unique namespaces, including intermediate ones
-	allNS := make(map[string]bool)
-	for ns := range nsToNodes {
-		for current := ns; current != ""; current = parentNamespace(current) {
-			allNS[current] = true
-		}
-	}
+	allNS := findAllNamespaces(nsToNodes)
 
 	// Find and sort top-level namespaces (those with no parent)
 	topLevel := make([]string, 0, len(allNS))
@@ -97,19 +88,39 @@ func writeGroupedNodesTo(
 			topLevel = append(topLevel, ns)
 		}
 	}
+
 	sort.Strings(topLevel)
 
 	writeNodesTo(root, nsToNodes[""], cfg)
 
+	for _, ns := range topLevel {
+		writeNamespaceSubgraphTo(root, ns, nsToNodes, allNS, cfg)
+	}
+}
+
+// findAllNamespaces takes a map of namespaces to their directly contained nodes
+// and returns a set of all namespaces.
+func findAllNamespaces(nsToNodes map[string][]*graph.Node) map[string]bool {
+	allNS := make(map[string]bool)
+
+	for ns := range nsToNodes {
+		for current := ns; current != ""; current = parentNamespace(current) {
+			allNS[current] = true
+		}
 	}
 
-	for _, ns := range topLevel {
-		if needsBlankLine {
-			root.Add("")
-		}
-		writeNamespaceSubgraphTo(root, ns, nsToNodes, allNS, cfg)
-		needsBlankLine = true
+	return allNS
+}
+
+func indexNodesByNamespace(nodes []*graph.Node) map[string][]*graph.Node {
+	nsToNodes := make(map[string][]*graph.Node)
+
+	for _, node := range nodes {
+		ns := nodeNamespace(node.ID())
+		nsToNodes[ns] = append(nsToNodes[ns], node)
 	}
+
+	return nsToNodes
 }
 
 // writeNamespaceSubgraphTo writes a subgraph cluster for the given namespace, recursively
@@ -131,6 +142,7 @@ func writeNamespaceSubgraphTo(
 			children = append(children, candidate)
 		}
 	}
+
 	sort.Strings(children)
 
 	// Write nodes directly in this namespace, then child subgraphs, with blank lines between items
