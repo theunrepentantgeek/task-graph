@@ -56,13 +56,7 @@ func WriteTo(
 	if cfg != nil && cfg.GroupByNamespace {
 		writeGroupedNodesTo(root, nodes, cfg)
 	} else {
-		for i, node := range nodes {
-			writeNodeTo(root, node, cfg)
-
-			if i < len(nodes)-1 {
-				root.Add("") // blank line between nodes
-			}
-		}
+		writeNodesTo(root, nodes, cfg)
 	}
 
 	iw.Add("}")
@@ -105,15 +99,8 @@ func writeGroupedNodesTo(
 	}
 	sort.Strings(topLevel)
 
-	// Write root-level nodes (no namespace) first, then top-level namespace subgraphs
-	needsBlankLine := false
+	writeNodesTo(root, nsToNodes[""], cfg)
 
-	for _, node := range nsToNodes[""] {
-		if needsBlankLine {
-			root.Add("")
-		}
-		writeNodeTo(root, node, cfg)
-		needsBlankLine = true
 	}
 
 	for _, ns := range topLevel {
@@ -147,15 +134,7 @@ func writeNamespaceSubgraphTo(
 	sort.Strings(children)
 
 	// Write nodes directly in this namespace, then child subgraphs, with blank lines between items
-	needsBlankLine := false
-
-	for _, node := range nsToNodes[ns] {
-		if needsBlankLine {
-			subgraph.Add("")
-		}
-		writeNodeTo(subgraph, node, cfg)
-		needsBlankLine = true
-	}
+	writeNodesTo(subgraph, nsToNodes[ns], cfg)
 
 	for _, child := range children {
 		if needsBlankLine {
@@ -196,6 +175,18 @@ func clusterID(ns string) string {
 	return "cluster_" + strings.ReplaceAll(ns, ":", "_")
 }
 
+// writeNodesTo writes all nodes and their edges to the graphviz output.
+func writeNodesTo(
+	root *indentwriter.Line,
+	nodes []*graph.Node,
+	cfg *config.Config,
+) {
+	for _, node := range nodes {
+		writeNodeTo(root, node, cfg)
+	}
+}
+
+// writeNodeTo writes a single node and its edges to the graphviz output.
 func writeNodeTo(
 	root *indentwriter.Line,
 	node *graph.Node,
