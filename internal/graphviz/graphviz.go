@@ -1,11 +1,14 @@
 package graphviz
 
 import (
+	"cmp"
 	"errors"
 	"fmt"
 	"io"
 	"os"
+	"slices"
 	"sort"
+	"strings"
 
 	"github.com/rotisserie/eris"
 
@@ -40,24 +43,20 @@ func WriteTo(
 		return errors.New("graphviz: graph is nil")
 	}
 
-	nodes := make([]*graph.Node, 0)
-	for node := range g.Nodes() {
-		nodes = append(nodes, node)
-	}
-
-	sort.Slice(nodes, func(i, j int) bool {
-		return nodes[i].ID() < nodes[j].ID()
-	})
+	nodes := slices.Collect(g.Nodes())
+	slices.SortFunc(
+		nodes,
+		func(left *graph.Node, right *graph.Node) int {
+			return cmp.Compare(left.ID(), right.ID())
+		})
 
 	iw := indentwriter.New()
 	root := iw.Add("digraph {")
 
-	for i, node := range nodes {
-		writeNodeTo(root, node, cfg)
-
-		if i < len(nodes)-1 {
-			root.Add("") // blank line between nodes
-		}
+	if cfg != nil && cfg.GroupByNamespace {
+		writeGroupedNodesTo(root, nodes, cfg)
+	} else {
+		writeNodesTo(root, nodes, cfg)
 	}
 
 	iw.Add("}")
@@ -70,6 +69,132 @@ func WriteTo(
 	return nil
 }
 
+// writeGroupedNodesTo writes nodes organized into namespace subgraph clusters.
+func writeGroupedNodesTo(
+	root *indentwriter.Line,
+	nodes []*graph.Node,
+	cfg *config.Config,
+) {
+	// Build map: namespace -> nodes directly in that namespace
+	nsToNodes := indexNodesByNamespace(nodes)
+
+	// Collect all unique namespaces, including intermediate ones
+	allNS := findAllNamespaces(nsToNodes)
+
+	// Find and sort top-level namespaces (those with no parent)
+	topLevel := make([]string, 0, len(allNS))
+	for ns := range allNS {
+		if parentNamespace(ns) == "" {
+			topLevel = append(topLevel, ns)
+		}
+	}
+
+	sort.Strings(topLevel)
+
+	writeNodesTo(root, nsToNodes[""], cfg)
+
+	for _, ns := range topLevel {
+		writeNamespaceSubgraphTo(root, ns, nsToNodes, allNS, cfg)
+	}
+}
+
+// findAllNamespaces takes a map of namespaces to their directly contained nodes
+// and returns a set of all namespaces.
+func findAllNamespaces(nsToNodes map[string][]*graph.Node) map[string]bool {
+	allNS := make(map[string]bool)
+
+	for ns := range nsToNodes {
+		for current := ns; current != ""; current = parentNamespace(current) {
+			allNS[current] = true
+		}
+	}
+
+	return allNS
+}
+
+func indexNodesByNamespace(nodes []*graph.Node) map[string][]*graph.Node {
+	nsToNodes := make(map[string][]*graph.Node)
+
+	for _, node := range nodes {
+		ns := nodeNamespace(node.ID())
+		nsToNodes[ns] = append(nsToNodes[ns], node)
+	}
+
+	return nsToNodes
+}
+
+// writeNamespaceSubgraphTo writes a subgraph cluster for the given namespace, recursively
+// handling child namespaces.
+func writeNamespaceSubgraphTo(
+	parent *indentwriter.Line,
+	ns string,
+	nsToNodes map[string][]*graph.Node,
+	allNS map[string]bool,
+	cfg *config.Config,
+) {
+	subgraph := parent.Addf("subgraph %s {", clusterID(ns))
+	subgraph.Addf("label=%q", ns)
+
+	// Find and sort child namespaces
+	children := make([]string, 0, len(allNS))
+	for candidate := range allNS {
+		if parentNamespace(candidate) == ns {
+			children = append(children, candidate)
+		}
+	}
+
+	sort.Strings(children)
+
+	// Write nodes directly in this namespace, then child subgraphs, with blank lines between items
+	writeNodesTo(subgraph, nsToNodes[ns], cfg)
+
+	for _, child := range children {
+		writeNamespaceSubgraphTo(subgraph, child, nsToNodes, allNS, cfg)
+	}
+
+	parent.Add("}")
+}
+
+// nodeNamespace returns the namespace portion of a node ID (everything before the last colon).
+// Returns an empty string if the ID has no colon.
+func nodeNamespace(id string) string {
+	idx := strings.LastIndex(id, ":")
+	if idx < 0 {
+		return ""
+	}
+
+	return id[:idx]
+}
+
+// parentNamespace returns the parent namespace of a namespace.
+// Returns an empty string if the namespace has no parent (i.e., no colon).
+func parentNamespace(ns string) string {
+	idx := strings.LastIndex(ns, ":")
+	if idx < 0 {
+		return ""
+	}
+
+	return ns[:idx]
+}
+
+// clusterID converts a namespace string into a valid Graphviz cluster subgraph identifier.
+// Colons are replaced with underscores to ensure the ID is valid.
+func clusterID(ns string) string {
+	return "cluster_" + strings.ReplaceAll(ns, ":", "_")
+}
+
+// writeNodesTo writes all nodes and their edges to the graphviz output.
+func writeNodesTo(
+	root *indentwriter.Line,
+	nodes []*graph.Node,
+	cfg *config.Config,
+) {
+	for _, node := range nodes {
+		writeNodeTo(root, node, cfg)
+	}
+}
+
+// writeNodeTo writes a single node and its edges to the graphviz output.
 func writeNodeTo(
 	root *indentwriter.Line,
 	node *graph.Node,
@@ -80,6 +205,9 @@ func writeNodeTo(
 	for _, edge := range node.Edges() {
 		writeEdgeTo(root, edge, cfg)
 	}
+
+	// Finish with a blank line for readability
+	root.Add("")
 }
 
 func writeNodeDefinitionTo(

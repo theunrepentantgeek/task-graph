@@ -31,6 +31,25 @@ func TestWriteTo_WithNodesAndEdges_WritesSortedGraphviz(t *testing.T) {
 	gg.Assert(t, "sample_graph", buf.Bytes())
 }
 
+func TestWriteTo_WithGroupByNamespace_WritesNamespaceSubgraphs(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	gr := buildNamespacedGraph(t)
+
+	cfg := config.New()
+	cfg.GroupByNamespace = true
+	err := WriteTo(&buf, gr, cfg)
+
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+
+	gg := goldie.New(t)
+	g.Expect(gg.WithFixtureDir("testdata")).To(gomega.Succeed())
+
+	gg.Assert(t, "namespace_graph", buf.Bytes())
+}
+
 func TestWriteTo_WithStyleRules_AppliesMatchingStyles(t *testing.T) {
 	t.Parallel()
 	g := gomega.NewWithT(t)
@@ -101,6 +120,27 @@ func buildSampleGraph(t *testing.T) *graph.Graph {
 
 	labeled := beta.AddEdge(gamma)
 	labeled.SetLabel("next")
+
+	return gr
+}
+
+func buildNamespacedGraph(t *testing.T) *graph.Graph {
+	t.Helper()
+
+	gr := graph.New()
+
+	build := gr.AddNode("build")
+	cmdBuild := gr.AddNode("cmd:build")
+	cmdTestUnit := gr.AddNode("cmd:test:unit")
+	cmdTestGolden := gr.AddNode("cmd:test:golden")
+
+	cmdBuild.AddEdge(build)
+
+	dep1 := cmdBuild.AddEdge(cmdTestUnit)
+	dep1.SetClass("dep")
+
+	dep2 := cmdBuild.AddEdge(cmdTestGolden)
+	dep2.SetClass("dep")
 
 	return gr
 }
