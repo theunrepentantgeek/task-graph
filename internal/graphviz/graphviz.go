@@ -137,11 +137,7 @@ func writeNamespaceSubgraphTo(
 	writeNodesTo(subgraph, nsToNodes[ns], cfg)
 
 	for _, child := range children {
-		if needsBlankLine {
-			subgraph.Add("")
-		}
 		writeNamespaceSubgraphTo(subgraph, child, nsToNodes, allNS, cfg)
-		needsBlankLine = true
 	}
 
 	parent.Add("}")
@@ -197,6 +193,9 @@ func writeNodeTo(
 	for _, edge := range node.Edges() {
 		writeEdgeTo(root, edge, cfg)
 	}
+
+	// Finish with a blank line for readability
+	root.Add("")
 }
 
 func writeNodeDefinitionTo(
