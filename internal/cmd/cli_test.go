@@ -1,10 +1,13 @@
 package cmd
 
 import (
+	"encoding/json"
+	"os"
 	"path/filepath"
 	"testing"
 
 	. "github.com/onsi/gomega"
+	"gopkg.in/yaml.v3"
 
 	"github.com/theunrepentantgeek/task-graph/internal/config"
 )
@@ -92,4 +95,99 @@ func TestCreateConfig_GroupByNamespaceFlagOverridesConfigFile(t *testing.T) {
 
 	g.Expect(err).NotTo(HaveOccurred())
 	g.Expect(cfg.GroupByNamespace).To(BeTrue())
+}
+
+// TestExportConfigToFile
+
+func TestExportConfigToFile_NoExportPathDoesNothing(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{}
+	cfg := config.New()
+
+	err := cli.ExportConfigToFile(cfg)
+
+	g.Expect(err).NotTo(HaveOccurred())
+}
+
+func TestExportConfigToFile_WritesYAMLFile(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	dir := t.TempDir()
+	outFile := filepath.Join(dir, "out.yaml")
+
+	cli := CLI{ExportConfig: outFile}
+	cfg := config.New()
+
+	err := cli.ExportConfigToFile(cfg)
+
+	g.Expect(err).NotTo(HaveOccurred())
+
+	raw, readErr := os.ReadFile(outFile)
+	g.Expect(readErr).NotTo(HaveOccurred())
+
+	var loaded config.Config
+	g.Expect(yaml.Unmarshal(raw, &loaded)).To(Succeed())
+	g.Expect(loaded.Graphviz.Font).To(Equal(cfg.Graphviz.Font))
+	g.Expect(loaded.Graphviz.FontSize).To(Equal(cfg.Graphviz.FontSize))
+}
+
+func TestExportConfigToFile_WritesJSONFile(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	dir := t.TempDir()
+	outFile := filepath.Join(dir, "out.json")
+
+	cli := CLI{ExportConfig: outFile}
+	cfg := config.New()
+
+	err := cli.ExportConfigToFile(cfg)
+
+	g.Expect(err).NotTo(HaveOccurred())
+
+	raw, readErr := os.ReadFile(outFile)
+	g.Expect(readErr).NotTo(HaveOccurred())
+
+	var loaded config.Config
+	g.Expect(json.Unmarshal(raw, &loaded)).To(Succeed())
+	g.Expect(loaded.Graphviz.Font).To(Equal(cfg.Graphviz.Font))
+	g.Expect(loaded.Graphviz.FontSize).To(Equal(cfg.Graphviz.FontSize))
+}
+
+func TestExportConfigToFile_WritesYMLFile(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	dir := t.TempDir()
+	outFile := filepath.Join(dir, "out.yml")
+
+	cli := CLI{ExportConfig: outFile}
+	cfg := config.New()
+
+	err := cli.ExportConfigToFile(cfg)
+
+	g.Expect(err).NotTo(HaveOccurred())
+
+	raw, readErr := os.ReadFile(outFile)
+	g.Expect(readErr).NotTo(HaveOccurred())
+
+	var loaded config.Config
+	g.Expect(yaml.Unmarshal(raw, &loaded)).To(Succeed())
+	g.Expect(loaded.Graphviz.Font).To(Equal(cfg.Graphviz.Font))
+	g.Expect(loaded.Graphviz.FontSize).To(Equal(cfg.Graphviz.FontSize))
+}
+
+func TestExportConfigToFile_InvalidPathReturnsError(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{ExportConfig: "/nonexistent-dir/out.yaml"}
+	cfg := config.New()
+
+	err := cli.ExportConfigToFile(cfg)
+
+	g.Expect(err).To(MatchError(ContainSubstring("failed to write config file")))
 }
