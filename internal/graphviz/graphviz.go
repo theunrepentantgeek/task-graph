@@ -1,10 +1,12 @@
 package graphviz
 
 import (
+	"cmp"
 	"errors"
 	"fmt"
 	"io"
 	"os"
+	"slices"
 	"sort"
 	"strings"
 
@@ -41,14 +43,12 @@ func WriteTo(
 		return errors.New("graphviz: graph is nil")
 	}
 
-	nodes := make([]*graph.Node, 0)
-	for node := range g.Nodes() {
-		nodes = append(nodes, node)
-	}
-
-	sort.Slice(nodes, func(i, j int) bool {
-		return nodes[i].ID() < nodes[j].ID()
-	})
+	nodes := slices.Collect(g.Nodes())
+	slices.SortFunc(
+		nodes,
+		func(left *graph.Node, right *graph.Node) int {
+			return cmp.Compare(left.ID(), right.ID())
+		})
 
 	iw := indentwriter.New()
 	root := iw.Add("digraph {")
