@@ -27,6 +27,7 @@ type CLI struct {
 
 	GroupByNamespace bool `help:"Group tasks in the same namespace together in the output." long:"group-by-namespace"`
 
+	//nolint:revive // Intentially long name for clarity in the CLI help.
 	Highlight string `help:"Highlight specific tasks in the graph. Accepts task names or glob patterns, separated by commas or semicolons." long:"highlight"`
 
 	//nolint:revive // Intentially long name for clarity in the CLI help.
