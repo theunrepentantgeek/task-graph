@@ -31,7 +31,9 @@ type CLI struct {
 	Highlight string `help:"Highlight specific tasks in the graph. Accepts task names or glob patterns, separated by commas or semicolons." long:"highlight"`
 
 	//nolint:revive // Intentially long name for clarity in the CLI help.
-	RenderImage  string `help:"Render the graph as an image using graphviz dot. Specify the file type (e.g. png, svg)." long:"render-image"`
+	RenderImage string `help:"Render the graph as an image using graphviz dot. Specify the file type (e.g. png, svg)." long:"render-image"`
+
+	//nolint:revive // Intentially long name for clarity in the CLI help.
 	ExportConfig string `help:"Export the effective configuration to a file (YAML or JSON based on file extension)." long:"export-config"`
 	Verbose      bool   `help:"Enable verbose logging."`
 }
