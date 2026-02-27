@@ -28,6 +28,9 @@ type CLI struct {
 	GroupByNamespace bool `help:"Group tasks in the same namespace together in the output." long:"group-by-namespace"`
 
 	//nolint:revive // Intentially long name for clarity in the CLI help.
+	Highlight string `help:"Highlight specific tasks in the graph. Accepts task names or glob patterns, separated by commas or semicolons." long:"highlight"`
+
+	//nolint:revive // Intentially long name for clarity in the CLI help.
 	RenderImage string `help:"Render the graph as an image using graphviz dot. Specify the file type (e.g. png, svg)." long:"render-image"`
 	Verbose     bool   `help:"Enable verbose logging."`
 }
@@ -131,6 +134,38 @@ func (c *CLI) CreateConfig() (*config.Config, error) {
 func (c *CLI) applyConfigOverrides(cfg *config.Config) {
 	if c.GroupByNamespace {
 		cfg.GroupByNamespace = true
+	}
+
+	if c.Highlight != "" {
+		c.applyHighlightOverrides(cfg)
+	}
+}
+
+// applyHighlightOverrides parses the --highlight flag and appends matching style rules.
+func (c *CLI) applyHighlightOverrides(cfg *config.Config) {
+	color := "yellow"
+	if cfg.Graphviz != nil && cfg.Graphviz.HighlightColor != "" {
+		color = cfg.Graphviz.HighlightColor
+	}
+
+	patterns := strings.FieldsFunc(
+		c.Highlight,
+		func(r rune) bool {
+			return r == ',' || r == ';'
+		})
+
+	for _, pattern := range patterns {
+		pattern = strings.TrimSpace(pattern)
+		if pattern == "" {
+			continue
+		}
+
+		rule := config.GraphvizStyleRule{
+			Match:     pattern,
+			FillColor: color,
+			Style:     "filled",
+		}
+		cfg.Graphviz.StyleRules = append(cfg.Graphviz.StyleRules, rule)
 	}
 }
 
