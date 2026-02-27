@@ -32,7 +32,10 @@ type CLI struct {
 
 	//nolint:revive // Intentially long name for clarity in the CLI help.
 	RenderImage string `help:"Render the graph as an image using graphviz dot. Specify the file type (e.g. png, svg)." long:"render-image"`
-	Verbose     bool   `help:"Enable verbose logging."`
+
+	//nolint:revive // Intentially long name for clarity in the CLI help.
+	ExportConfig string `help:"Export the effective configuration to a file (YAML or JSON based on file extension)." long:"export-config"`
+	Verbose      bool   `help:"Enable verbose logging."`
 }
 
 // Run executes the CLI command with the given flags.
@@ -193,6 +196,44 @@ func (c *CLI) loadConfigFile(cfg *config.Config) error {
 
 	if err != nil {
 		return eris.Wrapf(err, "failed to parse config file: %s", c.Config)
+	}
+
+	return nil
+}
+
+// ExportConfigToFile writes the effective configuration to the given file path.
+// The format is determined by the file extension (.yaml, .yml, or .json).
+func (c *CLI) ExportConfigToFile(cfg *config.Config) error {
+	if c.ExportConfig == "" {
+		return nil
+	}
+
+	ext := strings.ToLower(filepath.Ext(c.ExportConfig))
+
+	var (
+		data []byte
+		err  error
+	)
+
+	switch ext {
+	case ".yaml", ".yml":
+		data, err = yaml.Marshal(cfg)
+		if err != nil {
+			return eris.Wrapf(err, "failed to marshal config as YAML")
+		}
+
+	case ".json":
+		data, err = json.MarshalIndent(cfg, "", "  ")
+		if err != nil {
+			return eris.Wrapf(err, "failed to marshal config as JSON")
+		}
+
+	default:
+		return eris.Errorf("unsupported file extension for config export: %s", ext)
+	}
+
+	if err = os.WriteFile(c.ExportConfig, data, 0o600); err != nil {
+		return eris.Wrapf(err, "failed to write config file: %s", c.ExportConfig)
 	}
 
 	return nil
