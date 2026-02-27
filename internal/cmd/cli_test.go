@@ -98,15 +98,19 @@ func TestCreateConfig_HighlightFlagAddsSingleStyleRule(t *testing.T) {
 	t.Parallel()
 	g := NewWithT(t)
 
-	cli := CLI{Highlight: "build"}
+	cli := CLI{
+		Highlight: "build",
+	}
 
 	cfg, err := cli.CreateConfig()
 
 	g.Expect(err).NotTo(HaveOccurred())
 	g.Expect(cfg.Graphviz.StyleRules).To(HaveLen(1))
-	g.Expect(cfg.Graphviz.StyleRules[0].Match).To(Equal("build"))
-	g.Expect(cfg.Graphviz.StyleRules[0].FillColor).To(Equal("yellow"))
-	g.Expect(cfg.Graphviz.StyleRules[0].Style).To(Equal("filled"))
+
+	rule := cfg.Graphviz.StyleRules[0]
+	g.Expect(rule.Match).To(Equal("build"))
+	g.Expect(rule.FillColor).To(Equal("yellow"))
+	g.Expect(rule.Style).To(Equal("filled"))
 }
 
 func TestCreateConfig_HighlightFlagWithCommaSeparatorAddsMultipleStyleRules(t *testing.T) {

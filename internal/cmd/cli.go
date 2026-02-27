@@ -147,9 +147,11 @@ func (c *CLI) applyHighlightOverrides(cfg *config.Config) {
 		color = cfg.Graphviz.HighlightColor
 	}
 
-	patterns := strings.FieldsFunc(c.Highlight, func(r rune) bool {
-		return r == ',' || r == ';'
-	})
+	patterns := strings.FieldsFunc(
+		c.Highlight,
+		func(r rune) bool {
+			return r == ',' || r == ';'
+		})
 
 	for _, pattern := range patterns {
 		pattern = strings.TrimSpace(pattern)
@@ -157,11 +159,12 @@ func (c *CLI) applyHighlightOverrides(cfg *config.Config) {
 			continue
 		}
 
-		cfg.Graphviz.StyleRules = append(cfg.Graphviz.StyleRules, config.GraphvizStyleRule{
+		rule := config.GraphvizStyleRule{
 			Match:     pattern,
 			FillColor: color,
 			Style:     "filled",
-		})
+		}
+		cfg.Graphviz.StyleRules = append(cfg.Graphviz.StyleRules, rule)
 	}
 }
 
