@@ -191,3 +191,94 @@ func TestExportConfigToFile_InvalidPathReturnsError(t *testing.T) {
 
 	g.Expect(err).To(MatchError(ContainSubstring("failed to write config file")))
 }
+
+func TestExportConfigToFile_UnknownExtensionReturnsError(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	dir := t.TempDir()
+	cli := CLI{ExportConfig: filepath.Join(dir, "out.txt")}
+	cfg := config.New()
+
+	err := cli.ExportConfigToFile(cfg)
+
+	g.Expect(err).To(MatchError(ContainSubstring("unsupported file extension")))
+}
+
+// TestCreateConfig_HighlightFlag
+
+func TestCreateConfig_HighlightFlagAddsSingleStyleRule(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{
+		Highlight: "build",
+	}
+
+	cfg, err := cli.CreateConfig()
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.Graphviz.StyleRules).To(HaveLen(1))
+
+	rule := cfg.Graphviz.StyleRules[0]
+	g.Expect(rule.Match).To(Equal("build"))
+	g.Expect(rule.FillColor).To(Equal("yellow"))
+	g.Expect(rule.Style).To(Equal("filled"))
+}
+
+func TestCreateConfig_HighlightFlagWithCommaSeparatorAddsMultipleStyleRules(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{Highlight: "build,doc"}
+
+	cfg, err := cli.CreateConfig()
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.Graphviz.StyleRules).To(HaveLen(2))
+	g.Expect(cfg.Graphviz.StyleRules[0].Match).To(Equal("build"))
+	g.Expect(cfg.Graphviz.StyleRules[1].Match).To(Equal("doc"))
+}
+
+func TestCreateConfig_HighlightFlagWithSemicolonSeparatorAddsMultipleStyleRules(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{Highlight: "build;doc"}
+
+	cfg, err := cli.CreateConfig()
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.Graphviz.StyleRules).To(HaveLen(2))
+	g.Expect(cfg.Graphviz.StyleRules[0].Match).To(Equal("build"))
+	g.Expect(cfg.Graphviz.StyleRules[1].Match).To(Equal("doc"))
+}
+
+func TestCreateConfig_HighlightFlagUsesConfiguredHighlightColor(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{
+		Config:    filepath.Join("testdata", "highlight_color.yaml"),
+		Highlight: "build",
+	}
+
+	cfg, err := cli.CreateConfig()
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.Graphviz.StyleRules).To(HaveLen(1))
+	g.Expect(cfg.Graphviz.StyleRules[0].FillColor).To(Equal("lightblue"))
+}
+
+func TestCreateConfig_HighlightFlagWithGlobPattern(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{Highlight: "cmd:*"}
+
+	cfg, err := cli.CreateConfig()
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.Graphviz.StyleRules).To(HaveLen(1))
+	g.Expect(cfg.Graphviz.StyleRules[0].Match).To(Equal("cmd:*"))
+}
