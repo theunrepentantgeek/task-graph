@@ -168,7 +168,7 @@ func (c *CLI) applyHighlightOverrides(cfg *config.Config) {
 			FillColor: color,
 			Style:     "filled",
 		}
-		cfg.Graphviz.StyleRules = append(cfg.Graphviz.StyleRules, rule)
+		cfg.Graphviz.NodeStyleRules = append(cfg.Graphviz.NodeStyleRules, rule)
 	}
 }
 

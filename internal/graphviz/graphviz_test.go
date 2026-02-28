@@ -58,7 +58,7 @@ func TestWriteTo_WithStyleRules_AppliesMatchingStyles(t *testing.T) {
 	gr := buildSampleGraph(t)
 
 	cfg := config.New()
-	cfg.Graphviz.StyleRules = []config.GraphvizStyleRule{
+	cfg.Graphviz.NodeStyleRules = []config.GraphvizStyleRule{
 		{Match: "alpha", Color: "red", FillColor: "lightyellow", Style: "filled"},
 		{Match: "b*", FontColor: "blue"},
 	}
