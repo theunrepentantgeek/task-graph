@@ -233,6 +233,10 @@ func writeNodeDefinitionTo(
 		}
 	}
 
+	if props.ContainsKey("fillcolor") {
+		props.Add("style", "filled")
+	}
+
 	id := fmt.Sprintf("\"%s\"", node.ID())
 	props.WriteTo(id, root)
 }
