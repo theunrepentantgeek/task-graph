@@ -1,0 +1,25 @@
+graphviz:
+    font: Verdana
+    fontSize: 16
+    dependencyEdges:
+        color: black
+        width: 1
+        style: solid
+    callEdges:
+        color: blue
+        width: 1
+        style: dashed
+    taskNodes:
+        color: black
+    nodeStyleRules:
+    - match: "build*"
+      fillColor: powderblue
+    - match: "*test*"
+      fillColor: aquamarine
+    - match: "*lint*"
+      fillColor: aquamarine
+    - match: "*tidy*"
+      fillColor: cornsilk
+    - match: "*doc*"
+      fillColor: plum1
+      

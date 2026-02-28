@@ -34,14 +34,18 @@ digraph {
   
   "asoctl:go-mod-tidy" [
     color="black"
+    fillcolor="cornsilk"
     label="{asoctl:go-mod-tidy | Tidy the go.mod file}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "asoctl:lint" [
     color="black"
+    fillcolor="aquamarine"
     label="{asoctl:lint | Run \{\{.ASOCTL_APP\}\} fast \nlint checks.}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "asoctl:make-release-artifacts" [
@@ -103,8 +107,10 @@ digraph {
   
   "asoctl:unit-tests" [
     color="black"
+    fillcolor="aquamarine"
     label="{asoctl:unit-tests | Run \{\{.ASOCTL_APP\}\} unit \ntests.}"
     shape="Mrecord"
+    style="filled"
   ]
   "asoctl:unit-tests" -> "controller:generate-crds" [
     color="black"
@@ -114,8 +120,10 @@ digraph {
   
   "asoctl:unit-tests-cover" [
     color="black"
+    fillcolor="aquamarine"
     label="{asoctl:unit-tests-cover | Run \{\{.ASOCTL_APP\}\} unit tests and \noutput coverage.}"
     shape="Mrecord"
+    style="filled"
   ]
   "asoctl:unit-tests-cover" -> "setup" [
     color="black"
@@ -157,8 +165,10 @@ digraph {
   
   "build-docs-site" [
     color="black"
+    fillcolor="plum1"
     label="build-docs-site"
     shape="Mrecord"
+    style="filled"
   ]
   "build-docs-site" -> "doc:build-site" [
     color="blue"
@@ -168,8 +178,10 @@ digraph {
   
   "build-mangle-test" [
     color="black"
+    fillcolor="aquamarine"
     label="{build-mangle-test | Builds the tool we use for \nmangling test results}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "ci" [
@@ -391,8 +403,10 @@ digraph {
   
   "controller:ci-integration-tests" [
     color="black"
+    fillcolor="aquamarine"
     label="controller:ci-integration-tests"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:ci-integration-tests" -> "cleanup-old-live-azure-resources" [
     color="blue"
@@ -460,14 +474,18 @@ digraph {
   
   "controller:deploy-multitenant-testing-secret" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:deploy-multitenant-testing-secret | Deploy a multitenant \ntesting secret}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "controller:docker-build" [
     color="black"
+    fillcolor="plum1"
     label="{controller:docker-build | Builds the \{\{.CONTROLLER_APP\}\} \nDocker image.}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:docker-build" -> "controller:bundle-crds" [
     color="black"
@@ -477,8 +495,10 @@ digraph {
   
   "controller:docker-build-and-save" [
     color="black"
+    fillcolor="plum1"
     label="{controller:docker-build-and-save | Builds the \{\{.CONTROLLER_APP\}\} Docker \nimage and saves it using docker save.}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:docker-build-and-save" -> "controller:docker-build" [
     color="black"
@@ -488,8 +508,10 @@ digraph {
   
   "controller:docker-push-local" [
     color="black"
+    fillcolor="plum1"
     label="{controller:docker-push-local | Pushes the controller container image \nto a local registry}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:docker-push-local" -> "controller:bundle-crds" [
     color="black"
@@ -499,8 +521,10 @@ digraph {
   
   "controller:docker-push-multiarch" [
     color="black"
+    fillcolor="plum1"
     label="{controller:docker-push-multiarch | Builds, tags and pushes the multi \narchitecture controller container image \nto repository}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:docker-push-multiarch" -> "controller:bundle-crds" [
     color="black"
@@ -521,8 +545,10 @@ digraph {
   
   "controller:gen-crd-docs" [
     color="black"
+    fillcolor="plum1"
     label="controller:gen-crd-docs"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:gen-crd-docs" -> "doc:crd-api" [
     color="blue"
@@ -576,8 +602,10 @@ digraph {
   
   "controller:go-mod-tidy" [
     color="black"
+    fillcolor="cornsilk"
     label="{controller:go-mod-tidy | Tidy the go.mod file}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "controller:install" [
@@ -824,8 +852,10 @@ digraph {
   
   "controller:lint" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:lint | Run lint checks.}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:lint" -> "controller:generate-crds" [
     color="black"
@@ -916,8 +946,10 @@ digraph {
   
   "controller:run-kustomize-for-envtest" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:run-kustomize-for-envtest | Generates the CRDs for use \nin envtest}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:run-kustomize-for-envtest" -> "controller:generate-kustomize" [
     color="black"
@@ -938,8 +970,10 @@ digraph {
   
   "controller:test" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:test | Run \{\{.CONTROLLER_APP\}\} \nunit tests.}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:test" -> "controller:generate-crds" [
     color="black"
@@ -959,8 +993,10 @@ digraph {
   
   "controller:test-cover" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:test-cover | Run \{\{.CONTROLLER_APP\}\} unit tests \nand output coverage.}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:test-cover" -> "setup" [
     color="black"
@@ -985,8 +1021,10 @@ digraph {
   
   "controller:test-integration-ci" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:test-integration-ci | Run integration tests \nfor CI}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:test-integration-ci" -> "controller:test-integration-envtest" [
     color="black"
@@ -996,8 +1034,10 @@ digraph {
   
   "controller:test-integration-ci-live" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:test-integration-ci-live | Run integration tests for CI \nin live mode}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:test-integration-ci-live" -> "controller:test-integration-envtest-live" [
     color="black"
@@ -1007,8 +1047,10 @@ digraph {
   
   "controller:test-integration-envtest" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:test-integration-envtest | Run integration tests with envtest \nusing record/replay.}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:test-integration-envtest" -> "controller:run-kustomize-for-envtest" [
     color="black"
@@ -1018,8 +1060,10 @@ digraph {
   
   "controller:test-integration-envtest-cover" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:test-integration-envtest-cover | Run integration tests with envtest using \nrecord/replay and output coverage.}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:test-integration-envtest-cover" -> "setup" [
     color="black"
@@ -1049,8 +1093,10 @@ digraph {
   
   "controller:test-integration-envtest-live" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:test-integration-envtest-live | Run integration tests with envtest \nagainst live data and output coverage.}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:test-integration-envtest-live" -> "controller:run-kustomize-for-envtest" [
     color="black"
@@ -1065,8 +1111,10 @@ digraph {
   
   "controller:test-integration-envtest-record" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:test-integration-envtest-record | Run integration tests with envtest with \na longer timeout suitable for recording \nthe tests.}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:test-integration-envtest-record" -> "controller:run-kustomize-for-envtest" [
     color="black"
@@ -1076,8 +1124,10 @@ digraph {
   
   "controller:test-integration-kind" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:test-integration-kind | Run live integration tests \nin kind.}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:test-integration-kind" -> "controller:kind-create-helm-workload-identity" [
     color="black"
@@ -1087,8 +1137,10 @@ digraph {
   
   "controller:test-integration-kind-ci" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:test-integration-kind-ci | Run live integration tests in kind and \ndeletes the kind cluster afterwards.}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:test-integration-kind-ci" -> "controller:kind-create-helm-workload-identity" [
     color="black"
@@ -1103,8 +1155,10 @@ digraph {
   
   "controller:test-multitenant-integration-kind" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:test-multitenant-integration-kind | Run live multitenant integration \ntests in kind.}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:test-multitenant-integration-kind" -> "controller:kind-create-multitenant-cluster-helm" [
     color="black"
@@ -1114,8 +1168,10 @@ digraph {
   
   "controller:test-multitenant-integration-kind-ci" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:test-multitenant-integration-kind-ci | Run live multitenant integration \ntests in kind.}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:test-multitenant-integration-kind-ci" -> "controller:kind-create-multitenant-cluster-helm" [
     color="black"
@@ -1130,8 +1186,10 @@ digraph {
   
   "controller:test-upgrade" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:test-upgrade | Test upgrading \{\{.CONTROLLER_APP\}\} and \nhelm chart for new release}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:test-upgrade" -> "controller:test-upgrade-setup" [
     color="blue"
@@ -1151,8 +1209,10 @@ digraph {
   
   "controller:test-upgrade-apply-prerelease-chart" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:test-upgrade-apply-prerelease-chart | Apply the \{\{.CONTROLLER_APP\}\} prerelease \nchart for new release}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:test-upgrade-apply-prerelease-chart" -> "controller:docker-push-local" [
     color="blue"
@@ -1172,8 +1232,10 @@ digraph {
   
   "controller:test-upgrade-post" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:test-upgrade-post | Test upgrading \{\{.CONTROLLER_APP\}\} and \nhelm chart for new release}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:test-upgrade-post" -> "controller:test-upgrade-apply-prerelease-chart" [
     color="blue"
@@ -1188,8 +1250,10 @@ digraph {
   
   "controller:test-upgrade-pre" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:test-upgrade-pre | Test upgrading \{\{.CONTROLLER_APP\}\} and \nhelm chart for new release}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:test-upgrade-pre" -> "controller:test-upgrade-pre-setup" [
     color="black"
@@ -1199,8 +1263,10 @@ digraph {
   
   "controller:test-upgrade-pre-setup" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:test-upgrade-pre-setup | Setup for the \ntest-upgrade-pre step}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:test-upgrade-pre-setup" -> "controller:wait-for-operator-ready" [
     color="blue"
@@ -1210,8 +1276,10 @@ digraph {
   
   "controller:test-upgrade-setup" [
     color="black"
+    fillcolor="aquamarine"
     label="{controller:test-upgrade-setup | Setup for upgrade test}"
     shape="Mrecord"
+    style="filled"
   ]
   "controller:test-upgrade-setup" -> "controller:kind-create-wi" [
     color="blue"
@@ -1334,8 +1402,10 @@ digraph {
   
   "doc:build-site" [
     color="black"
+    fillcolor="plum1"
     label="doc:build-site"
     shape="Mrecord"
+    style="filled"
   ]
   "doc:build-site" -> "doc:frontmatter-check" [
     color="black"
@@ -1345,8 +1415,10 @@ digraph {
   
   "doc:crd-api" [
     color="black"
+    fillcolor="plum1"
     label="{doc:crd-api | Generates API docs for \nCRDs}"
     shape="Mrecord"
+    style="filled"
   ]
   "doc:crd-api" -> "controller:generate-crds" [
     color="black"
@@ -1356,26 +1428,34 @@ digraph {
   
   "doc:dependencies" [
     color="black"
+    fillcolor="plum1"
     label="{doc:dependencies | Generate documentation for \ndepencencies}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "doc:frontmatter-check" [
     color="black"
+    fillcolor="plum1"
     label="{doc:frontmatter-check | Ensure all Markdown documentation \nhas frontmatter.}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "doc:render-diagrams" [
     color="black"
+    fillcolor="plum1"
     label="{doc:render-diagrams | Render all GraphViz \ndiagrams}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "docker-login" [
     color="black"
+    fillcolor="plum1"
     label="{docker-login | Docker login}"
     shape="Mrecord"
+    style="filled"
   ]
   "docker-login" -> "az-login" [
     color="black"
@@ -1456,14 +1536,18 @@ digraph {
   
   "generator:go-mod-tidy" [
     color="black"
+    fillcolor="cornsilk"
     label="{generator:go-mod-tidy | Tidy the go.mod file}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "generator:lint" [
     color="black"
+    fillcolor="aquamarine"
     label="{generator:lint | Run \{\{.GENERATOR_APP\}\} lint \nchecks.}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "generator:quick-checks" [
@@ -1489,14 +1573,18 @@ digraph {
   
   "generator:unit-tests" [
     color="black"
+    fillcolor="aquamarine"
     label="{generator:unit-tests | Run \{\{.GENERATOR_APP\}\} unit \ntests.}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "generator:unit-tests-cover" [
     color="black"
+    fillcolor="aquamarine"
     label="{generator:unit-tests-cover | Run \{\{.GENERATOR_APP\}\} unit tests and \noutput coverage.}"
     shape="Mrecord"
+    style="filled"
   ]
   "generator:unit-tests-cover" -> "setup" [
     color="black"
@@ -1511,14 +1599,18 @@ digraph {
   
   "generator:update-golden-tests" [
     color="black"
+    fillcolor="aquamarine"
     label="{generator:update-golden-tests | Update \{\{.GENERATOR_APP\}\} golden \ntest outputs.}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "go-mod-tidy" [
     color="black"
+    fillcolor="cornsilk"
     label="{go-mod-tidy | Tidy the go.mod files}"
     shape="Mrecord"
+    style="filled"
   ]
   "go-mod-tidy" -> "controller:go-mod-tidy" [
     color="blue"
@@ -1565,14 +1657,18 @@ digraph {
   
   "mangle-test:lint" [
     color="black"
+    fillcolor="aquamarine"
     label="{mangle-test:lint | Run mangle-test fast lint \nchecks.}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "mangle-test:quick-checks" [
     color="black"
+    fillcolor="aquamarine"
     label="mangle-test:quick-checks"
     shape="Mrecord"
+    style="filled"
   ]
   "mangle-test:quick-checks" -> "mangle-test:lint" [
     color="blue"
@@ -1651,4 +1747,5 @@ digraph {
     label="{verify-no-changes | Checks that there are no uncommitted \nmodifications to files}"
     shape="Mrecord"
   ]
+  
 }
