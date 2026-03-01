@@ -15,6 +15,8 @@ import (
 	"github.com/theunrepentantgeek/task-graph/internal/indentwriter"
 )
 
+const testDescription = "A test node"
+
 func TestWriteTo_WithNodesAndEdges_WritesSortedGraphviz(t *testing.T) {
 	t.Parallel()
 	g := gomega.NewWithT(t)
@@ -114,7 +116,7 @@ func TestWriteNodeDefinitionTo_WithFillColorNoStyle_AddsFilled(t *testing.T) {
 
 	buf := bytes.Buffer{}
 	node := graph.NewNode("test-node")
-	node.SetDescription("A test node")
+	node.Description = testDescription
 
 	cfg := config.New()
 	cfg.Graphviz.TaskNodes.FillColor = "lightblue"
@@ -128,8 +130,8 @@ func TestWriteNodeDefinitionTo_WithFillColorNoStyle_AddsFilled(t *testing.T) {
 	g.Expect(err).NotTo(gomega.HaveOccurred())
 
 	output := buf.String()
-	g.Expect(output).To(gomega.ContainSubstring("style=filled"))
-	g.Expect(output).To(gomega.ContainSubstring("fillcolor=lightblue"))
+	g.Expect(output).To(gomega.ContainSubstring(`style="filled"`))
+	g.Expect(output).To(gomega.ContainSubstring(`fillcolor="lightblue"`))
 }
 
 func TestWriteNodeDefinitionTo_WithFillColorAndStyle_DoesNotOverrideStyle(t *testing.T) {
@@ -138,7 +140,7 @@ func TestWriteNodeDefinitionTo_WithFillColorAndStyle_DoesNotOverrideStyle(t *tes
 
 	buf := bytes.Buffer{}
 	node := graph.NewNode("test-node")
-	node.SetDescription("A test node")
+	node.Description = testDescription
 
 	cfg := config.New()
 	cfg.Graphviz.TaskNodes.FillColor = "lightblue"
@@ -153,8 +155,8 @@ func TestWriteNodeDefinitionTo_WithFillColorAndStyle_DoesNotOverrideStyle(t *tes
 	g.Expect(err).NotTo(gomega.HaveOccurred())
 
 	output := buf.String()
-	g.Expect(output).To(gomega.ContainSubstring("style=\"rounded,filled\""))
-	g.Expect(output).To(gomega.ContainSubstring("fillcolor=lightblue"))
+	g.Expect(output).To(gomega.ContainSubstring(`style="rounded,filled"`))
+	g.Expect(output).To(gomega.ContainSubstring(`fillcolor="lightblue"`))
 }
 
 func TestWriteNodeDefinitionTo_WithNodeLabel_UsesLabel(t *testing.T) {
@@ -164,7 +166,7 @@ func TestWriteNodeDefinitionTo_WithNodeLabel_UsesLabel(t *testing.T) {
 	buf := bytes.Buffer{}
 	node := graph.NewNode("test-node")
 	node.Label = "Custom Label"
-	node.SetDescription("A test node")
+	node.Description = testDescription
 
 	cfg := config.New()
 
@@ -187,7 +189,7 @@ func TestWriteNodeDefinitionTo_WithLongDescription_WrapsText(t *testing.T) {
 	buf := bytes.Buffer{}
 	node := graph.NewNode("test-node")
 	longDesc := strings.Repeat("x", 100)
-	node.SetDescription(longDesc)
+	node.Description = longDesc
 
 	cfg := config.New()
 
