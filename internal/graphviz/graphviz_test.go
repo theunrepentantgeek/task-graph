@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/onsi/gomega"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/theunrepentantgeek/task-graph/internal/config"
 	"github.com/theunrepentantgeek/task-graph/internal/graph"
+	"github.com/theunrepentantgeek/task-graph/internal/indentwriter"
 )
 
 func TestWriteTo_WithNodesAndEdges_WritesSortedGraphviz(t *testing.T) {
@@ -104,6 +106,102 @@ func TestSaveTo_WritesFileToDisk(t *testing.T) {
 	g.Expect(gg.WithFixtureDir("testdata")).To(gomega.Succeed())
 
 	gg.Assert(t, "sample_graph", content)
+}
+
+func TestWriteNodeDefinitionTo_WithFillColorNoStyle_AddsFilled(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	node := graph.NewNode("test-node")
+	node.SetDescription("A test node")
+
+	cfg := config.New()
+	cfg.Graphviz.TaskNodes.FillColor = "lightblue"
+
+	iw := indentwriter.New()
+	root := iw.Add("digraph {")
+	writeNodeDefinitionTo(root, node, cfg)
+	root.Add("}")
+
+	_, err := iw.WriteTo(&buf, "  ")
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+
+	output := buf.String()
+	g.Expect(output).To(gomega.ContainSubstring("style=filled"))
+	g.Expect(output).To(gomega.ContainSubstring("fillcolor=lightblue"))
+}
+
+func TestWriteNodeDefinitionTo_WithFillColorAndStyle_DoesNotOverrideStyle(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	node := graph.NewNode("test-node")
+	node.SetDescription("A test node")
+
+	cfg := config.New()
+	cfg.Graphviz.TaskNodes.FillColor = "lightblue"
+	cfg.Graphviz.TaskNodes.Style = "rounded,filled"
+
+	iw := indentwriter.New()
+	root := iw.Add("digraph {")
+	writeNodeDefinitionTo(root, node, cfg)
+	root.Add("}")
+
+	_, err := iw.WriteTo(&buf, "  ")
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+
+	output := buf.String()
+	g.Expect(output).To(gomega.ContainSubstring("style=\"rounded,filled\""))
+	g.Expect(output).To(gomega.ContainSubstring("fillcolor=lightblue"))
+}
+
+func TestWriteNodeDefinitionTo_WithNodeLabel_UsesLabel(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	node := graph.NewNode("test-node")
+	node.Label = "Custom Label"
+	node.SetDescription("A test node")
+
+	cfg := config.New()
+
+	iw := indentwriter.New()
+	root := iw.Add("digraph {")
+	writeNodeDefinitionTo(root, node, cfg)
+	root.Add("}")
+
+	_, err := iw.WriteTo(&buf, "  ")
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+
+	output := buf.String()
+	g.Expect(output).To(gomega.ContainSubstring("Custom Label"))
+}
+
+func TestWriteNodeDefinitionTo_WithLongDescription_WrapsText(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	node := graph.NewNode("test-node")
+	longDesc := strings.Repeat("x", 100)
+	node.SetDescription(longDesc)
+
+	cfg := config.New()
+
+	iw := indentwriter.New()
+	root := iw.Add("digraph {")
+	writeNodeDefinitionTo(root, node, cfg)
+	root.Add("}")
+
+	_, err := iw.WriteTo(&buf, "  ")
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+
+	output := buf.String()
+	g.Expect(output).To(gomega.ContainSubstring("Mrecord"))
+	g.Expect(output).To(gomega.ContainSubstring(longDesc))
 }
 
 func buildSampleGraph(t *testing.T) *graph.Graph {
