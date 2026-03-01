@@ -41,6 +41,8 @@ tasks:
       - build.bin
     cmds:
       - "sbom-tool generate -BuildDropPath {{.BUILD_DIR}} -BuildComponentPath {{.ROOT_DIR}} -PackageName task-graph -PackageVersion latest -PackageSupplier https://github.com/theunrepentantgeek/task-graph -NamespaceUriBase https://github.com/theunrepentantgeek/task-graph -DeleteManifestDirIfPresent true -FetchLicenseInformation true -Verbosity Information"
+      - mv {{.BUILD_DIR}}/_manifest/spdx_2.2/* {{.BUILD_DIR}}
+      - rm -rf {{.BUILD_DIR}}/_manifest
 
   build.dir:
     desc: Ensure our output folder exists and is empty
@@ -60,7 +62,7 @@ tasks:
       - build
     cmds:
       # If GITHUB_STEP_SUMMARY is not set, remove the output file so it only contains our results
-      - 'rm -f {{.REPORT}} || true'
+      - "rm -f {{.REPORT}} || true"
       # - "go test ./... -json | go-testreport -output {{.REPORT}}"
       - go test ./...
     vars:
@@ -103,7 +105,7 @@ tasks:
   gremlins:
     desc: "Use gremlins to check the quality of our tests"
     cmds:
-      - gremlins unleash ./internal --invert-assignments --invert-bitwise --invert-bwassign --invert-logical --invert-loopctrl --remove-self-assignments 
+      - gremlins unleash ./internal --invert-assignments --invert-bitwise --invert-bwassign --invert-logical --invert-loopctrl --remove-self-assignments
 
   update-golden-files:
     desc: "Update golden files with current output"
@@ -114,7 +116,7 @@ tasks:
     desc: "Generate graphs and images for the sample taskfiles"
     deps:
       - build
-    sources: 
+    sources:
       - "samples/*-taskfile.yml"
     cmds:
       - for: sources
@@ -132,8 +134,8 @@ tasks:
     deps:
       - build
     sources:
-      - '{{.BUILD_DIR}}/task-graph'
-      - 'Taskfile.yml'
+      - "{{.BUILD_DIR}}/task-graph"
+      - "Taskfile.yml"
     cmds:
-      - '{{.BUILD_DIR}}/task-graph {{.ROOT_DIR}}/Taskfile.yml -o {{.DOCS_DIR}}/taskfile.dot'
-      - 'dot -Tpng {{.DOCS_DIR}}/taskfile.dot -o {{.DOCS_DIR}}/taskfile.png'
+      - "{{.BUILD_DIR}}/task-graph {{.ROOT_DIR}}/Taskfile.yml -o {{.DOCS_DIR}}/taskfile.dot"
+      - "dot -Tpng {{.DOCS_DIR}}/taskfile.dot -o {{.DOCS_DIR}}/taskfile.png"
