@@ -18,9 +18,9 @@ type Graphviz struct {
 	// TaskNodes is the presentation for task nodes
 	TaskNodes *GraphvizNode `json:"taskNodes,omitempty" yaml:"taskNodes,omitempty"`
 
-	// StyleRules are additional style rules applied to matching task nodes, in order.
+	// NodeStyleRules are additional style rules applied to matching task nodes, in order.
 	// All matching rules are applied; in case of conflicts, the last matching rule wins.
-	StyleRules []GraphvizStyleRule `json:"styleRules,omitempty" yaml:"styleRules,omitempty"`
+	NodeStyleRules []GraphvizStyleRule `json:"nodeStyleRules,omitempty" yaml:"nodeStyleRules,omitempty"`
 
 	// HighlightColor is the fill color used for highlighted task nodes (from --highlight flag).
 	// Defaults to "yellow" when not specified.

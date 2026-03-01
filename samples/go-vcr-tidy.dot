@@ -1,8 +1,10 @@
 digraph {
   "build" [
     color="black"
+    fillcolor="powderblue"
     label="{build | Build everything}"
     shape="Mrecord"
+    style="filled"
   ]
   "build" -> "build.bin" [
     color="black"
@@ -12,8 +14,10 @@ digraph {
   
   "build.bin" [
     color="black"
+    fillcolor="powderblue"
     label="{build.bin | Build the go-vcr-tidy \nbinary}"
     shape="Mrecord"
+    style="filled"
   ]
   "build.bin" -> "build.dir" [
     color="black"
@@ -23,14 +27,18 @@ digraph {
   
   "build.dir" [
     color="black"
+    fillcolor="powderblue"
     label="{build.dir | Ensure our output folder exists \nand is empty}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "build.sbom" [
     color="black"
+    fillcolor="powderblue"
     label="{build.sbom | Generate a \nsoftware-bill-of-materials (SBOM)}"
     shape="Mrecord"
+    style="filled"
   ]
   "build.sbom" -> "build.bin" [
     color="black"
@@ -83,14 +91,18 @@ digraph {
   
   "lint" [
     color="black"
+    fillcolor="aquamarine"
     label="{lint | Run golangci-lint to check for \nlinting issues}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "test" [
     color="black"
+    fillcolor="aquamarine"
     label="{test | Run tests and checks}"
     shape="Mrecord"
+    style="filled"
   ]
   "test" -> "unit-test" [
     color="black"
@@ -105,8 +117,10 @@ digraph {
   
   "tidy" [
     color="black"
+    fillcolor="cornsilk"
     label="{tidy | Tidy up source}"
     shape="Mrecord"
+    style="filled"
   ]
   "tidy" -> "tidy.gofumpt" [
     color="blue"
@@ -126,30 +140,39 @@ digraph {
   
   "tidy.gofumpt" [
     color="black"
+    fillcolor="cornsilk"
     label="{tidy.gofumpt | Run gofumpt to reformat \nsource code}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "tidy.lint" [
     color="black"
+    fillcolor="cornsilk"
     label="{tidy.lint | Run golangci-lint in fix \nmode}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "tidy.mod" [
     color="black"
+    fillcolor="cornsilk"
     label="{tidy.mod | Run go mod tidy}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "unit-test" [
     color="black"
+    fillcolor="aquamarine"
     label="{unit-test | Run unit tests}"
     shape="Mrecord"
+    style="filled"
   ]
   "unit-test" -> "build" [
     color="black"
     penwidth="1"
     style="solid"
   ]
+  
 }

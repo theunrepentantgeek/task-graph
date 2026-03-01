@@ -57,6 +57,13 @@ func (p properties) AddWrappedf(
 	p.AddWrapped(key, width, fmt.Sprintf(format, args...))
 }
 
+// ContainsKey returns true if the properties map contains the given key.
+func (p properties) ContainsKey(key string) bool {
+	_, ok := p[key]
+
+	return ok
+}
+
 // WriteTo writes the properties to the given indentwriter.Line in the format expected by Graphviz.
 func (p properties) WriteTo(
 	label string,

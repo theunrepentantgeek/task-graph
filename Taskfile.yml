@@ -118,7 +118,7 @@ tasks:
       - "samples/*-taskfile.yml"
     cmds:
       - for: sources
-        cmd: '{{.BUILD_DIR}}/task-graph {{.ITEM}} -o {{.ITEM | replace "-taskfile.yml" ".dot" | osClean }}'
+        cmd: '{{.BUILD_DIR}}/task-graph {{.ITEM}} -o {{.ITEM | replace "-taskfile.yml" ".dot" | osClean }} --config {{.ITEM | replace "-taskfile.yml" "-config.yml" | osClean }}'
       - for: sources
         cmd: 'dot -Tpng {{.ITEM | replace "-taskfile.yml" ".dot" | osClean }} -o {{.ITEM | replace "-taskfile.yml" ".png" | osClean }}'
 

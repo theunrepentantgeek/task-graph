@@ -109,9 +109,9 @@ func TestCreateConfig_HighlightFlagAddsSingleStyleRule(t *testing.T) {
 	cfg, err := cli.CreateConfig()
 
 	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(cfg.Graphviz.StyleRules).To(HaveLen(1))
+	g.Expect(cfg.Graphviz.NodeStyleRules).To(HaveLen(1))
 
-	rule := cfg.Graphviz.StyleRules[0]
+	rule := cfg.Graphviz.NodeStyleRules[0]
 	g.Expect(rule.Match).To(Equal("build"))
 	g.Expect(rule.FillColor).To(Equal("yellow"))
 	g.Expect(rule.Style).To(Equal("filled"))
@@ -126,9 +126,9 @@ func TestCreateConfig_HighlightFlagWithCommaSeparatorAddsMultipleStyleRules(t *t
 	cfg, err := cli.CreateConfig()
 
 	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(cfg.Graphviz.StyleRules).To(HaveLen(2))
-	g.Expect(cfg.Graphviz.StyleRules[0].Match).To(Equal("build"))
-	g.Expect(cfg.Graphviz.StyleRules[1].Match).To(Equal("doc"))
+	g.Expect(cfg.Graphviz.NodeStyleRules).To(HaveLen(2))
+	g.Expect(cfg.Graphviz.NodeStyleRules[0].Match).To(Equal("build"))
+	g.Expect(cfg.Graphviz.NodeStyleRules[1].Match).To(Equal("doc"))
 }
 
 func TestCreateConfig_HighlightFlagWithSemicolonSeparatorAddsMultipleStyleRules(t *testing.T) {
@@ -140,9 +140,9 @@ func TestCreateConfig_HighlightFlagWithSemicolonSeparatorAddsMultipleStyleRules(
 	cfg, err := cli.CreateConfig()
 
 	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(cfg.Graphviz.StyleRules).To(HaveLen(2))
-	g.Expect(cfg.Graphviz.StyleRules[0].Match).To(Equal("build"))
-	g.Expect(cfg.Graphviz.StyleRules[1].Match).To(Equal("doc"))
+	g.Expect(cfg.Graphviz.NodeStyleRules).To(HaveLen(2))
+	g.Expect(cfg.Graphviz.NodeStyleRules[0].Match).To(Equal("build"))
+	g.Expect(cfg.Graphviz.NodeStyleRules[1].Match).To(Equal("doc"))
 }
 
 func TestCreateConfig_HighlightFlagUsesConfiguredHighlightColor(t *testing.T) {
@@ -157,8 +157,8 @@ func TestCreateConfig_HighlightFlagUsesConfiguredHighlightColor(t *testing.T) {
 	cfg, err := cli.CreateConfig()
 
 	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(cfg.Graphviz.StyleRules).To(HaveLen(1))
-	g.Expect(cfg.Graphviz.StyleRules[0].FillColor).To(Equal("lightblue"))
+	g.Expect(cfg.Graphviz.NodeStyleRules).To(HaveLen(1))
+	g.Expect(cfg.Graphviz.NodeStyleRules[0].FillColor).To(Equal("lightblue"))
 }
 
 func TestCreateConfig_HighlightFlagWithGlobPattern(t *testing.T) {
@@ -170,8 +170,8 @@ func TestCreateConfig_HighlightFlagWithGlobPattern(t *testing.T) {
 	cfg, err := cli.CreateConfig()
 
 	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(cfg.Graphviz.StyleRules).To(HaveLen(1))
-	g.Expect(cfg.Graphviz.StyleRules[0].Match).To(Equal("cmd:*"))
+	g.Expect(cfg.Graphviz.NodeStyleRules).To(HaveLen(1))
+	g.Expect(cfg.Graphviz.NodeStyleRules[0].Match).To(Equal("cmd:*"))
 }
 
 // TestExportConfigToFile
