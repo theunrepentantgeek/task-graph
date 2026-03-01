@@ -21,7 +21,7 @@ func New() *Graph {
 // id is a unique identifier for the node. If a node with the same ID already exists,
 // it will be overwritten.
 func (g *Graph) AddNode(id string) *Node {
-	node := newNode(id)
+	node := NewNode(id)
 	g.nodes[id] = node
 
 	return node

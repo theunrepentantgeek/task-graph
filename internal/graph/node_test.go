@@ -10,7 +10,7 @@ func TestNode_ID_ReturnsProvidedIdentifier(t *testing.T) {
 	t.Parallel()
 	g := gomega.NewWithT(t)
 
-	node := newNode("identifier")
+	node := NewNode("identifier")
 
 	g.Expect(node.ID()).To(gomega.Equal("identifier"))
 }
@@ -19,8 +19,8 @@ func TestNode_AddEdge_ToTargetNode_AppendsEdge(t *testing.T) {
 	t.Parallel()
 	g := gomega.NewWithT(t)
 
-	source := newNode("source")
-	target := newNode("target")
+	source := NewNode("source")
+	target := NewNode("target")
 
 	edge := source.AddEdge(target)
 

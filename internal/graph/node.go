@@ -20,8 +20,8 @@ type Node struct {
 	edges []*Edge
 }
 
-// newNode creates a new node with the given ID and returns it.
-func newNode(id string) *Node {
+// NewNode creates a new node with the given ID and returns it.
+func NewNode(id string) *Node {
 	return &Node{
 		NodeID: NodeID{id: id},
 	}
