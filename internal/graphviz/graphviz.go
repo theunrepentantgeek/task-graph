@@ -233,7 +233,7 @@ func writeNodeDefinitionTo(
 		}
 	}
 
-	if props.ContainsKey("fillcolor") {
+	if props.ContainsKey("fillcolor") && !props.ContainsKey("style") {
 		props.Add("style", "filled")
 	}
 
