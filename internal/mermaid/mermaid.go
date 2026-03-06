@@ -299,12 +299,12 @@ func nodeDisplayLabel(node *graph.Node) string {
 
 // escapeLabel escapes special characters in Mermaid node labels.
 func escapeLabel(label string) string {
-	return strings.ReplaceAll(label, `"`, "#quot;")
+	return strings.ReplaceAll(label, `"`, "&quot;")
 }
 
 // escapeEdgeLabel escapes special characters in Mermaid edge labels.
 func escapeEdgeLabel(label string) string {
-	label = strings.ReplaceAll(label, `"`, "#quot;")
+	label = strings.ReplaceAll(label, `"`, "&quot;")
 	label = strings.ReplaceAll(label, "|", "&#124;")
 
 	return label
