@@ -16,6 +16,7 @@ import (
 	"github.com/theunrepentantgeek/task-graph/internal/dot"
 	"github.com/theunrepentantgeek/task-graph/internal/graphviz"
 	"github.com/theunrepentantgeek/task-graph/internal/loader"
+	"github.com/theunrepentantgeek/task-graph/internal/mermaid"
 	"github.com/theunrepentantgeek/task-graph/internal/taskgraph"
 )
 
@@ -26,6 +27,9 @@ type CLI struct {
 	Config   string `help:"Path to a config file (YAML or JSON)." long:"config" short:"c"`
 
 	GroupByNamespace bool `help:"Group tasks in the same namespace together in the output." long:"group-by-namespace"`
+
+	//nolint:revive // Intentially long name for clarity in the CLI help.
+	GraphType string `help:"Type of graph to generate (dot or mermaid). Defaults to dot." long:"graph-type"`
 
 	//nolint:revive // Intentially long name for clarity in the CLI help.
 	Highlight string `help:"Highlight specific tasks in the graph. Accepts task names or glob patterns, separated by commas or semicolons." long:"highlight"`
@@ -58,7 +62,24 @@ func (c *CLI) Run(
 
 	gr := taskgraph.New(tf).Build()
 
-	err = graphviz.SaveTo(c.Output, gr, flags.Config)
+	graphType := c.GraphType
+	if graphType == "" {
+		graphType = flags.Config.GraphType
+	}
+
+	if graphType == "" {
+		graphType = "dot"
+	}
+
+	switch graphType {
+	case "dot":
+		err = graphviz.SaveTo(c.Output, gr, flags.Config)
+	case "mermaid":
+		err = mermaid.SaveTo(c.Output, gr, flags.Config)
+	default:
+		return eris.Errorf("unsupported graph type: %q, must be dot or mermaid", graphType)
+	}
+
 	if err != nil {
 		return eris.Wrap(err, "failed to save graph")
 	}
@@ -139,6 +160,10 @@ func (c *CLI) applyConfigOverrides(cfg *config.Config) {
 		cfg.GroupByNamespace = true
 	}
 
+	if c.GraphType != "" {
+		cfg.GraphType = c.GraphType
+	}
+
 	if c.Highlight != "" {
 		c.applyHighlightOverrides(cfg)
 	}
@@ -147,8 +172,8 @@ func (c *CLI) applyConfigOverrides(cfg *config.Config) {
 // applyHighlightOverrides parses the --highlight flag and appends matching style rules.
 func (c *CLI) applyHighlightOverrides(cfg *config.Config) {
 	color := "yellow"
-	if cfg.Graphviz != nil && cfg.Graphviz.HighlightColor != "" {
-		color = cfg.Graphviz.HighlightColor
+	if cfg.HighlightColor != "" {
+		color = cfg.HighlightColor
 	}
 
 	patterns := strings.FieldsFunc(
@@ -163,12 +188,12 @@ func (c *CLI) applyHighlightOverrides(cfg *config.Config) {
 			continue
 		}
 
-		rule := config.GraphvizStyleRule{
+		rule := config.NodeStyleRule{
 			Match:     pattern,
 			FillColor: color,
 			Style:     "filled",
 		}
-		cfg.Graphviz.NodeStyleRules = append(cfg.Graphviz.NodeStyleRules, rule)
+		cfg.NodeStyleRules = append(cfg.NodeStyleRules, rule)
 	}
 }
 

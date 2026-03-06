@@ -1,0 +1,10 @@
+flowchart TD
+  alpha["alpha"]
+  alpha --> beta
+  alpha --> gamma
+  
+  beta["beta"]
+  beta -->|"next"| gamma
+  
+  gamma["gamma"]
+  

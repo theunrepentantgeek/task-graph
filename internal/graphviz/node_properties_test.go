@@ -178,7 +178,7 @@ func TestNodePropertiesAddStyleRuleAttributes_WhenPatternMatchesExactName_Applie
 
 	// Arrange
 	p := newNodeProperties()
-	rule := config.GraphvizStyleRule{
+	rule := config.NodeStyleRule{
 		Match: "alpha",
 		Color: "red",
 	}
@@ -196,7 +196,7 @@ func TestNodePropertiesAddStyleRuleAttributes_WhenPatternDoesNotMatch_LeavesProp
 
 	// Arrange
 	p := newNodeProperties()
-	rule := config.GraphvizStyleRule{
+	rule := config.NodeStyleRule{
 		Match: "alpha",
 		Color: "red",
 	}
@@ -231,7 +231,7 @@ func TestNodePropertiesAddStyleRuleAttributes_WhenPatternUsesWildcard_MatchesMul
 
 			// Arrange
 			p := newNodeProperties()
-			rule := config.GraphvizStyleRule{
+			rule := config.NodeStyleRule{
 				Match: c.pattern,
 				Color: "red",
 			}
@@ -255,7 +255,7 @@ func TestNodePropertiesAddStyleRuleAttributes_WhenRuleHasAllFields_AppliesAllAtt
 
 	// Arrange
 	p := newNodeProperties()
-	rule := config.GraphvizStyleRule{
+	rule := config.NodeStyleRule{
 		Match:     "alpha",
 		Color:     "red",
 		FillColor: "lightyellow",
@@ -279,8 +279,8 @@ func TestNodePropertiesAddStyleRuleAttributes_LastRuleWins_WhenMultipleRulesMatc
 
 	// Arrange
 	p := newNodeProperties()
-	rule1 := config.GraphvizStyleRule{Match: "alpha", Color: "red"}
-	rule2 := config.GraphvizStyleRule{Match: "alpha", Color: "blue"}
+	rule1 := config.NodeStyleRule{Match: "alpha", Color: "red"}
+	rule2 := config.NodeStyleRule{Match: "alpha", Color: "blue"}
 
 	// Act
 	p.AddStyleRuleAttributes("alpha", rule1)
