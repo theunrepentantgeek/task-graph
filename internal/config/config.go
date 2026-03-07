@@ -13,6 +13,11 @@ type Config struct {
 	// Defaults to "yellow" when not specified.
 	HighlightColor string `json:"highlightColor,omitempty" yaml:"highlightColor,omitempty"`
 
+	// AutoColor controls whether nodes are automatically colored by namespace.
+	// When true, a distinct fill color from a built-in palette is assigned to each
+	// namespace found in the taskfile. User-defined NodeStyleRules take precedence.
+	AutoColor bool `json:"autoColor,omitempty" yaml:"autoColor,omitempty"`
+
 	// NodeStyleRules are additional style rules applied to matching task nodes, in order.
 	// All matching rules are applied; in case of conflicts, the last matching rule wins.
 	// These rules work across all graph types.

@@ -12,8 +12,10 @@ import (
 	"github.com/rotisserie/eris"
 	"gopkg.in/yaml.v3"
 
+	"github.com/theunrepentantgeek/task-graph/internal/autocolor"
 	"github.com/theunrepentantgeek/task-graph/internal/config"
 	"github.com/theunrepentantgeek/task-graph/internal/dot"
+	"github.com/theunrepentantgeek/task-graph/internal/graph"
 	"github.com/theunrepentantgeek/task-graph/internal/graphviz"
 	"github.com/theunrepentantgeek/task-graph/internal/loader"
 	"github.com/theunrepentantgeek/task-graph/internal/mermaid"
@@ -27,6 +29,8 @@ type CLI struct {
 	Config   string `help:"Path to a config file (YAML or JSON)." long:"config" short:"c"`
 
 	GroupByNamespace bool `help:"Group tasks in the same namespace together in the output." long:"group-by-namespace"`
+
+	AutoColor bool `help:"Automatically color nodes by namespace using a built-in palette." long:"auto-color"`
 
 	GraphType string `help:"Type of graph to generate (dot or mermaid). Defaults to dot." long:"graph-type"`
 
@@ -60,6 +64,8 @@ func (c *CLI) Run(
 		"tasks", tf.Tasks.Len())
 
 	gr := taskgraph.New(tf).Build()
+
+	applyAutoColor(flags.Config, gr)
 
 	graphType := c.resolveGraphType(flags)
 
@@ -165,6 +171,10 @@ func (c *CLI) applyConfigOverrides(cfg *config.Config) {
 		cfg.GroupByNamespace = true
 	}
 
+	if c.AutoColor {
+		cfg.AutoColor = true
+	}
+
 	if c.GraphType != "" {
 		cfg.GraphType = c.GraphType
 	}
@@ -200,6 +210,17 @@ func (c *CLI) applyHighlightOverrides(cfg *config.Config) {
 		}
 		cfg.NodeStyleRules = append(cfg.NodeStyleRules, rule)
 	}
+}
+
+// applyAutoColor generates auto-color rules from the graph's namespaces and
+// prepends them to cfg.NodeStyleRules so that user-defined rules take precedence.
+func applyAutoColor(cfg *config.Config, gr *graph.Graph) {
+	if !cfg.AutoColor {
+		return
+	}
+
+	autoRules := autocolor.GenerateRules(gr)
+	cfg.NodeStyleRules = append(autoRules, cfg.NodeStyleRules...)
 }
 
 func (c *CLI) loadConfigFile(cfg *config.Config) error {
