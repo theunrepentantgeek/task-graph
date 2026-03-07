@@ -28,7 +28,6 @@ type CLI struct {
 
 	GroupByNamespace bool `help:"Group tasks in the same namespace together in the output." long:"group-by-namespace"`
 
-	//nolint:revive // Intentially long line for clarity in the CLI help.
 	GraphType string `help:"Type of graph to generate (dot or mermaid). Defaults to dot." long:"graph-type"`
 
 	//nolint:revive // Intentially long line for clarity in the CLI help.
