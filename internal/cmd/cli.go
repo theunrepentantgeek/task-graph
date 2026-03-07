@@ -62,14 +62,7 @@ func (c *CLI) Run(
 
 	gr := taskgraph.New(tf).Build()
 
-	graphType := c.GraphType
-	if graphType == "" {
-		graphType = flags.Config.GraphType
-	}
-
-	if graphType == "" {
-		graphType = "dot"
-	}
+	graphType := c.resolveGraphType(flags)
 
 	switch graphType {
 	case "dot":
@@ -96,6 +89,19 @@ func (c *CLI) Run(
 	}
 
 	return nil
+}
+
+func (c *CLI) resolveGraphType(flags *Flags) string {
+	graphType := c.GraphType
+	if graphType == "" {
+		graphType = flags.Config.GraphType
+	}
+
+	if graphType == "" {
+		graphType = "dot"
+	}
+
+	return graphType
 }
 
 func (c *CLI) renderImage(ctx context.Context, flags *Flags) error {

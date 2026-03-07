@@ -214,26 +214,40 @@ func writeStyleRulesTo(
 	}
 
 	for i, rule := range cfg.NodeStyleRules {
-		classDef := buildClassDef(rule)
-		if classDef == "" {
-			continue
-		}
+		writeStyleRuleTo(root, nodes, i, rule)
+	}
+}
 
-		var matchingIDs []string
+func writeStyleRuleTo(
+	root *indentwriter.Line,
+	nodes []*graph.Node,
+	index int,
+	rule config.NodeStyleRule,
+) {
+	classDef := buildClassDef(rule)
+	if classDef == "" {
+		return
+	}
 
-		for _, node := range nodes {
-			matched, err := path.Match(rule.Match, node.ID())
-			if err == nil && matched {
-				matchingIDs = append(matchingIDs, sanitizeID(node.ID()))
-			}
-		}
+	matchingIDs := findMatchingNodeIDs(nodes, rule.Match)
+	if len(matchingIDs) > 0 {
+		sort.Strings(matchingIDs)
+		root.Addf("classDef rule%d %s", index, classDef)
+		root.Addf("class %s rule%d", strings.Join(matchingIDs, ","), index)
+	}
+}
 
-		if len(matchingIDs) > 0 {
-			sort.Strings(matchingIDs)
-			root.Addf("classDef rule%d %s", i, classDef)
-			root.Addf("class %s rule%d", strings.Join(matchingIDs, ","), i)
+func findMatchingNodeIDs(nodes []*graph.Node, pattern string) []string {
+	var matchingIDs []string
+
+	for _, node := range nodes {
+		matched, err := path.Match(pattern, node.ID())
+		if err == nil && matched {
+			matchingIDs = append(matchingIDs, sanitizeID(node.ID()))
 		}
 	}
+
+	return matchingIDs
 }
 
 // buildClassDef constructs a Mermaid classDef value string from a NodeStyleRule.
