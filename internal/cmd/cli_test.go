@@ -83,6 +83,18 @@ func TestCreateConfig_GroupByNamespaceFlagSetsConfig(t *testing.T) {
 	g.Expect(cfg.GroupByNamespace).To(BeTrue())
 }
 
+func TestCreateConfig_AutoColorFlagSetsConfig(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{AutoColor: true}
+
+	cfg, err := cli.CreateConfig()
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.AutoColor).To(BeTrue())
+}
+
 func TestCreateConfig_GroupByNamespaceFlagOverridesConfigFile(t *testing.T) {
 	t.Parallel()
 	g := NewWithT(t)
