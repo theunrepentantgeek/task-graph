@@ -4,40 +4,40 @@ digraph {
     label="{build | Build everything}"
     shape="Mrecord"
   ]
-  "build" -> "build.bin" [
+  "build" -> "build_bin" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "build" -> "build.dir" [
+  "build" -> "build_dir" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "build.bin" [
+  "build_bin" [
     color="black"
     label="{build.bin | Build the crddoc \nbinary}"
     shape="Mrecord"
   ]
-  "build.bin" -> "build.dir" [
+  "build_bin" -> "build_dir" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "build.dir" [
+  "build_dir" [
     color="black"
     label="{build.dir | Ensure our output folder \nexists}"
     shape="Mrecord"
   ]
   
-  "build.sbom" [
+  "build_sbom" [
     color="black"
     label="{build.sbom | Generate a \nsoftware-bill-of-materials (SBOM)}"
     shape="Mrecord"
   ]
-  "build.sbom" -> "build.bin" [
+  "build_sbom" -> "build_bin" [
     color="black"
     penwidth="1"
     style="solid"
@@ -75,66 +75,66 @@ digraph {
     label="{docs | Build documentation}"
     shape="Mrecord"
   ]
-  "docs" -> "docs.config" [
+  "docs" -> "docs_config" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "docs" -> "docs.aso" [
+  "docs" -> "docs_aso" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "docs" -> "docs.capz" [
+  "docs" -> "docs_capz" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "docs" -> "docs.model" [
+  "docs" -> "docs_model" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "docs.aso" [
+  "docs_aso" [
     color="black"
     label="{docs.aso | Build example showing documentation for \nAzure Service Operator}"
     shape="Mrecord"
   ]
-  "docs.aso" -> "build" [
+  "docs_aso" -> "build" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "docs.capz" [
+  "docs_capz" [
     color="black"
     label="{docs.capz | Build example showing documentation for \nCluster API Provider Azure}"
     shape="Mrecord"
   ]
-  "docs.capz" -> "build" [
+  "docs_capz" -> "build" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "docs.config" [
+  "docs_config" [
     color="black"
     label="{docs.config | Build documentation of \nconfig options}"
     shape="Mrecord"
   ]
-  "docs.config" -> "build" [
+  "docs_config" -> "build" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "docs.model" [
+  "docs_model" [
     color="black"
     label="{docs.model | Build example showing \ndocumentation for CRD model}"
     shape="Mrecord"
   ]
-  "docs.model" -> "build" [
+  "docs_model" -> "build" [
     color="black"
     penwidth="1"
     style="solid"
@@ -173,35 +173,35 @@ digraph {
     label="{tidy | Tidy up source}"
     shape="Mrecord"
   ]
-  "tidy" -> "tidy.gofumpt" [
+  "tidy" -> "tidy_gofumpt" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "tidy" -> "tidy.mod" [
+  "tidy" -> "tidy_mod" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "tidy" -> "tidy.lint" [
+  "tidy" -> "tidy_lint" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "tidy.gofumpt" [
+  "tidy_gofumpt" [
     color="black"
     label="{tidy.gofumpt | Run gofumpt}"
     shape="Mrecord"
   ]
   
-  "tidy.lint" [
+  "tidy_lint" [
     color="black"
     label="{tidy.lint | Run golangci-lint in fix \nmode}"
     shape="Mrecord"
   ]
   
-  "tidy.mod" [
+  "tidy_mod" [
     color="black"
     label="{tidy.mod | Run go mod tidy}"
     shape="Mrecord"

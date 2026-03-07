@@ -15,6 +15,7 @@ import (
 	"github.com/theunrepentantgeek/task-graph/internal/config"
 	"github.com/theunrepentantgeek/task-graph/internal/graph"
 	"github.com/theunrepentantgeek/task-graph/internal/indentwriter"
+	"github.com/theunrepentantgeek/task-graph/internal/safe"
 )
 
 // SaveTo writes the Mermaid flowchart representation of the graph to the given file path.
@@ -52,6 +53,14 @@ func WriteTo(
 			return cmp.Compare(left.ID(), right.ID())
 		})
 
+	nodeIDs := make([]string, len(nodes))
+	for i, n := range nodes {
+		nodeIDs[i] = n.ID()
+	}
+
+	reg := safe.NewRegistry()
+	reg.Prepare(nodeIDs)
+
 	direction := "TD"
 	if cfg != nil && cfg.Mermaid != nil && cfg.Mermaid.Direction != "" {
 		direction = cfg.Mermaid.Direction
@@ -61,12 +70,12 @@ func WriteTo(
 	root := iw.Addf("flowchart %s", direction)
 
 	if cfg != nil && cfg.GroupByNamespace {
-		writeGroupedNodesTo(root, nodes)
+		writeGroupedNodesTo(root, nodes, reg)
 	} else {
-		writeNodesTo(root, nodes)
+		writeNodesTo(root, nodes, reg)
 	}
 
-	writeStyleRulesTo(root, nodes, cfg)
+	writeStyleRulesTo(root, nodes, cfg, reg)
 
 	_, err := iw.WriteTo(w, indent)
 	if err != nil {
@@ -80,6 +89,7 @@ func WriteTo(
 func writeGroupedNodesTo(
 	root *indentwriter.Line,
 	nodes []*graph.Node,
+	reg *safe.Registry,
 ) {
 	nsToNodes := indexNodesByNamespace(nodes)
 	allNS := findAllNamespaces(nsToNodes)
@@ -93,10 +103,10 @@ func writeGroupedNodesTo(
 
 	sort.Strings(topLevel)
 
-	writeNodesTo(root, nsToNodes[""])
+	writeNodesTo(root, nsToNodes[""], reg)
 
 	for _, ns := range topLevel {
-		writeNamespaceSubgraphTo(root, ns, nsToNodes, allNS)
+		writeNamespaceSubgraphTo(root, ns, nsToNodes, allNS, reg)
 	}
 }
 
@@ -130,8 +140,9 @@ func writeNamespaceSubgraphTo(
 	ns string,
 	nsToNodes map[string][]*graph.Node,
 	allNS map[string]bool,
+	reg *safe.Registry,
 ) {
-	sg := parent.Addf("subgraph %s[\"%s\"]", subgraphID(ns), ns)
+	sg := parent.Addf("subgraph %s[\"%s\"]", reg.IDWithPrefix("sg_", ns), ns)
 
 	children := make([]string, 0, len(allNS))
 	for candidate := range allNS {
@@ -142,10 +153,10 @@ func writeNamespaceSubgraphTo(
 
 	sort.Strings(children)
 
-	writeNodesTo(sg, nsToNodes[ns])
+	writeNodesTo(sg, nsToNodes[ns], reg)
 
 	for _, child := range children {
-		writeNamespaceSubgraphTo(sg, child, nsToNodes, allNS)
+		writeNamespaceSubgraphTo(sg, child, nsToNodes, allNS, reg)
 	}
 
 	parent.Add("end")
@@ -155,9 +166,10 @@ func writeNamespaceSubgraphTo(
 func writeNodesTo(
 	root *indentwriter.Line,
 	nodes []*graph.Node,
+	reg *safe.Registry,
 ) {
 	for _, node := range nodes {
-		writeNodeTo(root, node)
+		writeNodeTo(root, node, reg)
 	}
 }
 
@@ -165,11 +177,12 @@ func writeNodesTo(
 func writeNodeTo(
 	root *indentwriter.Line,
 	node *graph.Node,
+	reg *safe.Registry,
 ) {
-	writeNodeDefinitionTo(root, node)
+	writeNodeDefinitionTo(root, node, reg)
 
 	for _, edge := range node.Edges() {
-		writeEdgeTo(root, edge)
+		writeEdgeTo(root, edge, reg)
 	}
 
 	root.Add("")
@@ -178,17 +191,19 @@ func writeNodeTo(
 func writeNodeDefinitionTo(
 	root *indentwriter.Line,
 	node *graph.Node,
+	reg *safe.Registry,
 ) {
-	label := escapeLabel(nodeDisplayLabel(node))
-	root.Addf("%s[\"%s\"]", sanitizeID(node.ID()), label)
+	label := safe.Label(nodeDisplayLabel(node))
+	root.Addf("%s[\"%s\"]", reg.ID(node.ID()), label)
 }
 
 func writeEdgeTo(
 	root *indentwriter.Line,
 	edge *graph.Edge,
+	reg *safe.Registry,
 ) {
-	from := sanitizeID(edge.From().ID())
-	to := sanitizeID(edge.To().ID())
+	from := reg.ID(edge.From().ID())
+	to := reg.ID(edge.To().ID())
 
 	connector := "-->"
 	if edge.Class() == "call" {
@@ -196,7 +211,7 @@ func writeEdgeTo(
 	}
 
 	if edge.Label() != "" {
-		label := escapeEdgeLabel(edge.Label())
+		label := safe.Label(edge.Label())
 		root.Addf("%s %s|\"%s\"| %s", from, connector, label, to)
 	} else {
 		root.Addf("%s %s %s", from, connector, to)
@@ -208,13 +223,14 @@ func writeStyleRulesTo(
 	root *indentwriter.Line,
 	nodes []*graph.Node,
 	cfg *config.Config,
+	reg *safe.Registry,
 ) {
 	if cfg == nil || len(cfg.NodeStyleRules) == 0 {
 		return
 	}
 
 	for i, rule := range cfg.NodeStyleRules {
-		writeStyleRuleTo(root, nodes, i, rule)
+		writeStyleRuleTo(root, nodes, i, rule, reg)
 	}
 }
 
@@ -223,13 +239,14 @@ func writeStyleRuleTo(
 	nodes []*graph.Node,
 	index int,
 	rule config.NodeStyleRule,
+	reg *safe.Registry,
 ) {
 	classDef := buildClassDef(rule)
 	if classDef == "" {
 		return
 	}
 
-	matchingIDs := findMatchingNodeIDs(nodes, rule.Match)
+	matchingIDs := findMatchingNodeIDs(nodes, rule.Match, reg)
 	if len(matchingIDs) > 0 {
 		sort.Strings(matchingIDs)
 		root.Addf("classDef rule%d %s", index, classDef)
@@ -237,13 +254,13 @@ func writeStyleRuleTo(
 	}
 }
 
-func findMatchingNodeIDs(nodes []*graph.Node, pattern string) []string {
+func findMatchingNodeIDs(nodes []*graph.Node, pattern string, reg *safe.Registry) []string {
 	var matchingIDs []string
 
 	for _, node := range nodes {
 		matched, err := path.Match(pattern, node.ID())
 		if err == nil && matched {
-			matchingIDs = append(matchingIDs, sanitizeID(node.ID()))
+			matchingIDs = append(matchingIDs, reg.ID(node.ID()))
 		}
 	}
 
@@ -268,16 +285,6 @@ func buildClassDef(rule config.NodeStyleRule) string {
 	}
 
 	return strings.Join(parts, ",")
-}
-
-// sanitizeID converts a node ID to a valid Mermaid node identifier by replacing colons with underscores.
-func sanitizeID(id string) string {
-	return strings.ReplaceAll(id, ":", "_")
-}
-
-// subgraphID converts a namespace name to a valid Mermaid subgraph identifier.
-func subgraphID(ns string) string {
-	return "sg_" + strings.ReplaceAll(ns, ":", "_")
 }
 
 // nodeNamespace returns the namespace portion of a node ID (everything before the last colon).
@@ -309,17 +316,4 @@ func nodeDisplayLabel(node *graph.Node) string {
 	}
 
 	return node.ID()
-}
-
-// escapeLabel escapes special characters in Mermaid node labels.
-func escapeLabel(label string) string {
-	return strings.ReplaceAll(label, `"`, "&quot;")
-}
-
-// escapeEdgeLabel escapes special characters in Mermaid edge labels.
-func escapeEdgeLabel(label string) string {
-	label = strings.ReplaceAll(label, `"`, "&quot;")
-	label = strings.ReplaceAll(label, "|", "&#124;")
-
-	return label
 }

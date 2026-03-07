@@ -1,133 +1,133 @@
 digraph {
-  "asoctl:build" [
+  "asoctl_build" [
     color="black"
     label="{asoctl:build | Generate the \{\{.ASOCTL_APP\}\} \nbinary.}"
     shape="Mrecord"
   ]
   
-  "asoctl:ci" [
+  "asoctl_ci" [
     color="black"
     label="asoctl:ci"
     shape="Mrecord"
   ]
-  "asoctl:ci" -> "asoctl:unit-tests-cover" [
+  "asoctl_ci" -> "asoctl_unit-tests-cover" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "asoctl:ci" -> "basic-checks" [
+  "asoctl_ci" -> "basic-checks" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "asoctl:ci" -> "asoctl:lint" [
+  "asoctl_ci" -> "asoctl_lint" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "asoctl:format-code" [
+  "asoctl_format-code" [
     color="black"
     label="{asoctl:format-code | Ensure all code for asoctl is \nformatted}"
     shape="Mrecord"
   ]
   
-  "asoctl:go-mod-tidy" [
+  "asoctl_go-mod-tidy" [
     color="black"
     label="{asoctl:go-mod-tidy | Tidy the go.mod file}"
     shape="Mrecord"
   ]
   
-  "asoctl:lint" [
+  "asoctl_lint" [
     color="black"
     label="{asoctl:lint | Run \{\{.ASOCTL_APP\}\} fast \nlint checks.}"
     shape="Mrecord"
   ]
   
-  "asoctl:make-release-artifacts" [
+  "asoctl_make-release-artifacts" [
     color="black"
     label="{asoctl:make-release-artifacts | Produce asoctl files required for \nan ASOv2 release}"
     shape="Mrecord"
   ]
-  "asoctl:make-release-artifacts" -> "controller:run-kustomize" [
+  "asoctl_make-release-artifacts" -> "controller_run-kustomize" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "asoctl:make-release-artifacts" -> "asoctl:build" [
+  "asoctl_make-release-artifacts" -> "asoctl_build" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "asoctl:make-release-artifacts" -> "asoctl:build" [
+  "asoctl_make-release-artifacts" -> "asoctl_build" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "asoctl:make-release-artifacts" -> "asoctl:build" [
+  "asoctl_make-release-artifacts" -> "asoctl_build" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "asoctl:make-release-artifacts" -> "asoctl:build" [
+  "asoctl_make-release-artifacts" -> "asoctl_build" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "asoctl:make-release-artifacts" -> "asoctl:build" [
+  "asoctl_make-release-artifacts" -> "asoctl_build" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "asoctl:quick-checks" [
+  "asoctl_quick-checks" [
     color="black"
     label="asoctl:quick-checks"
     shape="Mrecord"
   ]
-  "asoctl:quick-checks" -> "asoctl:unit-tests" [
+  "asoctl_quick-checks" -> "asoctl_unit-tests" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "asoctl:quick-checks" -> "basic-checks" [
+  "asoctl_quick-checks" -> "basic-checks" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "asoctl:quick-checks" -> "asoctl:lint" [
+  "asoctl_quick-checks" -> "asoctl_lint" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "asoctl:unit-tests" [
+  "asoctl_unit-tests" [
     color="black"
     label="{asoctl:unit-tests | Run \{\{.ASOCTL_APP\}\} unit \ntests.}"
     shape="Mrecord"
   ]
-  "asoctl:unit-tests" -> "controller:generate-crds" [
+  "asoctl_unit-tests" -> "controller_generate-crds" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "asoctl:unit-tests-cover" [
+  "asoctl_unit-tests-cover" [
     color="black"
     label="{asoctl:unit-tests-cover | Run \{\{.ASOCTL_APP\}\} unit tests and \noutput coverage.}"
     shape="Mrecord"
   ]
-  "asoctl:unit-tests-cover" -> "setup" [
+  "asoctl_unit-tests-cover" -> "setup" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "asoctl:unit-tests-cover" -> "controller:generate-crds" [
+  "asoctl_unit-tests-cover" -> "controller_generate-crds" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "asoctl:unit-tests-cover" -> "produce-markdown-summary" [
+  "asoctl_unit-tests-cover" -> "produce-markdown-summary" [
     color="blue"
     penwidth="1"
     style="dashed"
@@ -160,7 +160,7 @@ digraph {
     label="build-docs-site"
     shape="Mrecord"
   ]
-  "build-docs-site" -> "doc:build-site" [
+  "build-docs-site" -> "doc_build-site" [
     color="blue"
     penwidth="1"
     style="dashed"
@@ -177,22 +177,22 @@ digraph {
     label="{ci | Run all CI checks.}"
     shape="Mrecord"
   ]
-  "ci" -> "generator:ci" [
+  "ci" -> "generator_ci" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "ci" -> "controller:ci" [
+  "ci" -> "controller_ci" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "ci" -> "crossplane:ci" [
+  "ci" -> "crossplane_ci" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "ci" -> "asoctl:ci" [
+  "ci" -> "asoctl_ci" [
     color="blue"
     penwidth="1"
     style="dashed"
@@ -213,12 +213,12 @@ digraph {
     label="{ci-live | Run all CI checks with live Azure \nresources. Requires that auth \nenvironment variables are set.}"
     shape="Mrecord"
   ]
-  "ci-live" -> "generator:ci" [
+  "ci-live" -> "generator_ci" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "ci-live" -> "controller:ci-live" [
+  "ci-live" -> "controller_ci-live" [
     color="black"
     penwidth="1"
     style="solid"
@@ -246,1071 +246,1071 @@ digraph {
     style="solid"
   ]
   
-  "controller:acr-protect-image" [
+  "controller_acr-protect-image" [
     color="black"
     label="{controller:acr-protect-image | Protects an existing image in ACR from \nbeing updated or deleted}"
     shape="Mrecord"
   ]
-  "controller:acr-protect-image" -> "az-login" [
+  "controller_acr-protect-image" -> "az-login" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:aks-create" [
+  "controller_aks-create" [
     color="black"
     label="{controller:aks-create | Creates an AKS cluster}"
     shape="Mrecord"
   ]
-  "controller:aks-create" -> "az-login" [
+  "controller_aks-create" -> "az-login" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:aks-create-helm-install" [
+  "controller_aks-create-helm-install" [
     color="black"
     label="{controller:aks-create-helm-install | Deploys ASO onto an AKS \ncluster}"
     shape="Mrecord"
   ]
-  "controller:aks-create-helm-install" -> "az-login" [
+  "controller_aks-create-helm-install" -> "az-login" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "controller:aks-create-helm-install" -> "controller:aks-create" [
+  "controller_aks-create-helm-install" -> "controller_aks-create" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:aks-create-helm-install" -> "controller:create-mi-for-workload-identity" [
+  "controller_aks-create-helm-install" -> "controller_create-mi-for-workload-identity" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:aks-create-helm-install" -> "controller:install-cert-manager" [
+  "controller_aks-create-helm-install" -> "controller_install-cert-manager" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:aks-create-helm-install" -> "controller:docker-push-multiarch" [
+  "controller_aks-create-helm-install" -> "controller_docker-push-multiarch" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:aks-create-helm-install" -> "controller:package-helm-manifest" [
+  "controller_aks-create-helm-install" -> "controller_package-helm-manifest" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:aks-create-helm-install" -> "controller:install-helm-wi" [
+  "controller_aks-create-helm-install" -> "controller_install-helm-wi" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:aks-delete" [
+  "controller_aks-delete" [
     color="black"
     label="{controller:aks-delete | Deletes an AKS cluster}"
     shape="Mrecord"
   ]
-  "controller:aks-delete" -> "az-login" [
+  "controller_aks-delete" -> "az-login" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:build" [
+  "controller_build" [
     color="black"
     label="{controller:build | Generate the \n\{\{.CONTROLLER_APP\}\} binary.}"
     shape="Mrecord"
   ]
-  "controller:build" -> "controller:generate-crds" [
+  "controller_build" -> "controller_generate-crds" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:bundle-crds" [
+  "controller_bundle-crds" [
     color="black"
     label="{controller:bundle-crds | Bundles CRDs...}"
     shape="Mrecord"
   ]
-  "controller:bundle-crds" -> "controller:generate-kustomize" [
+  "controller_bundle-crds" -> "controller_generate-kustomize" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:check-crd-size" [
+  "controller_check-crd-size" [
     color="black"
     label="{controller:check-crd-size | Check that generated CRDs are not too \nlarge for Kubernetes}"
     shape="Mrecord"
   ]
-  "controller:check-crd-size" -> "controller:generate-crds" [
+  "controller_check-crd-size" -> "controller_generate-crds" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:ci" [
+  "controller_ci" [
     color="black"
     label="controller:ci"
     shape="Mrecord"
   ]
-  "controller:ci" -> "controller:verify-samples" [
+  "controller_ci" -> "controller_verify-samples" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:ci" -> "controller:test-cover" [
+  "controller_ci" -> "controller_test-cover" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:ci" -> "controller:test-integration-ci" [
+  "controller_ci" -> "controller_test-integration-ci" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:ci" -> "basic-checks" [
+  "controller_ci" -> "basic-checks" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:ci" -> "controller:check-crd-size" [
+  "controller_ci" -> "controller_check-crd-size" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:ci" -> "controller:lint" [
+  "controller_ci" -> "controller_lint" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:ci-integration-tests" [
+  "controller_ci-integration-tests" [
     color="black"
     label="controller:ci-integration-tests"
     shape="Mrecord"
   ]
-  "controller:ci-integration-tests" -> "cleanup-old-live-azure-resources" [
+  "controller_ci-integration-tests" -> "cleanup-old-live-azure-resources" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:ci-integration-tests" -> "controller:test-integration-kind-ci" [
+  "controller_ci-integration-tests" -> "controller_test-integration-kind-ci" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:ci-integration-tests" -> "controller:test-multitenant-integration-kind-ci" [
+  "controller_ci-integration-tests" -> "controller_test-multitenant-integration-kind-ci" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:ci-integration-tests" -> "cleanup-old-live-azure-resources" [
+  "controller_ci-integration-tests" -> "cleanup-old-live-azure-resources" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:ci-live" [
+  "controller_ci-live" [
     color="black"
     label="controller:ci-live"
     shape="Mrecord"
   ]
-  "controller:ci-live" -> "controller:test-integration-ci-live" [
+  "controller_ci-live" -> "controller_test-integration-ci-live" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:ci-live" -> "basic-checks" [
+  "controller_ci-live" -> "basic-checks" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:ci-live" -> "controller:check-crd-size" [
+  "controller_ci-live" -> "controller_check-crd-size" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:ci-live" -> "controller:lint" [
+  "controller_ci-live" -> "controller_lint" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:create-mi-for-workload-identity" [
+  "controller_create-mi-for-workload-identity" [
     color="black"
     label="{controller:create-mi-for-workload-identity | Creates a managed identity and federated \nidentity credential and stores their \ndetails in the specified path}"
     shape="Mrecord"
   ]
-  "controller:create-mi-for-workload-identity" -> "az-login" [
+  "controller_create-mi-for-workload-identity" -> "az-login" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:delete-helm" [
+  "controller_delete-helm" [
     color="black"
     label="{controller:delete-helm | Delete helm release}"
     shape="Mrecord"
   ]
   
-  "controller:deploy-multitenant-testing-secret" [
+  "controller_deploy-multitenant-testing-secret" [
     color="black"
     label="{controller:deploy-multitenant-testing-secret | Deploy a multitenant \ntesting secret}"
     shape="Mrecord"
   ]
   
-  "controller:docker-build" [
+  "controller_docker-build" [
     color="black"
     label="{controller:docker-build | Builds the \{\{.CONTROLLER_APP\}\} \nDocker image.}"
     shape="Mrecord"
   ]
-  "controller:docker-build" -> "controller:bundle-crds" [
+  "controller_docker-build" -> "controller_bundle-crds" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:docker-build-and-save" [
+  "controller_docker-build-and-save" [
     color="black"
     label="{controller:docker-build-and-save | Builds the \{\{.CONTROLLER_APP\}\} Docker \nimage and saves it using docker save.}"
     shape="Mrecord"
   ]
-  "controller:docker-build-and-save" -> "controller:docker-build" [
+  "controller_docker-build-and-save" -> "controller_docker-build" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:docker-push-local" [
+  "controller_docker-push-local" [
     color="black"
     label="{controller:docker-push-local | Pushes the controller container image \nto a local registry}"
     shape="Mrecord"
   ]
-  "controller:docker-push-local" -> "controller:bundle-crds" [
+  "controller_docker-push-local" -> "controller_bundle-crds" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:docker-push-multiarch" [
+  "controller_docker-push-multiarch" [
     color="black"
     label="{controller:docker-push-multiarch | Builds, tags and pushes the multi \narchitecture controller container image \nto repository}"
     shape="Mrecord"
   ]
-  "controller:docker-push-multiarch" -> "controller:bundle-crds" [
+  "controller_docker-push-multiarch" -> "controller_bundle-crds" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "controller:docker-push-multiarch" -> "docker-login" [
+  "controller_docker-push-multiarch" -> "docker-login" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:format-code" [
+  "controller_format-code" [
     color="black"
     label="{controller:format-code | Ensure all code for the \ncontroller is formatted}"
     shape="Mrecord"
   ]
   
-  "controller:gen-crd-docs" [
+  "controller_gen-crd-docs" [
     color="black"
     label="controller:gen-crd-docs"
     shape="Mrecord"
   ]
-  "controller:gen-crd-docs" -> "doc:crd-api" [
+  "controller_gen-crd-docs" -> "doc_crd-api" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:generate-crds" [
+  "controller_generate-crds" [
     color="black"
     label="{controller:generate-crds | Run controller-gen to generate \n\{\{.CONTROLLER_APP\}\} CRD files.}"
     shape="Mrecord"
   ]
-  "controller:generate-crds" -> "controller:generate-types" [
+  "controller_generate-crds" -> "controller_generate-types" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "controller:generate-crds" -> "controller:generate-genruntime-deepcopy" [
+  "controller_generate-crds" -> "controller_generate-genruntime-deepcopy" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:generate-genruntime-deepcopy" [
+  "controller_generate-genruntime-deepcopy" [
     color="black"
     label="{controller:generate-genruntime-deepcopy | Run controller-gen to generate \n\{\{.CONTROLLER_APP\}\} CRD files.}"
     shape="Mrecord"
   ]
   
-  "controller:generate-kustomize" [
+  "controller_generate-kustomize" [
     color="black"
     label="{controller:generate-kustomize | Run \{\{.GENERATOR_APP\}\} to generate the \nKustomize file for registering CRDs.}"
     shape="Mrecord"
   ]
-  "controller:generate-kustomize" -> "controller:generate-crds" [
+  "controller_generate-kustomize" -> "controller_generate-crds" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:generate-types" [
+  "controller_generate-types" [
     color="black"
     label="{controller:generate-types | Run \{\{.GENERATOR_APP\}\} to generate input \nfiles for controller-gen for \n\{\{.CONTROLLER_APP\}\}.}"
     shape="Mrecord"
   ]
-  "controller:generate-types" -> "generator:build" [
+  "controller_generate-types" -> "generator_build" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:go-mod-tidy" [
+  "controller_go-mod-tidy" [
     color="black"
     label="{controller:go-mod-tidy | Tidy the go.mod file}"
     shape="Mrecord"
   ]
   
-  "controller:install" [
+  "controller_install" [
     color="black"
     label="{controller:install | Installs the controller, webhooks, and \nCRDs into the default kubectl cluster}"
     shape="Mrecord"
   ]
-  "controller:install" -> "controller:generate-kustomize" [
+  "controller_install" -> "controller_generate-kustomize" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:install-cert-manager" [
+  "controller_install-cert-manager" [
     color="black"
     label="{controller:install-cert-manager | Installs cert manager}"
     shape="Mrecord"
   ]
   
-  "controller:install-helm-single-tenant" [
+  "controller_install-helm-single-tenant" [
     color="black"
     label="{controller:install-helm-single-tenant | Generate and install helm chart on \ncluster using workload identity}"
     shape="Mrecord"
   ]
   
-  "controller:install-helm-wi" [
+  "controller_install-helm-wi" [
     color="black"
     label="{controller:install-helm-wi | Generate and install helm chart on \ncluster using workload identity}"
     shape="Mrecord"
   ]
-  "controller:install-helm-wi" -> "controller:wait-for-operator-ready" [
+  "controller_install-helm-wi" -> "controller_wait-for-operator-ready" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:kind-create" [
+  "controller_kind-create" [
     color="black"
     label="{controller:kind-create | Creates a kind cluster and local Docker \nregistry. Images in the local registry \ncan be pulled in the kind cluster}"
     shape="Mrecord"
   ]
   
-  "controller:kind-create-helm-workload-identity" [
+  "controller_kind-create-helm-workload-identity" [
     color="black"
     label="{controller:kind-create-helm-workload-identity | Creates a local kind cluster with \nWorkload identity installed alongside \nASO helm chart using UMI auth.}"
     shape="Mrecord"
   ]
-  "controller:kind-create-helm-workload-identity" -> "controller:kind-create-wi" [
+  "controller_kind-create-helm-workload-identity" -> "controller_kind-create-wi" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-helm-workload-identity" -> "controller:create-mi-for-workload-identity" [
+  "controller_kind-create-helm-workload-identity" -> "controller_create-mi-for-workload-identity" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-helm-workload-identity" -> "controller:install-cert-manager" [
+  "controller_kind-create-helm-workload-identity" -> "controller_install-cert-manager" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-helm-workload-identity" -> "controller:docker-push-local" [
+  "controller_kind-create-helm-workload-identity" -> "controller_docker-push-local" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-helm-workload-identity" -> "controller:package-helm-manifest" [
+  "controller_kind-create-helm-workload-identity" -> "controller_package-helm-manifest" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-helm-workload-identity" -> "controller:install-helm-wi" [
+  "controller_kind-create-helm-workload-identity" -> "controller_install-helm-wi" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:kind-create-multitenant-cluster" [
+  "controller_kind-create-multitenant-cluster" [
     color="black"
     label="{controller:kind-create-multitenant-cluster | Creates a local kind cluster with ASO \ninstalled in multitenant configuration.}"
     shape="Mrecord"
   ]
-  "controller:kind-create-multitenant-cluster" -> "controller:make-multitenant-files" [
+  "controller_kind-create-multitenant-cluster" -> "controller_make-multitenant-files" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "controller:kind-create-multitenant-cluster" -> "controller:kind-create-wi" [
+  "controller_kind-create-multitenant-cluster" -> "controller_kind-create-wi" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-multitenant-cluster" -> "controller:create-mi-for-workload-identity" [
+  "controller_kind-create-multitenant-cluster" -> "controller_create-mi-for-workload-identity" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-multitenant-cluster" -> "controller:install-cert-manager" [
+  "controller_kind-create-multitenant-cluster" -> "controller_install-cert-manager" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-multitenant-cluster" -> "controller:docker-push-local" [
+  "controller_kind-create-multitenant-cluster" -> "controller_docker-push-local" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-multitenant-cluster" -> "controller:wait-for-operator-ready" [
+  "controller_kind-create-multitenant-cluster" -> "controller_wait-for-operator-ready" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-multitenant-cluster" -> "controller:deploy-multitenant-testing-secret" [
+  "controller_kind-create-multitenant-cluster" -> "controller_deploy-multitenant-testing-secret" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:kind-create-multitenant-cluster-helm" [
+  "controller_kind-create-multitenant-cluster-helm" [
     color="black"
     label="{controller:kind-create-multitenant-cluster-helm | Creates a local kind cluster Helm and \nASO in multitenant configuration.}"
     shape="Mrecord"
   ]
-  "controller:kind-create-multitenant-cluster-helm" -> "controller:kind-create-wi" [
+  "controller_kind-create-multitenant-cluster-helm" -> "controller_kind-create-wi" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-multitenant-cluster-helm" -> "controller:create-mi-for-workload-identity" [
+  "controller_kind-create-multitenant-cluster-helm" -> "controller_create-mi-for-workload-identity" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-multitenant-cluster-helm" -> "controller:install-cert-manager" [
+  "controller_kind-create-multitenant-cluster-helm" -> "controller_install-cert-manager" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-multitenant-cluster-helm" -> "controller:docker-push-local" [
+  "controller_kind-create-multitenant-cluster-helm" -> "controller_docker-push-local" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-multitenant-cluster-helm" -> "controller:package-helm-manifest" [
+  "controller_kind-create-multitenant-cluster-helm" -> "controller_package-helm-manifest" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-multitenant-cluster-helm" -> "controller:wait-for-operator-ready" [
+  "controller_kind-create-multitenant-cluster-helm" -> "controller_wait-for-operator-ready" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-multitenant-cluster-helm" -> "controller:install-helm-single-tenant" [
+  "controller_kind-create-multitenant-cluster-helm" -> "controller_install-helm-single-tenant" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:kind-create-wi" [
+  "controller_kind-create-wi" [
     color="black"
     label="{controller:kind-create-wi | Creates a kind cluster and local Docker \nregistry with OIDC + workload identity \nenabled. Images in the local registry \ncan be pulled in the kind cluster.}"
     shape="Mrecord"
   ]
-  "controller:kind-create-wi" -> "az-login" [
+  "controller_kind-create-wi" -> "az-login" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:kind-create-with-workload-identity" [
+  "controller_kind-create-with-workload-identity" [
     color="black"
     label="{controller:kind-create-with-workload-identity | Creates a local kind cluster in workload \nidentity mode with ASO using a managed \nidentity.}"
     shape="Mrecord"
   ]
-  "controller:kind-create-with-workload-identity" -> "controller:kind-create-wi" [
+  "controller_kind-create-with-workload-identity" -> "controller_kind-create-wi" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-with-workload-identity" -> "controller:create-mi-for-workload-identity" [
+  "controller_kind-create-with-workload-identity" -> "controller_create-mi-for-workload-identity" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-with-workload-identity" -> "controller:install-cert-manager" [
+  "controller_kind-create-with-workload-identity" -> "controller_install-cert-manager" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-with-workload-identity" -> "controller:docker-push-local" [
+  "controller_kind-create-with-workload-identity" -> "controller_docker-push-local" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-with-workload-identity" -> "controller:install" [
+  "controller_kind-create-with-workload-identity" -> "controller_install" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-with-workload-identity" -> "controller:make-workload-identity-secret" [
+  "controller_kind-create-with-workload-identity" -> "controller_make-workload-identity-secret" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-with-workload-identity" -> "controller:wait-for-operator-ready" [
+  "controller_kind-create-with-workload-identity" -> "controller_wait-for-operator-ready" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:kind-create-workloadidentity-local-helm" [
+  "controller_kind-create-workloadidentity-local-helm" [
     color="black"
     label="{controller:kind-create-workloadidentity-local-helm | Creates a local kind cluster with \nWorkload identity installed alongside \nthe local ASO helm chart. Does NOT build \nthe Helm chart, it expects that it has \nalready been built. Does NOT swap the \nimage for a local copy.}"
     shape="Mrecord"
   ]
-  "controller:kind-create-workloadidentity-local-helm" -> "controller:kind-create-wi" [
+  "controller_kind-create-workloadidentity-local-helm" -> "controller_kind-create-wi" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-workloadidentity-local-helm" -> "controller:create-mi-for-workload-identity" [
+  "controller_kind-create-workloadidentity-local-helm" -> "controller_create-mi-for-workload-identity" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-workloadidentity-local-helm" -> "controller:install-cert-manager" [
+  "controller_kind-create-workloadidentity-local-helm" -> "controller_install-cert-manager" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:kind-create-workloadidentity-local-helm" -> "controller:install-helm-wi" [
+  "controller_kind-create-workloadidentity-local-helm" -> "controller_install-helm-wi" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:kind-delete" [
+  "controller_kind-delete" [
     color="black"
     label="{controller:kind-delete | Deletes a kind cluster}"
     shape="Mrecord"
   ]
   
-  "controller:lint" [
+  "controller_lint" [
     color="black"
     label="{controller:lint | Run lint checks.}"
     shape="Mrecord"
   ]
-  "controller:lint" -> "controller:generate-crds" [
+  "controller_lint" -> "controller_generate-crds" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:make-multitenant-files" [
+  "controller_make-multitenant-files" [
     color="black"
     label="{controller:make-multitenant-files | Splits the deployment yaml into cluster \nand tenant files for multitenant \ndeployment}"
     shape="Mrecord"
   ]
-  "controller:make-multitenant-files" -> "controller:run-kustomize" [
+  "controller_make-multitenant-files" -> "controller_run-kustomize" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:make-sp-secret" [
+  "controller_make-sp-secret" [
     color="black"
     label="{controller:make-sp-secret | Creates a service principal \naso-controller-settings secret for \ntesting purposes}"
     shape="Mrecord"
   ]
   
-  "controller:make-workload-identity-secret" [
+  "controller_make-workload-identity-secret" [
     color="black"
     label="{controller:make-workload-identity-secret | Creates a workload identity secret \nfor testing purposes}"
     shape="Mrecord"
   ]
   
-  "controller:package-helm-manifest" [
+  "controller_package-helm-manifest" [
     color="black"
     label="{controller:package-helm-manifest | Package helm manifest for \nthe release}"
     shape="Mrecord"
   ]
-  "controller:package-helm-manifest" -> "controller:generate-kustomize" [
+  "controller_package-helm-manifest" -> "controller_generate-kustomize" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "controller:package-helm-manifest" -> "controller:validate-helm" [
+  "controller_package-helm-manifest" -> "controller_validate-helm" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:quick-checks" [
+  "controller_quick-checks" [
     color="black"
     label="controller:quick-checks"
     shape="Mrecord"
   ]
-  "controller:quick-checks" -> "controller:test" [
+  "controller_quick-checks" -> "controller_test" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:quick-checks" -> "basic-checks" [
+  "controller_quick-checks" -> "basic-checks" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:quick-checks" -> "controller:check-crd-size" [
+  "controller_quick-checks" -> "controller_check-crd-size" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:quick-checks" -> "controller:verify-samples" [
+  "controller_quick-checks" -> "controller_verify-samples" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:quick-checks" -> "controller:lint" [
+  "controller_quick-checks" -> "controller_lint" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:run-kustomize" [
+  "controller_run-kustomize" [
     color="black"
     label="{controller:run-kustomize | Generates the CRD & \nconfiguration bundle.}"
     shape="Mrecord"
   ]
-  "controller:run-kustomize" -> "controller:generate-kustomize" [
+  "controller_run-kustomize" -> "controller_generate-kustomize" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:run-kustomize-for-envtest" [
+  "controller_run-kustomize-for-envtest" [
     color="black"
     label="{controller:run-kustomize-for-envtest | Generates the CRDs for use \nin envtest}"
     shape="Mrecord"
   ]
-  "controller:run-kustomize-for-envtest" -> "controller:generate-kustomize" [
+  "controller_run-kustomize-for-envtest" -> "controller_generate-kustomize" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:scan-image" [
+  "controller_scan-image" [
     color="black"
     label="{controller:scan-image | Builds a local image and scans the \nimage using trivy}"
     shape="Mrecord"
   ]
-  "controller:scan-image" -> "controller:docker-build" [
+  "controller_scan-image" -> "controller_docker-build" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:test" [
+  "controller_test" [
     color="black"
     label="{controller:test | Run \{\{.CONTROLLER_APP\}\} \nunit tests.}"
     shape="Mrecord"
   ]
-  "controller:test" -> "controller:generate-crds" [
+  "controller_test" -> "controller_generate-crds" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "controller:test" -> "controller:run-kustomize-for-envtest" [
+  "controller_test" -> "controller_run-kustomize-for-envtest" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "controller:test" -> "controller:bundle-crds" [
+  "controller_test" -> "controller_bundle-crds" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:test-cover" [
+  "controller_test-cover" [
     color="black"
     label="{controller:test-cover | Run \{\{.CONTROLLER_APP\}\} unit tests \nand output coverage.}"
     shape="Mrecord"
   ]
-  "controller:test-cover" -> "setup" [
+  "controller_test-cover" -> "setup" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "controller:test-cover" -> "controller:generate-crds" [
+  "controller_test-cover" -> "controller_generate-crds" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "controller:test-cover" -> "controller:bundle-crds" [
+  "controller_test-cover" -> "controller_bundle-crds" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "controller:test-cover" -> "produce-markdown-summary" [
+  "controller_test-cover" -> "produce-markdown-summary" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:test-integration-ci" [
+  "controller_test-integration-ci" [
     color="black"
     label="{controller:test-integration-ci | Run integration tests \nfor CI}"
     shape="Mrecord"
   ]
-  "controller:test-integration-ci" -> "controller:test-integration-envtest" [
+  "controller_test-integration-ci" -> "controller_test-integration-envtest" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:test-integration-ci-live" [
+  "controller_test-integration-ci-live" [
     color="black"
     label="{controller:test-integration-ci-live | Run integration tests for CI \nin live mode}"
     shape="Mrecord"
   ]
-  "controller:test-integration-ci-live" -> "controller:test-integration-envtest-live" [
+  "controller_test-integration-ci-live" -> "controller_test-integration-envtest-live" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:test-integration-envtest" [
+  "controller_test-integration-envtest" [
     color="black"
     label="{controller:test-integration-envtest | Run integration tests with envtest \nusing record/replay.}"
     shape="Mrecord"
   ]
-  "controller:test-integration-envtest" -> "controller:run-kustomize-for-envtest" [
+  "controller_test-integration-envtest" -> "controller_run-kustomize-for-envtest" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:test-integration-envtest-cover" [
+  "controller_test-integration-envtest-cover" [
     color="black"
     label="{controller:test-integration-envtest-cover | Run integration tests with envtest using \nrecord/replay and output coverage.}"
     shape="Mrecord"
   ]
-  "controller:test-integration-envtest-cover" -> "setup" [
+  "controller_test-integration-envtest-cover" -> "setup" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "controller:test-integration-envtest-cover" -> "controller:run-kustomize-for-envtest" [
+  "controller_test-integration-envtest-cover" -> "controller_run-kustomize-for-envtest" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "controller:test-integration-envtest-cover" -> "produce-markdown-summary" [
+  "controller_test-integration-envtest-cover" -> "produce-markdown-summary" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:test-integration-envtest-cover" -> "produce-markdown-summary" [
+  "controller_test-integration-envtest-cover" -> "produce-markdown-summary" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:test-integration-envtest-cover" -> "produce-markdown-summary" [
+  "controller_test-integration-envtest-cover" -> "produce-markdown-summary" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:test-integration-envtest-live" [
+  "controller_test-integration-envtest-live" [
     color="black"
     label="{controller:test-integration-envtest-live | Run integration tests with envtest \nagainst live data and output coverage.}"
     shape="Mrecord"
   ]
-  "controller:test-integration-envtest-live" -> "controller:run-kustomize-for-envtest" [
+  "controller_test-integration-envtest-live" -> "controller_run-kustomize-for-envtest" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "controller:test-integration-envtest-live" -> "cleanup-azure-resources" [
+  "controller_test-integration-envtest-live" -> "cleanup-azure-resources" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:test-integration-envtest-record" [
+  "controller_test-integration-envtest-record" [
     color="black"
     label="{controller:test-integration-envtest-record | Run integration tests with envtest with \na longer timeout suitable for recording \nthe tests.}"
     shape="Mrecord"
   ]
-  "controller:test-integration-envtest-record" -> "controller:run-kustomize-for-envtest" [
+  "controller_test-integration-envtest-record" -> "controller_run-kustomize-for-envtest" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:test-integration-kind" [
+  "controller_test-integration-kind" [
     color="black"
     label="{controller:test-integration-kind | Run live integration tests \nin kind.}"
     shape="Mrecord"
   ]
-  "controller:test-integration-kind" -> "controller:kind-create-helm-workload-identity" [
+  "controller_test-integration-kind" -> "controller_kind-create-helm-workload-identity" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:test-integration-kind-ci" [
+  "controller_test-integration-kind-ci" [
     color="black"
     label="{controller:test-integration-kind-ci | Run live integration tests in kind and \ndeletes the kind cluster afterwards.}"
     shape="Mrecord"
   ]
-  "controller:test-integration-kind-ci" -> "controller:kind-create-helm-workload-identity" [
+  "controller_test-integration-kind-ci" -> "controller_kind-create-helm-workload-identity" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "controller:test-integration-kind-ci" -> "controller:kind-delete" [
+  "controller_test-integration-kind-ci" -> "controller_kind-delete" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:test-multitenant-integration-kind" [
+  "controller_test-multitenant-integration-kind" [
     color="black"
     label="{controller:test-multitenant-integration-kind | Run live multitenant integration \ntests in kind.}"
     shape="Mrecord"
   ]
-  "controller:test-multitenant-integration-kind" -> "controller:kind-create-multitenant-cluster-helm" [
+  "controller_test-multitenant-integration-kind" -> "controller_kind-create-multitenant-cluster-helm" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:test-multitenant-integration-kind-ci" [
+  "controller_test-multitenant-integration-kind-ci" [
     color="black"
     label="{controller:test-multitenant-integration-kind-ci | Run live multitenant integration \ntests in kind.}"
     shape="Mrecord"
   ]
-  "controller:test-multitenant-integration-kind-ci" -> "controller:kind-create-multitenant-cluster-helm" [
+  "controller_test-multitenant-integration-kind-ci" -> "controller_kind-create-multitenant-cluster-helm" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "controller:test-multitenant-integration-kind-ci" -> "controller:kind-delete" [
+  "controller_test-multitenant-integration-kind-ci" -> "controller_kind-delete" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:test-upgrade" [
+  "controller_test-upgrade" [
     color="black"
     label="{controller:test-upgrade | Test upgrading \{\{.CONTROLLER_APP\}\} and \nhelm chart for new release}"
     shape="Mrecord"
   ]
-  "controller:test-upgrade" -> "controller:test-upgrade-setup" [
+  "controller_test-upgrade" -> "controller_test-upgrade-setup" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:test-upgrade" -> "controller:test-upgrade-pre" [
+  "controller_test-upgrade" -> "controller_test-upgrade-pre" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:test-upgrade" -> "controller:test-upgrade-post" [
+  "controller_test-upgrade" -> "controller_test-upgrade-post" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:test-upgrade-apply-prerelease-chart" [
+  "controller_test-upgrade-apply-prerelease-chart" [
     color="black"
     label="{controller:test-upgrade-apply-prerelease-chart | Apply the \{\{.CONTROLLER_APP\}\} prerelease \nchart for new release}"
     shape="Mrecord"
   ]
-  "controller:test-upgrade-apply-prerelease-chart" -> "controller:docker-push-local" [
+  "controller_test-upgrade-apply-prerelease-chart" -> "controller_docker-push-local" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:test-upgrade-apply-prerelease-chart" -> "controller:package-helm-manifest" [
+  "controller_test-upgrade-apply-prerelease-chart" -> "controller_package-helm-manifest" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:test-upgrade-apply-prerelease-chart" -> "controller:install-helm-wi" [
+  "controller_test-upgrade-apply-prerelease-chart" -> "controller_install-helm-wi" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:test-upgrade-post" [
+  "controller_test-upgrade-post" [
     color="black"
     label="{controller:test-upgrade-post | Test upgrading \{\{.CONTROLLER_APP\}\} and \nhelm chart for new release}"
     shape="Mrecord"
   ]
-  "controller:test-upgrade-post" -> "controller:test-upgrade-apply-prerelease-chart" [
+  "controller_test-upgrade-post" -> "controller_test-upgrade-apply-prerelease-chart" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:test-upgrade-post" -> "controller:kind-delete" [
+  "controller_test-upgrade-post" -> "controller_kind-delete" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:test-upgrade-pre" [
+  "controller_test-upgrade-pre" [
     color="black"
     label="{controller:test-upgrade-pre | Test upgrading \{\{.CONTROLLER_APP\}\} and \nhelm chart for new release}"
     shape="Mrecord"
   ]
-  "controller:test-upgrade-pre" -> "controller:test-upgrade-pre-setup" [
+  "controller_test-upgrade-pre" -> "controller_test-upgrade-pre-setup" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:test-upgrade-pre-setup" [
+  "controller_test-upgrade-pre-setup" [
     color="black"
     label="{controller:test-upgrade-pre-setup | Setup for the \ntest-upgrade-pre step}"
     shape="Mrecord"
   ]
-  "controller:test-upgrade-pre-setup" -> "controller:wait-for-operator-ready" [
+  "controller_test-upgrade-pre-setup" -> "controller_wait-for-operator-ready" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:test-upgrade-setup" [
+  "controller_test-upgrade-setup" [
     color="black"
     label="{controller:test-upgrade-setup | Setup for upgrade test}"
     shape="Mrecord"
   ]
-  "controller:test-upgrade-setup" -> "controller:kind-create-wi" [
+  "controller_test-upgrade-setup" -> "controller_kind-create-wi" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:test-upgrade-setup" -> "controller:create-mi-for-workload-identity" [
+  "controller_test-upgrade-setup" -> "controller_create-mi-for-workload-identity" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:test-upgrade-setup" -> "controller:install-cert-manager" [
+  "controller_test-upgrade-setup" -> "controller_install-cert-manager" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "controller:test-upgrade-setup" -> "controller:package-helm-manifest" [
+  "controller_test-upgrade-setup" -> "controller_package-helm-manifest" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "controller:validate-helm" [
+  "controller_validate-helm" [
     color="black"
     label="{controller:validate-helm | Validates and compares helm against the \nASO yaml generated by kustomize and \nensures that they match}"
     shape="Mrecord"
   ]
-  "controller:validate-helm" -> "controller:run-kustomize" [
+  "controller_validate-helm" -> "controller_run-kustomize" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "controller:validate-helm" -> "scripts:build-python-venv" [
+  "controller_validate-helm" -> "scripts_build-python-venv" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:verify-samples" [
+  "controller_verify-samples" [
     color="black"
     label="{controller:verify-samples | Verify that a sample exists for each \nsupported resource}"
     shape="Mrecord"
   ]
-  "controller:verify-samples" -> "controller:generate-crds" [
+  "controller_verify-samples" -> "controller_generate-crds" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "controller:wait-for-operator-ready" [
+  "controller_wait-for-operator-ready" [
     color="black"
     label="{controller:wait-for-operator-ready | Waits for the operator and associated \nCRDs to be ready}"
     shape="Mrecord"
   ]
   
-  "crossplane:ci" [
+  "crossplane_ci" [
     color="black"
     label="crossplane:ci"
     shape="Mrecord"
   ]
-  "crossplane:ci" -> "basic-checks" [
+  "crossplane_ci" -> "basic-checks" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "crossplane:ci" -> "crossplane:generate-crds" [
+  "crossplane_ci" -> "crossplane_generate-crds" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "crossplane:generate-crds" [
+  "crossplane_generate-crds" [
     color="black"
     label="{crossplane:generate-crds | Run controller-gen to generate \n\{\{.CROSSPLANE_APP\}\} CRD files.}"
     shape="Mrecord"
   ]
-  "crossplane:generate-crds" -> "crossplane:generate-types" [
+  "crossplane_generate-crds" -> "crossplane_generate-types" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "crossplane:generate-types" [
+  "crossplane_generate-types" [
     color="black"
     label="{crossplane:generate-types | Run \{\{.GENERATOR_APP\}\} to generate input \nfiles for controller-gen for \n\{\{.CROSSPLANE_APP\}\}.}"
     shape="Mrecord"
   ]
-  "crossplane:generate-types" -> "generator:build" [
+  "crossplane_generate-types" -> "generator_build" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "crossplane:quick-checks" [
+  "crossplane_quick-checks" [
     color="black"
     label="crossplane:quick-checks"
     shape="Mrecord"
   ]
-  "crossplane:quick-checks" -> "basic-checks" [
+  "crossplane_quick-checks" -> "basic-checks" [
     color="blue"
     penwidth="1"
     style="dashed"
@@ -1332,41 +1332,41 @@ digraph {
     style="dashed"
   ]
   
-  "doc:build-site" [
+  "doc_build-site" [
     color="black"
     label="doc:build-site"
     shape="Mrecord"
   ]
-  "doc:build-site" -> "doc:frontmatter-check" [
+  "doc_build-site" -> "doc_frontmatter-check" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "doc:crd-api" [
+  "doc_crd-api" [
     color="black"
     label="{doc:crd-api | Generates API docs for \nCRDs}"
     shape="Mrecord"
   ]
-  "doc:crd-api" -> "controller:generate-crds" [
+  "doc_crd-api" -> "controller_generate-crds" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "doc:dependencies" [
+  "doc_dependencies" [
     color="black"
     label="{doc:dependencies | Generate documentation for \ndepencencies}"
     shape="Mrecord"
   ]
   
-  "doc:frontmatter-check" [
+  "doc_frontmatter-check" [
     color="black"
     label="{doc:frontmatter-check | Ensure all Markdown documentation \nhas frontmatter.}"
     shape="Mrecord"
   ]
   
-  "doc:render-diagrams" [
+  "doc_render-diagrams" [
     color="black"
     label="{doc:render-diagrams | Render all GraphViz \ndiagrams}"
     shape="Mrecord"
@@ -1388,17 +1388,17 @@ digraph {
     label="{format-code | Ensure all code is \nformatted}"
     shape="Mrecord"
   ]
-  "format-code" -> "asoctl:format-code" [
+  "format-code" -> "asoctl_format-code" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "format-code" -> "generator:format-code" [
+  "format-code" -> "generator_format-code" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "format-code" -> "controller:format-code" [
+  "format-code" -> "controller_format-code" [
     color="blue"
     penwidth="1"
     style="dashed"
@@ -1410,106 +1410,106 @@ digraph {
     shape="Mrecord"
   ]
   
-  "generator:build" [
+  "generator_build" [
     color="black"
     label="{generator:build | Generate the \n\{\{.GENERATOR_APP\}\} binary.}"
     shape="Mrecord"
   ]
   
-  "generator:ci" [
+  "generator_ci" [
     color="black"
     label="generator:ci"
     shape="Mrecord"
   ]
-  "generator:ci" -> "generator:unit-tests-cover" [
+  "generator_ci" -> "generator_unit-tests-cover" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "generator:ci" -> "basic-checks" [
+  "generator_ci" -> "basic-checks" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "generator:ci" -> "generator:lint" [
+  "generator_ci" -> "generator_lint" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "generator:diagrams" [
+  "generator_diagrams" [
     color="black"
     label="generator:diagrams"
     shape="Mrecord"
   ]
-  "generator:diagrams" -> "doc:render-diagrams" [
+  "generator_diagrams" -> "doc_render-diagrams" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "generator:format-code" [
+  "generator_format-code" [
     color="black"
     label="{generator:format-code | Ensure all code for the code \ngenerator is formatted}"
     shape="Mrecord"
   ]
   
-  "generator:go-mod-tidy" [
+  "generator_go-mod-tidy" [
     color="black"
     label="{generator:go-mod-tidy | Tidy the go.mod file}"
     shape="Mrecord"
   ]
   
-  "generator:lint" [
+  "generator_lint" [
     color="black"
     label="{generator:lint | Run \{\{.GENERATOR_APP\}\} lint \nchecks.}"
     shape="Mrecord"
   ]
   
-  "generator:quick-checks" [
+  "generator_quick-checks" [
     color="black"
     label="generator:quick-checks"
     shape="Mrecord"
   ]
-  "generator:quick-checks" -> "generator:unit-tests" [
+  "generator_quick-checks" -> "generator_unit-tests" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "generator:quick-checks" -> "basic-checks" [
+  "generator_quick-checks" -> "basic-checks" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "generator:quick-checks" -> "generator:lint" [
+  "generator_quick-checks" -> "generator_lint" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "generator:unit-tests" [
+  "generator_unit-tests" [
     color="black"
     label="{generator:unit-tests | Run \{\{.GENERATOR_APP\}\} unit \ntests.}"
     shape="Mrecord"
   ]
   
-  "generator:unit-tests-cover" [
+  "generator_unit-tests-cover" [
     color="black"
     label="{generator:unit-tests-cover | Run \{\{.GENERATOR_APP\}\} unit tests and \noutput coverage.}"
     shape="Mrecord"
   ]
-  "generator:unit-tests-cover" -> "setup" [
+  "generator_unit-tests-cover" -> "setup" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "generator:unit-tests-cover" -> "produce-markdown-summary" [
+  "generator_unit-tests-cover" -> "produce-markdown-summary" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "generator:update-golden-tests" [
+  "generator_update-golden-tests" [
     color="black"
     label="{generator:update-golden-tests | Update \{\{.GENERATOR_APP\}\} golden \ntest outputs.}"
     shape="Mrecord"
@@ -1520,17 +1520,17 @@ digraph {
     label="{go-mod-tidy | Tidy the go.mod files}"
     shape="Mrecord"
   ]
-  "go-mod-tidy" -> "controller:go-mod-tidy" [
+  "go-mod-tidy" -> "controller_go-mod-tidy" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "go-mod-tidy" -> "asoctl:go-mod-tidy" [
+  "go-mod-tidy" -> "asoctl_go-mod-tidy" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "go-mod-tidy" -> "generator:go-mod-tidy" [
+  "go-mod-tidy" -> "generator_go-mod-tidy" [
     color="blue"
     penwidth="1"
     style="dashed"
@@ -1547,34 +1547,34 @@ digraph {
     label="{make-release-artifacts | Produce files required for an \nASOv2 release}"
     shape="Mrecord"
   ]
-  "make-release-artifacts" -> "controller:run-kustomize" [
+  "make-release-artifacts" -> "controller_run-kustomize" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "make-release-artifacts" -> "controller:make-multitenant-files" [
+  "make-release-artifacts" -> "controller_make-multitenant-files" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "make-release-artifacts" -> "asoctl:make-release-artifacts" [
+  "make-release-artifacts" -> "asoctl_make-release-artifacts" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "mangle-test:lint" [
+  "mangle-test_lint" [
     color="black"
     label="{mangle-test:lint | Run mangle-test fast lint \nchecks.}"
     shape="Mrecord"
   ]
   
-  "mangle-test:quick-checks" [
+  "mangle-test_quick-checks" [
     color="black"
     label="mangle-test:quick-checks"
     shape="Mrecord"
   ]
-  "mangle-test:quick-checks" -> "mangle-test:lint" [
+  "mangle-test_quick-checks" -> "mangle-test_lint" [
     color="blue"
     penwidth="1"
     style="dashed"
@@ -1602,33 +1602,33 @@ digraph {
     label="{quick-checks | Perform all fast local \npre-commit tasks.}"
     shape="Mrecord"
   ]
-  "quick-checks" -> "generator:quick-checks" [
+  "quick-checks" -> "generator_quick-checks" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "quick-checks" -> "controller:quick-checks" [
+  "quick-checks" -> "controller_quick-checks" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "quick-checks" -> "asoctl:quick-checks" [
+  "quick-checks" -> "asoctl_quick-checks" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "quick-checks" -> "crossplane:quick-checks" [
+  "quick-checks" -> "crossplane_quick-checks" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "quick-checks" -> "mangle-test:quick-checks" [
+  "quick-checks" -> "mangle-test_quick-checks" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "scripts:build-python-venv" [
+  "scripts_build-python-venv" [
     color="black"
     label="{scripts:build-python-venv | Creates a Python virtual \nenv}"
     shape="Mrecord"
