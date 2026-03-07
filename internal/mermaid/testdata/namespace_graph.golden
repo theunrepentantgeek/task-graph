@@ -1,0 +1,16 @@
+flowchart TD
+  build["build"]
+  
+  subgraph sg_cmd["cmd"]
+    cmd_build["cmd:build"]
+    cmd_build --> build
+    cmd_build --> cmd_test_unit
+    cmd_build --> cmd_test_golden
+    
+    subgraph sg_cmd_test["cmd:test"]
+      cmd_test_golden["cmd:test:golden"]
+      
+      cmd_test_unit["cmd:test:unit"]
+      
+    end
+  end

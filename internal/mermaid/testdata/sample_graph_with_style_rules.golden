@@ -1,0 +1,14 @@
+flowchart TD
+  alpha["alpha"]
+  alpha --> beta
+  alpha --> gamma
+  
+  beta["beta"]
+  beta -->|"next"| gamma
+  
+  gamma["gamma"]
+  
+  classDef rule0 fill:lightyellow,stroke:red
+  class alpha rule0
+  classDef rule1 color:blue
+  class beta rule1

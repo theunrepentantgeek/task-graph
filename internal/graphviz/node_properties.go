@@ -41,11 +41,11 @@ func (p nodeProperties) AddAttributes(
 	}
 }
 
-// AddStyleRuleAttributes adds the attributes from the given GraphvizStyleRule to the properties map
+// AddStyleRuleAttributes adds the attributes from the given NodeStyleRule to the properties map
 // if the given node ID matches the rule's pattern.
 func (p nodeProperties) AddStyleRuleAttributes(
 	nodeID string,
-	rule config.GraphvizStyleRule,
+	rule config.NodeStyleRule,
 ) {
 	matched, err := path.Match(rule.Match, nodeID)
 	if err != nil || !matched {
