@@ -29,7 +29,6 @@ type CLI struct {
 
 	GroupByNamespace bool `help:"Group tasks in the same namespace together in the output." long:"group-by-namespace"`
 
-	//nolint:revive // Intentionally long name for clarity in the CLI help.
 	AutoColor bool `help:"Automatically color nodes by namespace using a built-in palette." long:"auto-color"`
 
 	GraphType string `help:"Type of graph to generate (dot or mermaid). Defaults to dot." long:"graph-type"`

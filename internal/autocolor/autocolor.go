@@ -78,6 +78,7 @@ func sortNamespaces(namespaces []string) {
 	slices.SortFunc(namespaces, func(a, b string) int {
 		depthA := strings.Count(a, ":")
 		depthB := strings.Count(b, ":")
+
 		if depthA != depthB {
 			return cmp.Compare(depthA, depthB)
 		}
