@@ -57,15 +57,13 @@ func (r *Registry) IDWithPrefix(prefix, name string) string {
 // claim assigns base (or a disambiguated variant) to the given original name.
 func (r *Registry) claim(original string, base string) string {
 	// If base is unclaimed, or was already claimed by the same original, assign it directly.
-	if claimer, ok := r.claimed[base]; !ok || claimer == original {
-		r.claimed[base] = original
+	if r.tryAssign(original, base) {
 		return base
 	}
 
 	for _, suffix := range knownSuffixes {
 		candidate := base + "_" + suffix
-		if claimer, ok := r.claimed[candidate]; !ok || claimer == original {
-			r.claimed[candidate] = original
+		if r.tryAssign(original, candidate) {
 			return candidate
 		}
 	}
@@ -73,15 +71,25 @@ func (r *Registry) claim(original string, base string) string {
 	// Fall back to numeric suffixes for extreme collision scenarios
 	for i := 1; ; i++ {
 		candidate := fmt.Sprintf("%s_%d", base, i)
-		if claimer, ok := r.claimed[candidate]; !ok || claimer == original {
-			r.claimed[candidate] = original
+		if r.tryAssign(original, candidate) {
 			return candidate
 		}
 	}
 }
 
+// tryAssign attempts to assign candidate to original, returning true if successful.
+func (r *Registry) tryAssign(original string, candidate string) bool {
+	if claimer, ok := r.claimed[candidate]; !ok || claimer == original {
+		r.claimed[candidate] = original
+
+		return true
+	}
+
+	return false
+}
+
 // isValid returns true if name is already a valid safe identifier requiring no transformation.
-func (r *Registry) isValid(name string) bool {
+func (*Registry) isValid(name string) bool {
 	if len(name) == 0 {
 		return false
 	}
@@ -102,7 +110,7 @@ func (r *Registry) isValid(name string) bool {
 
 // sanitize converts name to a safe identifier by replacing invalid characters with underscores.
 // A leading digit is preserved by prepending an underscore.
-func (r *Registry) sanitize(name string) string {
+func (*Registry) sanitize(name string) string {
 	if name == "" {
 		return "_"
 	}
