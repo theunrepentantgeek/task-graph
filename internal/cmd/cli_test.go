@@ -11,6 +11,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/theunrepentantgeek/task-graph/internal/config"
+	"github.com/theunrepentantgeek/task-graph/internal/graph"
 )
 
 func TestCreateConfig_DefaultsWhenNoFileProvided(t *testing.T) {
@@ -184,6 +185,84 @@ func TestCreateConfig_HighlightFlagWithGlobPattern(t *testing.T) {
 	g.Expect(err).NotTo(HaveOccurred())
 	g.Expect(cfg.NodeStyleRules).To(HaveLen(1))
 	g.Expect(cfg.NodeStyleRules[0].Match).To(Equal("cmd:*"))
+}
+
+// TestApplyAutoColor
+
+func TestApplyAutoColor_WhenDisabled_LeavesRulesUnchanged(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	cfg := config.New()
+	cfg.AutoColor = false
+	cfg.NodeStyleRules = []config.NodeStyleRule{
+		{Match: "user:*", FillColor: "red", Style: "filled"},
+	}
+
+	gr := graph.New()
+	gr.AddNode("cmd:build")
+
+	// Act
+	applyAutoColor(cfg, gr)
+
+	// Assert
+	g.Expect(cfg.NodeStyleRules).To(HaveLen(1))
+	g.Expect(cfg.NodeStyleRules[0].Match).To(Equal("user:*"))
+}
+
+func TestApplyAutoColor_WithNamespacedGraph_GeneratesRulesForNamespaces(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	cfg := config.New()
+	cfg.AutoColor = true
+
+	gr := graph.New()
+	gr.AddNode("cmd:build")
+	gr.AddNode("cmd:test")
+	gr.AddNode("controllers:deploy")
+
+	// Act
+	applyAutoColor(cfg, gr)
+
+	// Assert
+	matches := make([]string, len(cfg.NodeStyleRules))
+	for i, r := range cfg.NodeStyleRules {
+		matches[i] = r.Match
+	}
+
+	g.Expect(matches).To(ContainElements("cmd:*", "controllers:*"))
+}
+
+func TestApplyAutoColor_AutoRulesPrependedBeforeUserRules(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	cfg := config.New()
+	cfg.AutoColor = true
+	cfg.NodeStyleRules = []config.NodeStyleRule{
+		{Match: "cmd:build", FillColor: "gold", Style: "filled"},
+	}
+
+	gr := graph.New()
+	gr.AddNode("cmd:build")
+	gr.AddNode("cmd:test")
+
+	// Act
+	applyAutoColor(cfg, gr)
+
+	// Assert: auto-generated rule comes first, user-defined rule comes last
+	g.Expect(cfg.NodeStyleRules).To(HaveLen(2))
+
+	autoRule := cfg.NodeStyleRules[0]
+	g.Expect(autoRule.Match).To(Equal("cmd:*"))
+
+	userRule := cfg.NodeStyleRules[1]
+	g.Expect(userRule.Match).To(Equal("cmd:build"))
+	g.Expect(userRule.FillColor).To(Equal("gold"))
 }
 
 // TestExportConfigToFile

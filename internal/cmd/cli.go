@@ -15,6 +15,7 @@ import (
 	"github.com/theunrepentantgeek/task-graph/internal/autocolor"
 	"github.com/theunrepentantgeek/task-graph/internal/config"
 	"github.com/theunrepentantgeek/task-graph/internal/dot"
+	"github.com/theunrepentantgeek/task-graph/internal/graph"
 	"github.com/theunrepentantgeek/task-graph/internal/graphviz"
 	"github.com/theunrepentantgeek/task-graph/internal/loader"
 	"github.com/theunrepentantgeek/task-graph/internal/mermaid"
@@ -64,10 +65,7 @@ func (c *CLI) Run(
 
 	gr := taskgraph.New(tf).Build()
 
-	if flags.Config.AutoColor {
-		autoRules := autocolor.GenerateRules(gr)
-		flags.Config.NodeStyleRules = append(autoRules, flags.Config.NodeStyleRules...)
-	}
+	applyAutoColor(flags.Config, gr)
 
 	graphType := c.resolveGraphType(flags)
 
@@ -212,6 +210,17 @@ func (c *CLI) applyHighlightOverrides(cfg *config.Config) {
 		}
 		cfg.NodeStyleRules = append(cfg.NodeStyleRules, rule)
 	}
+}
+
+// applyAutoColor generates auto-color rules from the graph's namespaces and
+// prepends them to cfg.NodeStyleRules so that user-defined rules take precedence.
+func applyAutoColor(cfg *config.Config, gr *graph.Graph) {
+	if !cfg.AutoColor {
+		return
+	}
+
+	autoRules := autocolor.GenerateRules(gr)
+	cfg.NodeStyleRules = append(autoRules, cfg.NodeStyleRules...)
 }
 
 func (c *CLI) loadConfigFile(cfg *config.Config) error {
