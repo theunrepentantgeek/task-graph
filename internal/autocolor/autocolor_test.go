@@ -41,7 +41,7 @@ func TestGenerateRules_SingleNamespace_ReturnsOneRule(t *testing.T) {
 	// Assert
 	g.Expect(rules).To(HaveLen(1))
 	g.Expect(rules[0].Match).To(Equal("cmd:*"))
-	g.Expect(rules[0].FillColor).To(Equal(Palette[0]))
+	g.Expect(rules[0].FillColor).To(Equal(palette[0]))
 	g.Expect(rules[0].Style).To(Equal("filled"))
 }
 
@@ -63,11 +63,11 @@ func TestGenerateRules_MultipleNamespaces_AssignsColorsAlphabetically(t *testing
 
 	cmd := rules[0]
 	g.Expect(cmd.Match).To(Equal("cmd:*"))
-	g.Expect(cmd.FillColor).To(Equal(Palette[0]))
+	g.Expect(cmd.FillColor).To(Equal(palette[0]))
 
 	controllers := rules[1]
 	g.Expect(controllers.Match).To(Equal("controllers:*"))
-	g.Expect(controllers.FillColor).To(Equal(Palette[1]))
+	g.Expect(controllers.FillColor).To(Equal(palette[1]))
 }
 
 func TestGenerateRules_NestedNamespaces_GeneratesRulesForAll(t *testing.T) {
@@ -90,11 +90,11 @@ func TestGenerateRules_NestedNamespaces_GeneratesRulesForAll(t *testing.T) {
 	// "cmd" comes first (shallower), then "cmd:test"
 	cmd := rules[0]
 	g.Expect(cmd.Match).To(Equal("cmd:*"))
-	g.Expect(cmd.FillColor).To(Equal(Palette[0]))
+	g.Expect(cmd.FillColor).To(Equal(palette[0]))
 
 	cmdTest := rules[1]
 	g.Expect(cmdTest.Match).To(Equal("cmd:test:*"))
-	g.Expect(cmdTest.FillColor).To(Equal(Palette[1]))
+	g.Expect(cmdTest.FillColor).To(Equal(palette[1]))
 }
 
 func TestGenerateRules_MoreNamespacesThanPalette_CyclesColors(t *testing.T) {
@@ -103,7 +103,7 @@ func TestGenerateRules_MoreNamespacesThanPalette_CyclesColors(t *testing.T) {
 
 	// Arrange: create more namespaces than palette entries
 	gr := graph.New()
-	for i := range len(Palette) + 1 {
+	for i := range len(palette) + 1 {
 		gr.AddNode(string(rune('a'+i)) + ":task")
 	}
 
@@ -111,10 +111,10 @@ func TestGenerateRules_MoreNamespacesThanPalette_CyclesColors(t *testing.T) {
 	rules := GenerateRules(gr)
 
 	// Assert
-	g.Expect(rules).To(HaveLen(len(Palette) + 1))
+	g.Expect(rules).To(HaveLen(len(palette) + 1))
 
 	// The last rule should cycle back to the first palette color
-	g.Expect(rules[len(Palette)].FillColor).To(Equal(Palette[0]))
+	g.Expect(rules[len(palette)].FillColor).To(Equal(palette[0]))
 }
 
 func TestGenerateRules_EmptyGraph_ReturnsEmptyRules(t *testing.T) {

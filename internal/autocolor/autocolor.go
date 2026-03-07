@@ -9,9 +9,9 @@ import (
 	"github.com/theunrepentantgeek/task-graph/internal/graph"
 )
 
-// Palette is the ordered list of fill colors used for auto-coloring namespaces.
+// palette is the ordered list of fill colors used for auto-coloring namespaces.
 // Colors are selected to be visually distinct and suitable for node backgrounds.
-var Palette = []string{
+var palette = []string{
 	"lightblue",
 	"lightgreen",
 	"lightyellow",
@@ -30,7 +30,7 @@ var Palette = []string{
 // The generated rules should be prepended to any existing NodeStyleRules so that
 // user-defined rules take precedence over the auto-generated ones.
 func GenerateRules(gr *graph.Graph) []config.NodeStyleRule {
-	if len(Palette) == 0 {
+	if len(palette) == 0 {
 		return nil
 	}
 
@@ -39,7 +39,7 @@ func GenerateRules(gr *graph.Graph) []config.NodeStyleRule {
 
 	rules := make([]config.NodeStyleRule, 0, len(namespaces))
 	for i, ns := range namespaces {
-		color := Palette[i%len(Palette)]
+		color := palette[i%len(palette)]
 		rules = append(rules, config.NodeStyleRule{
 			Match:     ns + ":*",
 			FillColor: color,
