@@ -60,10 +60,14 @@ func TestGenerateRules_MultipleNamespaces_AssignsColorsAlphabetically(t *testing
 	// Assert
 	// Alphabetical: "cmd" before "controllers"
 	g.Expect(rules).To(HaveLen(2))
-	g.Expect(rules[0].Match).To(Equal("cmd:*"))
-	g.Expect(rules[0].FillColor).To(Equal(Palette[0]))
-	g.Expect(rules[1].Match).To(Equal("controllers:*"))
-	g.Expect(rules[1].FillColor).To(Equal(Palette[1]))
+
+	cmd := rules[0]
+	g.Expect(cmd.Match).To(Equal("cmd:*"))
+	g.Expect(cmd.FillColor).To(Equal(Palette[0]))
+
+	controllers := rules[1]
+	g.Expect(controllers.Match).To(Equal("controllers:*"))
+	g.Expect(controllers.FillColor).To(Equal(Palette[1]))
 }
 
 func TestGenerateRules_NestedNamespaces_GeneratesRulesForAll(t *testing.T) {
@@ -82,11 +86,15 @@ func TestGenerateRules_NestedNamespaces_GeneratesRulesForAll(t *testing.T) {
 	// Assert
 	// Expect rules for "cmd" (depth 0) and "cmd:test" (depth 1)
 	g.Expect(rules).To(HaveLen(2))
+
 	// "cmd" comes first (shallower), then "cmd:test"
-	g.Expect(rules[0].Match).To(Equal("cmd:*"))
-	g.Expect(rules[0].FillColor).To(Equal(Palette[0]))
-	g.Expect(rules[1].Match).To(Equal("cmd:test:*"))
-	g.Expect(rules[1].FillColor).To(Equal(Palette[1]))
+	cmd := rules[0]
+	g.Expect(cmd.Match).To(Equal("cmd:*"))
+	g.Expect(cmd.FillColor).To(Equal(Palette[0]))
+
+	cmdTest := rules[1]
+	g.Expect(cmdTest.Match).To(Equal("cmd:test:*"))
+	g.Expect(cmdTest.FillColor).To(Equal(Palette[1]))
 }
 
 func TestGenerateRules_MoreNamespacesThanPalette_CyclesColors(t *testing.T) {
@@ -180,9 +188,11 @@ func TestGenerateRules_SingleNamespace_IncludesExpectedFieldValues(t *testing.T)
 
 	// Assert
 	g.Expect(rules).To(HaveLen(1))
-	g.Expect(rules[0].Match).To(Equal("cmd:*"))
-	g.Expect(rules[0].FillColor).NotTo(BeEmpty())
-	g.Expect(rules[0].Style).To(Equal("filled"))
-	g.Expect(rules[0].Color).To(BeEmpty())
-	g.Expect(rules[0].FontColor).To(BeEmpty())
+
+	rule := rules[0]
+	g.Expect(rule.Match).To(Equal("cmd:*"))
+	g.Expect(rule.FillColor).NotTo(BeEmpty())
+	g.Expect(rule.Style).To(Equal("filled"))
+	g.Expect(rule.Color).To(BeEmpty())
+	g.Expect(rule.FontColor).To(BeEmpty())
 }
