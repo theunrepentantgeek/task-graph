@@ -25,7 +25,7 @@ func NewRegistry() *Registry {
 // names before calling ID() to guarantee deterministic results.
 func (r *Registry) Prepare(names []string) {
 	for _, name := range names {
-		if IsValid(name) {
+		if r.isValid(name) {
 			if _, ok := r.results[name]; !ok {
 				r.claimed[name] = name
 				r.results[name] = name
@@ -41,7 +41,7 @@ func (r *Registry) ID(name string) string {
 		return result
 	}
 
-	base := Sanitize(name)
+	base := r.sanitize(name)
 	result := r.claim(name, base)
 	r.results[name] = result
 
@@ -55,7 +55,8 @@ func (r *Registry) IDWithPrefix(prefix, name string) string {
 }
 
 // claim assigns base (or a disambiguated variant) to the given original name.
-func (r *Registry) claim(original, base string) string {
+func (r *Registry) claim(original string, base string) string {
+	// If base is unclaimed, or was already claimed by the same original, assign it directly.
 	if claimer, ok := r.claimed[base]; !ok || claimer == original {
 		r.claimed[base] = original
 		return base
@@ -79,8 +80,8 @@ func (r *Registry) claim(original, base string) string {
 	}
 }
 
-// IsValid returns true if name is already a valid safe identifier requiring no transformation.
-func IsValid(name string) bool {
+// isValid returns true if name is already a valid safe identifier requiring no transformation.
+func (r *Registry) isValid(name string) bool {
 	if len(name) == 0 {
 		return false
 	}
@@ -99,9 +100,9 @@ func IsValid(name string) bool {
 	return true
 }
 
-// Sanitize converts name to a safe identifier by replacing invalid characters with underscores.
+// sanitize converts name to a safe identifier by replacing invalid characters with underscores.
 // A leading digit is preserved by prepending an underscore.
-func Sanitize(name string) string {
+func (r *Registry) sanitize(name string) string {
 	if name == "" {
 		return "_"
 	}

@@ -1,27 +1,39 @@
-package safe_test
+package safe
 
 import (
 	"testing"
 
 	"github.com/onsi/gomega"
-
-	"github.com/theunrepentantgeek/task-graph/internal/safe"
 )
 
-// TestIsValid_AlreadySafeNames_ReturnsTrue tests whether IsValid correctly identifies already-safe identifiers.
+// TestIsValid_AlreadySafeNames_ReturnsTrue tests whether isValid correctly identifies already-safe identifiers.
 func TestIsValid_AlreadySafeNames_ReturnsTrue(t *testing.T) {
 	t.Parallel()
 
 	cases := map[string]struct {
 		name string
 	}{
-		"simple":             {name: "build"},
-		"underscore":         {name: "_build"},
-		"hyphen-in-middle":   {name: "test-node"},
-		"mixed":              {name: "cmd_build"},
-		"uppercase":          {name: "Build"},
-		"with_digits":        {name: "build2"},
-		"leading_underscore": {name: "_2build"},
+		"simple": {
+			name: "build",
+		},
+		"underscore": {
+			name: "_build",
+		},
+		"hyphen-in-middle": {
+			name: "test-node",
+		},
+		"mixed": {
+			name: "cmd_build",
+		},
+		"uppercase": {
+			name: "Build",
+		},
+		"with_digits": {
+			name: "build2",
+		},
+		"leading_underscore": {
+			name: "_2build",
+		},
 	}
 
 	for name, c := range cases {
@@ -29,8 +41,11 @@ func TestIsValid_AlreadySafeNames_ReturnsTrue(t *testing.T) {
 			t.Parallel()
 			g := gomega.NewWithT(t)
 
+			// Arrange
+			reg := NewRegistry()
+
 			// Act
-			result := safe.IsValid(c.name)
+			result := reg.isValid(c.name)
 
 			// Assert
 			g.Expect(result).To(gomega.BeTrue(), "expected %q to be valid", c.name)
@@ -45,12 +60,24 @@ func TestIsValid_UnsafeNames_ReturnsFalse(t *testing.T) {
 	cases := map[string]struct {
 		name string
 	}{
-		"empty":         {name: ""},
-		"colon":         {name: "cmd:build"},
-		"slash":         {name: "doc/taskfile"},
-		"leading_digit": {name: "2build"},
-		"leading_hyphen": {name: "-build"},
-		"space":         {name: "my task"},
+		"empty": {
+			name: "",
+		},
+		"colon": {
+			name: "cmd:build",
+		},
+		"slash": {
+			name: "doc/taskfile",
+		},
+		"leading_digit": {
+			name: "2build",
+		},
+		"leading_hyphen": {
+			name: "-build",
+		},
+		"space": {
+			name: "my task",
+		},
 	}
 
 	for name, c := range cases {
@@ -58,8 +85,11 @@ func TestIsValid_UnsafeNames_ReturnsFalse(t *testing.T) {
 			t.Parallel()
 			g := gomega.NewWithT(t)
 
+			// Arrange
+			reg := NewRegistry()
+
 			// Act
-			result := safe.IsValid(c.name)
+			result := reg.isValid(c.name)
 
 			// Assert
 			g.Expect(result).To(gomega.BeFalse(), "expected %q to be invalid", c.name)
@@ -67,7 +97,7 @@ func TestIsValid_UnsafeNames_ReturnsFalse(t *testing.T) {
 	}
 }
 
-// TestSanitize tests that Sanitize produces the expected safe identifier.
+// TestSanitize_VariousInputs_ProducesExpectedOutput tests that sanitize produces the expected safe identifier.
 func TestSanitize_VariousInputs_ProducesExpectedOutput(t *testing.T) {
 	t.Parallel()
 
@@ -75,15 +105,42 @@ func TestSanitize_VariousInputs_ProducesExpectedOutput(t *testing.T) {
 		input    string
 		expected string
 	}{
-		"already_safe":   {input: "build", expected: "build"},
-		"colon":          {input: "cmd:build", expected: "cmd_build"},
-		"slash":          {input: "doc/taskfile", expected: "doc_taskfile"},
-		"leading_digit":  {input: "2build", expected: "_2build"},
-		"leading_hyphen": {input: "-build", expected: "_build"},
-		"empty":          {input: "", expected: "_"},
-		"multiple_colons": {input: "cmd:test:unit", expected: "cmd_test_unit"},
-		"space":          {input: "my task", expected: "my_task"},
-		"hyphen_in_middle": {input: "test-node", expected: "test-node"},
+		"already_safe": {
+			input:    "build",
+			expected: "build",
+		},
+		"colon": {
+			input:    "cmd:build",
+			expected: "cmd_build",
+		},
+		"slash": {
+			input:    "doc/taskfile",
+			expected: "doc_taskfile",
+		},
+		"leading_digit": {
+			input:    "2build",
+			expected: "_2build",
+		},
+		"leading_hyphen": {
+			input:    "-build",
+			expected: "_build",
+		},
+		"empty": {
+			input:    "",
+			expected: "_",
+		},
+		"multiple_colons": {
+			input:    "cmd:test:unit",
+			expected: "cmd_test_unit",
+		},
+		"space": {
+			input:    "my task",
+			expected: "my_task",
+		},
+		"hyphen_in_middle": {
+			input:    "test-node",
+			expected: "test-node",
+		},
 	}
 
 	for name, c := range cases {
@@ -91,8 +148,11 @@ func TestSanitize_VariousInputs_ProducesExpectedOutput(t *testing.T) {
 			t.Parallel()
 			g := gomega.NewWithT(t)
 
+			// Arrange
+			reg := NewRegistry()
+
 			// Act
-			result := safe.Sanitize(c.input)
+			result := reg.sanitize(c.input)
 
 			// Assert
 			g.Expect(result).To(gomega.Equal(c.expected))
@@ -106,7 +166,7 @@ func TestRegistry_ID_AlreadySafeName_ReturnsUnchanged(t *testing.T) {
 	g := gomega.NewWithT(t)
 
 	// Arrange
-	reg := safe.NewRegistry()
+	reg := NewRegistry()
 
 	// Act
 	result := reg.ID("build")
@@ -121,7 +181,7 @@ func TestRegistry_ID_UnsafeName_ReturnsSanitized(t *testing.T) {
 	g := gomega.NewWithT(t)
 
 	// Arrange
-	reg := safe.NewRegistry()
+	reg := NewRegistry()
 
 	// Act
 	result := reg.ID("cmd:build")
@@ -136,7 +196,7 @@ func TestRegistry_ID_SameName_ReturnsSameResult(t *testing.T) {
 	g := gomega.NewWithT(t)
 
 	// Arrange
-	reg := safe.NewRegistry()
+	reg := NewRegistry()
 
 	// Act
 	first := reg.ID("cmd:build")
@@ -152,7 +212,7 @@ func TestRegistry_ID_CollidingNames_ProducesUniqueIDs(t *testing.T) {
 	g := gomega.NewWithT(t)
 
 	// Arrange
-	reg := safe.NewRegistry()
+	reg := NewRegistry()
 
 	// Act
 	id1 := reg.ID("doc:taskfile")
@@ -168,7 +228,7 @@ func TestRegistry_ID_SafeNameTakesPrecedence_WhenPrepared(t *testing.T) {
 	g := gomega.NewWithT(t)
 
 	// Arrange
-	reg := safe.NewRegistry()
+	reg := NewRegistry()
 	reg.Prepare([]string{"doc_taskfile", "doc:taskfile", "doc/taskfile"})
 
 	// Act
@@ -189,11 +249,11 @@ func TestRegistry_ID_DisambiguationSuffix_UsesLetterSuffix(t *testing.T) {
 	g := gomega.NewWithT(t)
 
 	// Arrange
-	reg := safe.NewRegistry()
+	reg := NewRegistry()
 	reg.Prepare([]string{"doc_taskfile"})
 
 	// Act
-	reg.ID("doc_taskfile")       // claims doc_taskfile
+	reg.ID("doc_taskfile")          // claims doc_taskfile
 	colon := reg.ID("doc:taskfile") // collides -> gets _A
 	slash := reg.ID("doc/taskfile") // collides -> gets _B
 
@@ -208,7 +268,7 @@ func TestRegistry_IDWithPrefix_AddsPrefixBeforeTransformation(t *testing.T) {
 	g := gomega.NewWithT(t)
 
 	// Arrange
-	reg := safe.NewRegistry()
+	reg := NewRegistry()
 
 	// Act
 	result := reg.IDWithPrefix("cluster_", "cmd:test")
@@ -223,7 +283,7 @@ func TestRegistry_IDWithPrefix_ReducesCollisions(t *testing.T) {
 	g := gomega.NewWithT(t)
 
 	// Arrange
-	reg := safe.NewRegistry()
+	reg := NewRegistry()
 
 	// Act
 	nodeID := reg.ID("cmd:test")
@@ -241,7 +301,7 @@ func TestLabel_EscapesDoubleQuote(t *testing.T) {
 	g := gomega.NewWithT(t)
 
 	// Act
-	result := safe.Label(`say "hello"`)
+	result := Label(`say "hello"`)
 
 	// Assert
 	g.Expect(result).To(gomega.Equal("say &quot;hello&quot;"))
@@ -253,7 +313,7 @@ func TestLabel_EscapesPipe(t *testing.T) {
 	g := gomega.NewWithT(t)
 
 	// Act
-	result := safe.Label("a|b")
+	result := Label("a|b")
 
 	// Assert
 	g.Expect(result).To(gomega.Equal("a&#124;b"))
@@ -265,7 +325,7 @@ func TestLabel_PlainText_ReturnsUnchanged(t *testing.T) {
 	g := gomega.NewWithT(t)
 
 	// Act
-	result := safe.Label("simple label")
+	result := Label("simple label")
 
 	// Assert
 	g.Expect(result).To(gomega.Equal("simple label"))
