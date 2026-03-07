@@ -4,35 +4,35 @@ digraph {
     label="{build | Build everything}"
     shape="Mrecord"
   ]
-  "build" -> "build.bin" [
+  "build" -> "build_bin" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "build.bin" [
+  "build_bin" [
     color="black"
     label="{build.bin | Build the go-vcr-tidy \nbinary}"
     shape="Mrecord"
   ]
-  "build.bin" -> "build.dir" [
+  "build_bin" -> "build_dir" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "build.dir" [
+  "build_dir" [
     color="black"
     label="{build.dir | Ensure our output folder exists \nand is empty}"
     shape="Mrecord"
   ]
   
-  "build.sbom" [
+  "build_sbom" [
     color="black"
     label="{build.sbom | Generate a \nsoftware-bill-of-materials (SBOM)}"
     shape="Mrecord"
   ]
-  "build.sbom" -> "build.bin" [
+  "build_sbom" -> "build_bin" [
     color="black"
     penwidth="1"
     style="solid"
@@ -53,7 +53,7 @@ digraph {
     penwidth="1"
     style="solid"
   ]
-  "ci" -> "build.sbom" [
+  "ci" -> "build_sbom" [
     color="black"
     penwidth="1"
     style="solid"
@@ -108,35 +108,35 @@ digraph {
     label="{tidy | Tidy up source}"
     shape="Mrecord"
   ]
-  "tidy" -> "tidy.gofumpt" [
+  "tidy" -> "tidy_gofumpt" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "tidy" -> "tidy.mod" [
+  "tidy" -> "tidy_mod" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "tidy" -> "tidy.lint" [
+  "tidy" -> "tidy_lint" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "tidy.gofumpt" [
+  "tidy_gofumpt" [
     color="black"
     label="{tidy.gofumpt | Run gofumpt to reformat \nsource code}"
     shape="Mrecord"
   ]
   
-  "tidy.lint" [
+  "tidy_lint" [
     color="black"
     label="{tidy.lint | Run golangci-lint in fix \nmode}"
     shape="Mrecord"
   ]
   
-  "tidy.mod" [
+  "tidy_mod" [
     color="black"
     label="{tidy.mod | Run go mod tidy}"
     shape="Mrecord"

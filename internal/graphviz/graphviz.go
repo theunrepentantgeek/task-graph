@@ -15,6 +15,7 @@ import (
 	"github.com/theunrepentantgeek/task-graph/internal/config"
 	"github.com/theunrepentantgeek/task-graph/internal/graph"
 	"github.com/theunrepentantgeek/task-graph/internal/indentwriter"
+	"github.com/theunrepentantgeek/task-graph/internal/safe"
 )
 
 func SaveTo(
@@ -50,13 +51,21 @@ func WriteTo(
 			return cmp.Compare(left.ID(), right.ID())
 		})
 
+	nodeIDs := make([]string, len(nodes))
+	for i, n := range nodes {
+		nodeIDs[i] = n.ID()
+	}
+
+	reg := safe.NewRegistry()
+	reg.Prepare(nodeIDs)
+
 	iw := indentwriter.New()
 	root := iw.Add("digraph {")
 
 	if cfg != nil && cfg.GroupByNamespace {
-		writeGroupedNodesTo(root, nodes, cfg)
+		writeGroupedNodesTo(root, nodes, cfg, reg)
 	} else {
-		writeNodesTo(root, nodes, cfg)
+		writeNodesTo(root, nodes, cfg, reg)
 	}
 
 	iw.Add("}")
@@ -74,6 +83,7 @@ func writeGroupedNodesTo(
 	root *indentwriter.Line,
 	nodes []*graph.Node,
 	cfg *config.Config,
+	reg *safe.Registry,
 ) {
 	// Build map: namespace -> nodes directly in that namespace
 	nsToNodes := indexNodesByNamespace(nodes)
@@ -91,10 +101,10 @@ func writeGroupedNodesTo(
 
 	sort.Strings(topLevel)
 
-	writeNodesTo(root, nsToNodes[""], cfg)
+	writeNodesTo(root, nsToNodes[""], cfg, reg)
 
 	for _, ns := range topLevel {
-		writeNamespaceSubgraphTo(root, ns, nsToNodes, allNS, cfg)
+		writeNamespaceSubgraphTo(root, ns, nsToNodes, allNS, cfg, reg)
 	}
 }
 
@@ -131,8 +141,9 @@ func writeNamespaceSubgraphTo(
 	nsToNodes map[string][]*graph.Node,
 	allNS map[string]bool,
 	cfg *config.Config,
+	reg *safe.Registry,
 ) {
-	subgraph := parent.Addf("subgraph %s {", clusterID(ns))
+	subgraph := parent.Addf("subgraph %s {", reg.IDWithPrefix("cluster_", ns))
 	subgraph.Addf("label=%q", ns)
 
 	// Find and sort child namespaces
@@ -146,10 +157,10 @@ func writeNamespaceSubgraphTo(
 	sort.Strings(children)
 
 	// Write nodes directly in this namespace, then child subgraphs, with blank lines between items
-	writeNodesTo(subgraph, nsToNodes[ns], cfg)
+	writeNodesTo(subgraph, nsToNodes[ns], cfg, reg)
 
 	for _, child := range children {
-		writeNamespaceSubgraphTo(subgraph, child, nsToNodes, allNS, cfg)
+		writeNamespaceSubgraphTo(subgraph, child, nsToNodes, allNS, cfg, reg)
 	}
 
 	parent.Add("}")
@@ -177,20 +188,15 @@ func parentNamespace(ns string) string {
 	return ns[:idx]
 }
 
-// clusterID converts a namespace string into a valid Graphviz cluster subgraph identifier.
-// Colons are replaced with underscores to ensure the ID is valid.
-func clusterID(ns string) string {
-	return "cluster_" + strings.ReplaceAll(ns, ":", "_")
-}
-
 // writeNodesTo writes all nodes and their edges to the graphviz output.
 func writeNodesTo(
 	root *indentwriter.Line,
 	nodes []*graph.Node,
 	cfg *config.Config,
+	reg *safe.Registry,
 ) {
 	for _, node := range nodes {
-		writeNodeTo(root, node, cfg)
+		writeNodeTo(root, node, cfg, reg)
 	}
 }
 
@@ -199,11 +205,12 @@ func writeNodeTo(
 	root *indentwriter.Line,
 	node *graph.Node,
 	cfg *config.Config,
+	reg *safe.Registry,
 ) {
-	writeNodeDefinitionTo(root, node, cfg)
+	writeNodeDefinitionTo(root, node, cfg, reg)
 
 	for _, edge := range node.Edges() {
-		writeEdgeTo(root, edge, cfg)
+		writeEdgeTo(root, edge, cfg, reg)
 	}
 
 	// Finish with a blank line for readability
@@ -214,6 +221,7 @@ func writeNodeDefinitionTo(
 	root *indentwriter.Line,
 	node *graph.Node,
 	cfg *config.Config,
+	reg *safe.Registry,
 ) {
 	margin := min((len(node.Description)+20)/2, 40)
 
@@ -237,7 +245,7 @@ func writeNodeDefinitionTo(
 		props.Add("style", "filled")
 	}
 
-	id := fmt.Sprintf("\"%s\"", node.ID())
+	id := fmt.Sprintf("\"%s\"", reg.ID(node.ID()))
 	props.WriteTo(id, root)
 }
 
@@ -245,6 +253,7 @@ func writeEdgeTo(
 	root *indentwriter.Line,
 	edge *graph.Edge,
 	cfg *config.Config,
+	reg *safe.Registry,
 ) {
 	props := newEdgeProperties()
 
@@ -266,8 +275,8 @@ func writeEdgeTo(
 	props.WriteTo(
 		fmt.Sprintf(
 			"\"%s\" -> \"%s\"",
-			edge.From().ID(),
-			edge.To().ID()),
+			reg.ID(edge.From().ID()),
+			reg.ID(edge.To().ID())),
 		root)
 }
 

@@ -13,6 +13,7 @@ import (
 	"github.com/theunrepentantgeek/task-graph/internal/config"
 	"github.com/theunrepentantgeek/task-graph/internal/graph"
 	"github.com/theunrepentantgeek/task-graph/internal/indentwriter"
+	"github.com/theunrepentantgeek/task-graph/internal/safe"
 )
 
 const testDescription = "A test node"
@@ -123,7 +124,7 @@ func TestWriteNodeDefinitionTo_WithFillColorNoStyle_AddsFilled(t *testing.T) {
 
 	iw := indentwriter.New()
 	root := iw.Add("digraph {")
-	writeNodeDefinitionTo(root, node, cfg)
+	writeNodeDefinitionTo(root, node, cfg, safe.NewRegistry())
 	root.Add("}")
 
 	_, err := iw.WriteTo(&buf, "  ")
@@ -148,7 +149,7 @@ func TestWriteNodeDefinitionTo_WithFillColorAndStyle_DoesNotOverrideStyle(t *tes
 
 	iw := indentwriter.New()
 	root := iw.Add("digraph {")
-	writeNodeDefinitionTo(root, node, cfg)
+	writeNodeDefinitionTo(root, node, cfg, safe.NewRegistry())
 	root.Add("}")
 
 	_, err := iw.WriteTo(&buf, "  ")
@@ -172,7 +173,7 @@ func TestWriteNodeDefinitionTo_WithNodeLabel_UsesLabel(t *testing.T) {
 
 	iw := indentwriter.New()
 	root := iw.Add("digraph {")
-	writeNodeDefinitionTo(root, node, cfg)
+	writeNodeDefinitionTo(root, node, cfg, safe.NewRegistry())
 	root.Add("}")
 
 	_, err := iw.WriteTo(&buf, "  ")
@@ -195,7 +196,7 @@ func TestWriteNodeDefinitionTo_WithLongDescription_WrapsText(t *testing.T) {
 
 	iw := indentwriter.New()
 	root := iw.Add("digraph {")
-	writeNodeDefinitionTo(root, node, cfg)
+	writeNodeDefinitionTo(root, node, cfg, safe.NewRegistry())
 	root.Add("}")
 
 	_, err := iw.WriteTo(&buf, "  ")
