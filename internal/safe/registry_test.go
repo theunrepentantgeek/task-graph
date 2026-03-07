@@ -8,20 +8,19 @@ import (
 	"github.com/theunrepentantgeek/task-graph/internal/safe"
 )
 
-// TestIsValid tests whether IsValid correctly identifies already-safe identifiers.
+// TestIsValid_AlreadySafeNames_ReturnsTrue tests whether IsValid correctly identifies already-safe identifiers.
 func TestIsValid_AlreadySafeNames_ReturnsTrue(t *testing.T) {
 	t.Parallel()
-	g := gomega.NewWithT(t)
 
 	cases := map[string]struct {
 		name string
 	}{
-		"simple":          {name: "build"},
-		"underscore":      {name: "_build"},
-		"hyphen-in-middle": {name: "test-node"},
-		"mixed":           {name: "cmd_build"},
-		"uppercase":       {name: "Build"},
-		"with_digits":     {name: "build2"},
+		"simple":             {name: "build"},
+		"underscore":         {name: "_build"},
+		"hyphen-in-middle":   {name: "test-node"},
+		"mixed":              {name: "cmd_build"},
+		"uppercase":          {name: "Build"},
+		"with_digits":        {name: "build2"},
 		"leading_underscore": {name: "_2build"},
 	}
 
@@ -37,8 +36,6 @@ func TestIsValid_AlreadySafeNames_ReturnsTrue(t *testing.T) {
 			g.Expect(result).To(gomega.BeTrue(), "expected %q to be valid", c.name)
 		})
 	}
-
-	_ = g
 }
 
 // TestIsValid_UnsafeNames_ReturnsFalse tests that unsafe identifiers are rejected.

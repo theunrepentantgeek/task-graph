@@ -1,6 +1,9 @@
 package safe
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 // Registry maintains a cache of safe identifiers, ensuring that each unique input
 // produces a unique output, with already-safe names taking precedence.
@@ -66,7 +69,14 @@ func (r *Registry) claim(original, base string) string {
 		}
 	}
 
-	return base + "_OVERFLOW"
+	// Fall back to numeric suffixes for extreme collision scenarios
+	for i := 1; ; i++ {
+		candidate := fmt.Sprintf("%s_%d", base, i)
+		if claimer, ok := r.claimed[candidate]; !ok || claimer == original {
+			r.claimed[candidate] = original
+			return candidate
+		}
+	}
 }
 
 // IsValid returns true if name is already a valid safe identifier requiring no transformation.
