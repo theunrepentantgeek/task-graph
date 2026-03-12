@@ -1,0 +1,312 @@
+digraph {
+  "api_check" [
+    color="black"
+    fillcolor="lightblue"
+    label="{api:check | Checks what changes have been made \nto the public API}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  "api_check" -> "gorelease_install" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  
+  "clean" [
+    color="black"
+    label="{clean | Cleans temp files and \nfolders}"
+    shape="Mrecord"
+  ]
+  
+  "default" [
+    color="black"
+    label="default"
+    shape="Mrecord"
+  ]
+  "default" -> "lint" [
+    color="blue"
+    penwidth="1"
+    style="dashed"
+  ]
+  "default" -> "test" [
+    color="blue"
+    penwidth="1"
+    style="dashed"
+  ]
+  
+  "format" [
+    color="black"
+    label="{format | Runs golangci-lint and formats \nany Go files}"
+    shape="Mrecord"
+  ]
+  
+  "generate" [
+    color="black"
+    label="{generate | Runs all generate \ntasks}"
+    shape="Mrecord"
+  ]
+  "generate" -> "generate_mocks" [
+    color="blue"
+    penwidth="1"
+    style="dashed"
+  ]
+  "generate" -> "generate_fixtures" [
+    color="blue"
+    penwidth="1"
+    style="dashed"
+  ]
+  
+  "generate_fixtures" [
+    color="black"
+    fillcolor="lightgreen"
+    label="{generate:fixtures | Runs tests and generates golden \nfixture files}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  
+  "generate_mocks" [
+    color="black"
+    fillcolor="lightgreen"
+    label="{generate:mocks | Runs Mockery to create \nmocks}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  "generate_mocks" -> "install_mockery" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  
+  "gorelease_install" [
+    color="black"
+    fillcolor="lightyellow"
+    label="{gorelease:install | Installs gorelease: \nhttps://pkg.go.dev/golang.org/x/exp/cmd/gorelease}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  
+  "goreleaser_install" [
+    color="black"
+    fillcolor="lightsalmon"
+    label="{goreleaser:install | Installs goreleaser}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  
+  "goreleaser_test" [
+    color="black"
+    fillcolor="lightsalmon"
+    label="{goreleaser:test | Tests release process without \npublishing}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  
+  "gotestsum_install" [
+    color="black"
+    fillcolor="lightpink"
+    label="{gotestsum:install | Installs gotestsum}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  
+  "install" [
+    color="black"
+    label="{install | Installs Task}"
+    shape="Mrecord"
+  ]
+  
+  "install_mockery" [
+    color="black"
+    fillcolor="lightgray"
+    label="{install:mockery | Installs mockgen; a tool to \ngenerate mock files}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  
+  "lint" [
+    color="black"
+    label="{lint | Runs golangci-lint}"
+    shape="Mrecord"
+  ]
+  
+  "lint_fix" [
+    color="black"
+    fillcolor="lavender"
+    label="{lint:fix | Runs golangci-lint and fixes \nany issues}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  
+  "mod" [
+    color="black"
+    label="{mod | Downloads and tidy Go \nmodules}"
+    shape="Mrecord"
+  ]
+  
+  "release__" [
+    color="black"
+    fillcolor="peachpuff"
+    label="{release:* | Prepare the project for a \nnew release}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  
+  "run" [
+    color="black"
+    label="{run | Runs Task}"
+    shape="Mrecord"
+  ]
+  
+  "sleepit_build" [
+    color="black"
+    fillcolor="lightblue"
+    label="{sleepit:build | Builds the sleepit test \nhelper}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  
+  "sleepit_run" [
+    color="black"
+    fillcolor="lightblue"
+    label="{sleepit:run | Builds the sleepit test \nhelper}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  "sleepit_run" -> "sleepit_build" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  
+  "test" [
+    color="black"
+    label="{test | Runs test suite}"
+    shape="Mrecord"
+  ]
+  "test" -> "gotestsum_install" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  
+  "test_all" [
+    color="black"
+    fillcolor="lightgreen"
+    label="{test:all | Runs test suite with signals and \nwatch tests included}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  "test_all" -> "sleepit_build" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  "test_all" -> "gotestsum_install" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  
+  "test_watch" [
+    color="black"
+    fillcolor="lightgreen"
+    label="{test:watch | Runs test suite with watch \ntests included}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  "test_watch" -> "sleepit_build" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  "test_watch" -> "gotestsum_install" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  
+  "website_build" [
+    color="black"
+    fillcolor="lightyellow"
+    label="{website:build | Build website}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  "website_build" -> "website_install" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  
+  "website_clean" [
+    color="black"
+    fillcolor="lightyellow"
+    label="{website:clean | Clean temp directories}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  
+  "website_default" [
+    color="black"
+    fillcolor="lightyellow"
+    label="{website:default | Start website}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  "website_default" -> "website_install" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  
+  "website_deploy_next" [
+    color="black"
+    fillcolor="lightsalmon"
+    label="{website:deploy:next | Build and deploy \nnext.taskfile.dev}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  
+  "website_deploy_prod" [
+    color="black"
+    fillcolor="lightsalmon"
+    label="{website:deploy:prod | Build and deploy \ntaskfile.dev}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  
+  "website_install" [
+    color="black"
+    fillcolor="lightyellow"
+    label="{website:install | Setup VitePress \nlocally}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  
+  "website_lint" [
+    color="black"
+    fillcolor="lightyellow"
+    label="{website:lint | Lint website}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  "website_lint" -> "website_install" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  
+  "website_preview" [
+    color="black"
+    fillcolor="lightyellow"
+    label="{website:preview | Preview Website}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  "website_preview" -> "website_build" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  
+}
