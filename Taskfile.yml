@@ -26,25 +26,25 @@ tasks:
   build:
     desc: Build everything
     deps:
-      - build.bin
+      - build:bin
 
-  build.bin:
+  build:bin:
     desc: Build the task-graph binary
     deps:
-      - build.dir
+      - build:dir
     cmds:
       - go build -o "{{.BUILD_DIR}}/task-graph"
 
-  build.sbom:
+  build:sbom:
     desc: Generate a software-bill-of-materials (SBOM)
     deps:
-      - build.bin
+      - build:bin
     cmds:
       - "sbom-tool generate -BuildDropPath {{.BUILD_DIR}} -BuildComponentPath {{.ROOT_DIR}} -PackageName task-graph -PackageVersion latest -PackageSupplier https://github.com/theunrepentantgeek/task-graph -NamespaceUriBase https://github.com/theunrepentantgeek/task-graph -DeleteManifestDirIfPresent true -FetchLicenseInformation true -Verbosity Information"
       - mv {{.BUILD_DIR}}/_manifest/spdx_2.2/* {{.BUILD_DIR}}
       - rm -rf {{.BUILD_DIR}}/_manifest
 
-  build.dir:
+  build:dir:
     desc: Ensure our output folder exists and is empty
     cmds:
       - rm -rf {{.BUILD_DIR}}
@@ -76,28 +76,27 @@ tasks:
   ci:
     desc: Run continuous integration tasks
     deps:
-      - build
       - test
-      - build.sbom
+      - build:sbom
 
   tidy:
     desc: "Tidy up source"
     cmds:
-      - task: tidy.gofumpt
-      - task: tidy.mod
-      - task: tidy.lint
+      - task: tidy:gofumpt
+      - task: tidy:mod
+      - task: tidy:lint
 
-  tidy.gofumpt:
+  tidy:gofumpt:
     desc: "Run gofumpt to reformat source code"
     cmds:
       - gofumpt -l -w .
 
-  tidy.mod:
+  tidy:mod:
     desc: "Run go mod tidy"
     cmds:
       - go mod tidy
 
-  tidy.lint:
+  tidy:lint:
     desc: "Run golangci-lint in fix mode"
     cmds:
       - golangci-lint-custom run --fix --verbose
@@ -127,9 +126,9 @@ tasks:
   docs:
     desc: "Generate documentation"
     deps:
-      - docs.build
+      - docs:build
 
-  docs.build:
+  docs:build:
     desc: "Document the Taskfile graph and generate an image"
     deps:
       - build
@@ -137,5 +136,5 @@ tasks:
       - "{{.BUILD_DIR}}/task-graph"
       - "Taskfile.yml"
     cmds:
-      - "{{.BUILD_DIR}}/task-graph {{.ROOT_DIR}}/Taskfile.yml -o {{.DOCS_DIR}}/taskfile.dot"
+      - "{{.BUILD_DIR}}/task-graph {{.ROOT_DIR}}/Taskfile.yml --output {{.DOCS_DIR}}/taskfile.dot --auto-color"
       - "dot -Tpng {{.DOCS_DIR}}/taskfile.dot -o {{.DOCS_DIR}}/taskfile.png"

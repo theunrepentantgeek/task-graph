@@ -4,35 +4,41 @@ digraph {
     label="{build | Build everything}"
     shape="Mrecord"
   ]
-  "build" -> "build.bin" [
+  "build" -> "build_bin" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "build.bin" [
+  "build_bin" [
     color="black"
-    label="{build.bin | Build the task-graph \nbinary}"
+    fillcolor="lightblue"
+    label="{build:bin | Build the task-graph \nbinary}"
     shape="Mrecord"
+    style="filled"
   ]
-  "build.bin" -> "build.dir" [
+  "build_bin" -> "build_dir" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "build.dir" [
+  "build_dir" [
     color="black"
-    label="{build.dir | Ensure our output folder exists \nand is empty}"
+    fillcolor="lightblue"
+    label="{build:dir | Ensure our output folder exists \nand is empty}"
     shape="Mrecord"
+    style="filled"
   ]
   
-  "build.sbom" [
+  "build_sbom" [
     color="black"
-    label="{build.sbom | Generate a \nsoftware-bill-of-materials (SBOM)}"
+    fillcolor="lightblue"
+    label="{build:sbom | Generate a \nsoftware-bill-of-materials (SBOM)}"
     shape="Mrecord"
+    style="filled"
   ]
-  "build.sbom" -> "build.bin" [
+  "build_sbom" -> "build_bin" [
     color="black"
     penwidth="1"
     style="solid"
@@ -43,17 +49,12 @@ digraph {
     label="{ci | Run continuous integration \ntasks}"
     shape="Mrecord"
   ]
-  "ci" -> "build" [
-    color="black"
-    penwidth="1"
-    style="solid"
-  ]
   "ci" -> "test" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "ci" -> "build.sbom" [
+  "ci" -> "build_sbom" [
     color="black"
     penwidth="1"
     style="solid"
@@ -80,18 +81,20 @@ digraph {
     label="{docs | Generate documentation}"
     shape="Mrecord"
   ]
-  "docs" -> "docs.build" [
+  "docs" -> "docs_build" [
     color="black"
     penwidth="1"
     style="solid"
   ]
   
-  "docs.build" [
+  "docs_build" [
     color="black"
-    label="{docs.build | Document the Taskfile graph and \ngenerate an image}"
+    fillcolor="lightgreen"
+    label="{docs:build | Document the Taskfile graph and \ngenerate an image}"
     shape="Mrecord"
+    style="filled"
   ]
-  "docs.build" -> "build" [
+  "docs_build" -> "build" [
     color="black"
     penwidth="1"
     style="solid"
@@ -141,38 +144,44 @@ digraph {
     label="{tidy | Tidy up source}"
     shape="Mrecord"
   ]
-  "tidy" -> "tidy.gofumpt" [
+  "tidy" -> "tidy_gofumpt" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "tidy" -> "tidy.mod" [
+  "tidy" -> "tidy_mod" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
-  "tidy" -> "tidy.lint" [
+  "tidy" -> "tidy_lint" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   
-  "tidy.gofumpt" [
+  "tidy_gofumpt" [
     color="black"
-    label="{tidy.gofumpt | Run gofumpt to reformat \nsource code}"
+    fillcolor="lightyellow"
+    label="{tidy:gofumpt | Run gofumpt to reformat \nsource code}"
     shape="Mrecord"
+    style="filled"
   ]
   
-  "tidy.lint" [
+  "tidy_lint" [
     color="black"
-    label="{tidy.lint | Run golangci-lint in fix \nmode}"
+    fillcolor="lightyellow"
+    label="{tidy:lint | Run golangci-lint in fix \nmode}"
     shape="Mrecord"
+    style="filled"
   ]
   
-  "tidy.mod" [
+  "tidy_mod" [
     color="black"
-    label="{tidy.mod | Run go mod tidy}"
+    fillcolor="lightyellow"
+    label="{tidy:mod | Run go mod tidy}"
     shape="Mrecord"
+    style="filled"
   ]
   
   "unit-test" [
@@ -191,4 +200,5 @@ digraph {
     label="{update-golden-files | Update golden files with \ncurrent output}"
     shape="Mrecord"
   ]
+  
 }
