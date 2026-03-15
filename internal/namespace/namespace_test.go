@@ -6,114 +6,60 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestNamespace_FormalDelimiter_ReturnsPrefix(t *testing.T) {
+func TestNamespace_VariousInputs_ReturnsExpectedNamespace(t *testing.T) {
 	t.Parallel()
-	g := NewWithT(t)
 
-	// Act
-	ns := Namespace("cmd:build")
+	cases := map[string]struct {
+		input    string
+		expected string
+	}{
+		"formal delimiter":           {input: "cmd:build", expected: "cmd"},
+		"nested formal delimiter":    {input: "cmd:test:unit", expected: "cmd:test"},
+		"informal hyphen":            {input: "build-bin", expected: "build"},
+		"informal dot":               {input: "tidy.format", expected: "tidy"},
+		"mixed informal":             {input: "build-bin.linux", expected: "build-bin"},
+		"formal takes precedence":    {input: "build-bin:test", expected: "build-bin"},
+		"no delimiter returns empty": {input: "deploy", expected: ""},
+	}
 
-	// Assert
-	g.Expect(ns).To(Equal("cmd"))
+	for name, c := range cases {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			g := NewWithT(t)
+
+			// Act
+			ns := Namespace(c.input)
+
+			// Assert
+			g.Expect(ns).To(Equal(c.expected))
+		})
+	}
 }
 
-func TestNamespace_NestedFormalDelimiter_ReturnsFullPrefix(t *testing.T) {
+func TestParent_VariousInputs_ReturnsExpectedParent(t *testing.T) {
 	t.Parallel()
-	g := NewWithT(t)
 
-	// Act
-	ns := Namespace("cmd:test:unit")
+	cases := map[string]struct {
+		input    string
+		expected string
+	}{
+		"formal nested":           {input: "cmd:test", expected: "cmd"},
+		"informal nested":         {input: "build-bin", expected: "build"},
+		"top level returns empty": {input: "cmd", expected: ""},
+	}
 
-	// Assert
-	g.Expect(ns).To(Equal("cmd:test"))
-}
+	for name, c := range cases {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			g := NewWithT(t)
 
-func TestNamespace_InformalHyphen_ReturnsPrefix(t *testing.T) {
-	t.Parallel()
-	g := NewWithT(t)
+			// Act
+			p := Parent(c.input)
 
-	// Act
-	ns := Namespace("build-bin")
-
-	// Assert
-	g.Expect(ns).To(Equal("build"))
-}
-
-func TestNamespace_InformalDot_ReturnsPrefix(t *testing.T) {
-	t.Parallel()
-	g := NewWithT(t)
-
-	// Act
-	ns := Namespace("tidy.format")
-
-	// Assert
-	g.Expect(ns).To(Equal("tidy"))
-}
-
-func TestNamespace_MixedInformal_ReturnsPrefix(t *testing.T) {
-	t.Parallel()
-	g := NewWithT(t)
-
-	// Act
-	ns := Namespace("build-bin.linux")
-
-	// Assert
-	g.Expect(ns).To(Equal("build-bin"))
-}
-
-func TestNamespace_FormalTakesPrecedence_IgnoresInformal(t *testing.T) {
-	t.Parallel()
-	g := NewWithT(t)
-
-	// Act
-	ns := Namespace("build-bin:test")
-
-	// Assert
-	g.Expect(ns).To(Equal("build-bin"))
-}
-
-func TestNamespace_NoDelimiter_ReturnsEmpty(t *testing.T) {
-	t.Parallel()
-	g := NewWithT(t)
-
-	// Act
-	ns := Namespace("deploy")
-
-	// Assert
-	g.Expect(ns).To(BeEmpty())
-}
-
-func TestParent_FormalNested_ReturnsParent(t *testing.T) {
-	t.Parallel()
-	g := NewWithT(t)
-
-	// Act
-	p := Parent("cmd:test")
-
-	// Assert
-	g.Expect(p).To(Equal("cmd"))
-}
-
-func TestParent_InformalNested_ReturnsParent(t *testing.T) {
-	t.Parallel()
-	g := NewWithT(t)
-
-	// Act
-	p := Parent("build-bin")
-
-	// Assert
-	g.Expect(p).To(Equal("build"))
-}
-
-func TestParent_TopLevel_ReturnsEmpty(t *testing.T) {
-	t.Parallel()
-	g := NewWithT(t)
-
-	// Act
-	p := Parent("cmd")
-
-	// Assert
-	g.Expect(p).To(BeEmpty())
+			// Assert
+			g.Expect(p).To(Equal(c.expected))
+		})
+	}
 }
 
 func TestDepth_VariousNamespaces_ReturnsCorrectDepth(t *testing.T) {
@@ -146,40 +92,31 @@ func TestDepth_VariousNamespaces_ReturnsCorrectDepth(t *testing.T) {
 	}
 }
 
-func TestCompileMatchPattern_GlobStar_ConvertsToRegex(t *testing.T) {
+func TestCompileMatchPattern_VariousPatterns_ConvertsToExpectedRegex(t *testing.T) {
 	t.Parallel()
-	g := NewWithT(t)
 
-	// Act
-	re, err := CompileMatchPattern("build*")
+	cases := map[string]struct {
+		pattern  string
+		expected string
+	}{
+		"glob star":     {pattern: "build*", expected: "^build.*$"},
+		"glob question": {pattern: "build?", expected: "^build.$"},
+		"special chars": {pattern: "a.b(c)", expected: `^a\.b\(c\)$`},
+	}
 
-	// Assert
-	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(re.String()).To(Equal("^build.*$"))
-}
+	for name, c := range cases {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			g := NewWithT(t)
 
-func TestCompileMatchPattern_GlobQuestion_ConvertsToRegex(t *testing.T) {
-	t.Parallel()
-	g := NewWithT(t)
+			// Act
+			re, err := CompileMatchPattern(c.pattern)
 
-	// Act
-	re, err := CompileMatchPattern("build?")
-
-	// Assert
-	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(re.String()).To(Equal("^build.$"))
-}
-
-func TestCompileMatchPattern_SpecialChars_Escaped(t *testing.T) {
-	t.Parallel()
-	g := NewWithT(t)
-
-	// Act
-	re, err := CompileMatchPattern("a.b(c)")
-
-	// Assert
-	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(re.String()).To(Equal(`^a\.b\(c\)$`))
+			// Assert
+			g.Expect(err).NotTo(HaveOccurred())
+			g.Expect(re.String()).To(Equal(c.expected))
+		})
+	}
 }
 
 func TestCompileMatchPattern_CharacterClass_PassedThrough(t *testing.T) {
