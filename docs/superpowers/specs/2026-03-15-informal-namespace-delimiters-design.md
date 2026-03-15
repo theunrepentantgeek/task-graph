@@ -89,7 +89,7 @@ func CompileMatchPattern(pattern string) (*regexp.Regexp, error)
 // The returned pattern is intended for storage in NodeStyleRule.Match and will be compiled
 // via CompileMatchPattern when applied.
 // For namespaces containing ":" (clearly formal): returns "ns:*" (e.g., "cmd:test:*")
-// For namespaces without ":" (ambiguous tier): returns "ns[-.:].*" (e.g., "build[-.:].*")
+// For namespaces without ":" (ambiguous tier): returns "ns[-.:]*" (e.g., "build[-.:]*")
 // The ambiguous case matches all delimiter types, handling mixed-tier graphs correctly.
 func MatchPattern(ns string) string
 ```
@@ -108,7 +108,7 @@ func MatchPattern(ns string) string
    - Anchor the result with `^...$`
    - Compile with `regexp.Compile`
    
-   This handles both user-defined glob patterns (e.g., `build*`, `*test*`) and autocolor-generated patterns containing character classes (e.g., `build[-.].*`).
+   This handles both user-defined glob patterns (e.g., `build*`, `*test*`) and autocolor-generated patterns containing character classes (e.g., `build[-.:]*`).
 2. Both graphviz and mermaid use `CompileMatchPattern` for rule matching
 3. **Errors are propagated** — invalid patterns produce a clear user-visible error rather than silent failure
 4. Backward compatible — existing patterns like `build*`, `*test*`, `cmd:*` convert correctly
@@ -120,7 +120,7 @@ func MatchPattern(ns string) string
 - Replace local `nodeNamespace()` / `parentNamespace()` / `sortNamespaces` with `namespace.Namespace()` / `namespace.Parent()` / `namespace.Depth()`
 - Pattern generation changes from `ns + ":*"` to `namespace.MatchPattern(ns)`:
   - Formal namespace `cmd:test` → `cmd:test:*`
-  - Ambiguous namespace `build` → `build[-.:].*` (matches `build:x`, `build-x`, `build.x`)
+  - Ambiguous namespace `build` → `build[-.:]*` (matches `build:x`, `build-x`, `build.x`)
   - A single rule per namespace handles mixed-tier graphs correctly
 - Delete local namespace helper functions
 
@@ -163,7 +163,7 @@ Autocolor uses `namespace.MatchPattern(ns)` to generate the `Match` field for ea
 | User config: `match: "*test*"` | `*test*` | `^.*test.*$` | `test`, `mytest`, `test-unit` |
 | User config: `match: "cmd:*"` | `cmd:*` | `^cmd:.*$` | `cmd:build`, `cmd:test` |
 | Autocolor formal: `MatchPattern("cmd:test")` | `cmd:test:*` | `^cmd:test:.*$` | `cmd:test:unit`, `cmd:test:e2e` |
-| Autocolor ambiguous: `MatchPattern("build")` | `build[-.:].*` | `^build[-\.:].*$` | `build-bin`, `build.image`, `build:x` |
+| Autocolor ambiguous: `MatchPattern("build")` | `build[-.:]*` | `^build[-.:].*$` | `build-bin`, `build.image`, `build:x` |
 
 ### Edge cases
 
@@ -203,10 +203,10 @@ Core parsing logic:
 - `TestCompileMatchPattern_GlobStar_ConvertsToRegex` — `build*` → `^build.*$`
 - `TestCompileMatchPattern_GlobQuestion_ConvertsToRegex` — `build?` → `^build.$`
 - `TestCompileMatchPattern_SpecialChars_Escaped` — dots/parens in literal positions are escaped
-- `TestCompileMatchPattern_CharacterClass_PassedThrough` — `build[-.].*` → `^build[-.].*$` (brackets and contents passed through literally; dot is literal inside character classes regardless)
+- `TestCompileMatchPattern_CharacterClass_PassedThrough` — `build[-.:]*` → `^build[-.:].*$` (brackets and contents passed through literally)
 - `TestCompileMatchPattern_InvalidPattern_ReturnsError`
 - `TestMatchPattern_FormalNamespace_ReturnsColonPattern` — `cmd:test` → `cmd:test:*`
-- `TestMatchPattern_AmbiguousNamespace_ReturnsAllDelimiterPattern` — `build` → `build[-.:].*`
+- `TestMatchPattern_AmbiguousNamespace_ReturnsAllDelimiterPattern` — `build` → `build[-.:]*`
 
 ### Updated golden tests
 
