@@ -102,7 +102,7 @@ func MatchPattern(ns string) string
 1. `CompileMatchPattern` converts glob patterns (`*`, `?`, `[...]`) to regex by walking the pattern character by character:
    - `*` → `.*`
    - `?` → `.`
-   - `[...]` character classes → passed through verbatim (valid in both glob and regex)
+   - `[...]` character classes → bracket structure preserved; characters inside the brackets are passed through literally (regex character classes have the same semantics as glob character classes for our use cases)
    - All other characters → `regexp.QuoteMeta(char)` (escapes regex metacharacters like `.`)
    - Anchor the result with `^...$`
    - Compile with `regexp.Compile`
@@ -118,7 +118,7 @@ func MatchPattern(ns string) string
 
 - Replace local `nodeNamespace()` / `parentNamespace()` / `sortNamespaces` with `namespace.Namespace()` / `namespace.Parent()` / `namespace.Depth()`
 - Pattern generation changes from `ns + ":*"` to `namespace.MatchPattern(ns)`:
-  - Formal namespace `cmd` → `cmd:.*`
+  - Formal namespace `cmd` → `cmd:*`
   - Informal namespace `build` → `build[-.].*`
 - Delete local namespace helper functions
 
