@@ -73,16 +73,23 @@ func Namespace(id string) string
 // Returns "" if the namespace has no parent.
 func Parent(ns string) string
 
-// Depth returns the nesting depth of a namespace (number of internal delimiters).
+// Depth returns the nesting depth of a namespace.
+// Counts all delimiters within the namespace's tier:
+//   Tier 1 (contains ":"): counts colons. "cmd:test" → 1
+//   Tier 2 (no ":"): counts hyphens and dots. "build-bin" → 1, "build-bin.linux" → 2
+// A top-level namespace (no internal delimiters) has depth 0.
 func Depth(ns string) int
 
 // CompileMatchPattern converts a glob-style pattern (using * and ?) to a compiled regexp.
 // Returns an error if the resulting regex is invalid.
 func CompileMatchPattern(pattern string) (*regexp.Regexp, error)
 
-// MatchPattern returns a regex pattern string matching all nodes in the given namespace.
-// For formal namespaces (containing ":"): returns "ns:.*"
-// For informal namespaces: returns "ns[-.].*"
+// MatchPattern returns a glob-style pattern string matching all nodes in the given namespace.
+// The returned pattern is intended for storage in NodeStyleRule.Match and will be compiled
+// via CompileMatchPattern when applied.
+// For formal namespaces (containing ":"): returns "ns:*" (e.g., "cmd:*")
+// For informal namespaces: returns "ns[-.].*" (e.g., "build[-.].*")
+// The "[...]" character class syntax is supported by CompileMatchPattern.
 func MatchPattern(ns string) string
 ```
 
@@ -92,10 +99,15 @@ func MatchPattern(ns string) string
 
 **New approach:**
 
-1. `CompileMatchPattern` converts glob patterns (`*`, `?`) to regex:
-   - `regexp.QuoteMeta(pattern)` escapes all special chars
-   - Replace `\*` with `.*` and `\?` with `.`
-   - Anchor with `^...$`
+1. `CompileMatchPattern` converts glob patterns (`*`, `?`, `[...]`) to regex by walking the pattern character by character:
+   - `*` → `.*`
+   - `?` → `.`
+   - `[...]` character classes → passed through verbatim (valid in both glob and regex)
+   - All other characters → `regexp.QuoteMeta(char)` (escapes regex metacharacters like `.`)
+   - Anchor the result with `^...$`
+   - Compile with `regexp.Compile`
+   
+   This handles both user-defined glob patterns (e.g., `build*`, `*test*`) and autocolor-generated patterns containing character classes (e.g., `build[-.].*`).
 2. Both graphviz and mermaid use `CompileMatchPattern` for rule matching
 3. **Errors are propagated** — invalid patterns produce a clear user-visible error rather than silent failure
 4. Backward compatible — existing patterns like `build*`, `*test*`, `cmd:*` convert correctly
@@ -115,15 +127,51 @@ func MatchPattern(ns string) string
 - Replace local `nodeNamespace()` / `parentNamespace()` with `namespace.Namespace()` / `namespace.Parent()`
 - Replace `strings.Count(a, ":")` in sort comparisons with `namespace.Depth(a)`
 - Replace `path.Match` with `namespace.CompileMatchPattern` + `regexp.MatchString`
-- Propagate match compilation errors from `AddStyleRuleAttributes` through `WriteTo`
+- Propagate match compilation errors — signature changes:
+  - `AddStyleRuleAttributes(nodeID, rule)` → `AddStyleRuleAttributes(nodeID, rule) error`
+  - `writeNodeDefinitionTo(root, node, cfg, reg)` → `writeNodeDefinitionTo(root, node, cfg, reg) error`
+  - `writeNodeTo(root, node, cfg, reg)` → `writeNodeTo(root, node, cfg, reg) error`
+  - `writeNodesTo(root, nodes, cfg, reg)` → `writeNodesTo(root, nodes, cfg, reg) error`
+  - `writeGroupedNodesTo(root, nodes, cfg, reg)` → `writeGroupedNodesTo(root, nodes, cfg, reg) error`
 - Delete local namespace helper functions
 
 #### mermaid
 
-- Identical changes as graphviz
+- Identical error propagation approach as graphviz — signature changes:
+  - `findMatchingNodeIDs(nodes, pattern, reg) []string` → `findMatchingNodeIDs(nodes, pattern, reg) ([]string, error)`
+  - `writeStyleRuleTo(root, nodes, i, rule, reg)` → `writeStyleRuleTo(root, nodes, i, rule, reg) error`
+  - `writeStyleRulesTo(root, nodes, cfg, reg)` → `writeStyleRulesTo(root, nodes, cfg, reg) error`
+  - `writeGroupedNodesTo(root, nodes, reg)` → `writeGroupedNodesTo(root, nodes, reg) error`
 - Replace `path.Match` in `findMatchingNodeIDs` with `namespace.CompileMatchPattern`
-- Propagate errors through `WriteTo`
 - Delete local namespace helper functions
+
+### Pattern compilation strategy
+
+Patterns are compiled on-demand during output generation. Each `CompileMatchPattern` call returns a `*regexp.Regexp` that is used immediately. No caching is needed — the number of rules is small (typically < 20) and compilation is fast. If profiling later shows this matters, caching can be added inside `CompileMatchPattern` without changing its API.
+
+### Autocolor pattern usage
+
+Autocolor uses `namespace.MatchPattern(ns)` to generate the `Match` field for each `NodeStyleRule`. Graphviz and mermaid use `namespace.CompileMatchPattern(rule.Match)` to compile any rule's pattern (whether user-defined or autocolor-generated) for matching against node IDs.
+
+**End-to-end pattern flow:**
+
+| Source | Pattern (glob) | CompileMatchPattern output (regex) | Matches |
+|---|---|---|---|
+| User config: `match: "build*"` | `build*` | `^build.*$` | `build`, `build-bin`, `buildall` |
+| User config: `match: "*test*"` | `*test*` | `^.*test.*$` | `test`, `mytest`, `test-unit` |
+| User config: `match: "cmd:*"` | `cmd:*` | `^cmd:.*$` | `cmd:build`, `cmd:test` |
+| Autocolor formal: `MatchPattern("cmd")` | `cmd:*` | `^cmd:.*$` | `cmd:build`, `cmd:test` |
+| Autocolor informal: `MatchPattern("build")` | `build[-.].*` | `^build[-\.].*$` | `build-bin`, `build.image` |
+
+### Edge cases
+
+- Leading/trailing delimiters (e.g., `-build`, `build-`): treated literally — `Namespace("-build")` returns `""` (empty prefix before `-`), `Namespace("build-")` returns `"build"`. Unlikely in practice.
+- Consecutive delimiters (e.g., `build--bin`): produce empty segments. `Namespace("build--bin")` returns `"build-"`. Unlikely in practice.
+- These are degenerate inputs; no special handling needed.
+
+### Documentation update
+
+`.github/copilot-instructions.md` references `path.Match` wildcards (`*`, `?`) for style rules. Update to reflect regex-based matching.
 
 ### What doesn't change
 
@@ -152,9 +200,10 @@ Core parsing logic:
 - `TestDepth_VariousNamespaces_ReturnsCorrectDepth`
 - `TestCompileMatchPattern_GlobStar_ConvertsToRegex` — `build*` → `^build.*$`
 - `TestCompileMatchPattern_GlobQuestion_ConvertsToRegex` — `build?` → `^build.$`
-- `TestCompileMatchPattern_SpecialChars_Escaped` — dots/parens are escaped
-- `TestCompileMatchPattern_InvalidRegex_ReturnsError`
-- `TestMatchPattern_FormalNamespace_ReturnsColonPattern` — `cmd` → `cmd:.*`
+- `TestCompileMatchPattern_SpecialChars_Escaped` — dots/parens in literal positions are escaped
+- `TestCompileMatchPattern_CharacterClass_PassedThrough` — `build[-.].*` → `^build[-\.].*$` (brackets preserved, dot inside escaped)
+- `TestCompileMatchPattern_InvalidPattern_ReturnsError`
+- `TestMatchPattern_FormalNamespace_ReturnsGlobPattern` — `cmd` → `cmd:*`
 - `TestMatchPattern_InformalNamespace_ReturnsBracketPattern` — `build` → `build[-.].*`
 
 ### Updated golden tests
