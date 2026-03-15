@@ -10,7 +10,7 @@ import (
 )
 
 type matchPattern interface {
-	MatchString(string) bool
+	MatchString(s string) bool
 }
 
 var nodeStylePatternCache sync.Map // map[string]matchPattern
@@ -33,21 +33,10 @@ func (p nodeProperties) AddAttributes(
 		return
 	}
 
-	if cfg.Color != "" {
-		p.Add("color", cfg.Color)
-	}
-
-	if cfg.FillColor != "" {
-		p.Add("fillcolor", cfg.FillColor)
-	}
-
-	if cfg.Style != "" {
-		p.Add("style", cfg.Style)
-	}
-
-	if cfg.FontColor != "" {
-		p.Add("fontcolor", cfg.FontColor)
-	}
+	p.AddIfNotEmpty("color", cfg.Color)
+	p.AddIfNotEmpty("fillcolor", cfg.FillColor)
+	p.AddIfNotEmpty("style", cfg.Style)
+	p.AddIfNotEmpty("fontcolor", cfg.FontColor)
 }
 
 // AddStyleRuleAttributes adds the attributes from the given NodeStyleRule to the properties map
@@ -76,21 +65,10 @@ func (p nodeProperties) AddStyleRuleAttributes(
 		return nil
 	}
 
-	if rule.Color != "" {
-		p.Add("color", rule.Color)
-	}
-
-	if rule.FillColor != "" {
-		p.Add("fillcolor", rule.FillColor)
-	}
-
-	if rule.Style != "" {
-		p.Add("style", rule.Style)
-	}
-
-	if rule.FontColor != "" {
-		p.Add("fontcolor", rule.FontColor)
-	}
+	p.AddIfNotEmpty("color", rule.Color)
+	p.AddIfNotEmpty("fillcolor", rule.FillColor)
+	p.AddIfNotEmpty("style", rule.Style)
+	p.AddIfNotEmpty("fontcolor", rule.FontColor)
 
 	return nil
 }

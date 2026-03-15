@@ -25,6 +25,16 @@ func (p properties) Add(
 	p[key] = value
 }
 
+// AddIfNotEmpty adds a property with the given key and value to the properties map only if the value is not empty.
+func (p properties) AddIfNotEmpty(
+	key string,
+	value string,
+) {
+	if value != "" {
+		p.Add(key, value)
+	}
+}
+
 // Addf adds a property with the given key and value to the properties map.
 // The value is formatted using fmt.Sprintf.
 func (p properties) Addf(
