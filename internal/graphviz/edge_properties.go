@@ -20,15 +20,10 @@ func (p edgeProperties) AddAttributes(
 		return
 	}
 
-	if cfg.Color != "" {
-		p.Add("color", cfg.Color)
-	}
+	p.AddIfNotEmpty("color", cfg.Color)
+	p.AddIfNotEmpty("style", cfg.Style)
 
 	if cfg.Width > 0 {
 		p.Addf("penwidth", "%d", cfg.Width)
-	}
-
-	if cfg.Style != "" {
-		p.Add("style", cfg.Style)
 	}
 }

@@ -1,10 +1,19 @@
 package graphviz
 
 import (
-	"path"
+	"sync"
+
+	"github.com/rotisserie/eris"
 
 	"github.com/theunrepentantgeek/task-graph/internal/config"
+	"github.com/theunrepentantgeek/task-graph/internal/namespace"
 )
+
+type matchPattern interface {
+	MatchString(s string) bool
+}
+
+var nodeStylePatternCache sync.Map // map[string]matchPattern
 
 type nodeProperties struct {
 	properties
@@ -24,21 +33,10 @@ func (p nodeProperties) AddAttributes(
 		return
 	}
 
-	if cfg.Color != "" {
-		p.Add("color", cfg.Color)
-	}
-
-	if cfg.FillColor != "" {
-		p.Add("fillcolor", cfg.FillColor)
-	}
-
-	if cfg.Style != "" {
-		p.Add("style", cfg.Style)
-	}
-
-	if cfg.FontColor != "" {
-		p.Add("fontcolor", cfg.FontColor)
-	}
+	p.AddIfNotEmpty("color", cfg.Color)
+	p.AddIfNotEmpty("fillcolor", cfg.FillColor)
+	p.AddIfNotEmpty("style", cfg.Style)
+	p.AddIfNotEmpty("fontcolor", cfg.FontColor)
 }
 
 // AddStyleRuleAttributes adds the attributes from the given NodeStyleRule to the properties map
@@ -46,25 +44,31 @@ func (p nodeProperties) AddAttributes(
 func (p nodeProperties) AddStyleRuleAttributes(
 	nodeID string,
 	rule config.NodeStyleRule,
-) {
-	matched, err := path.Match(rule.Match, nodeID)
-	if err != nil || !matched {
-		return
+) error {
+	value, ok := nodeStylePatternCache.Load(rule.Match)
+	if !ok {
+		re, err := namespace.CompileMatchPattern(rule.Match)
+		if err != nil {
+			return eris.Wrapf(err, "failed to compile match pattern %q", rule.Match)
+		}
+
+		nodeStylePatternCache.Store(rule.Match, re)
+		value = re
 	}
 
-	if rule.Color != "" {
-		p.Add("color", rule.Color)
+	pattern, ok := value.(matchPattern)
+	if !ok {
+		return eris.New("cached node style pattern does not implement MatchString")
 	}
 
-	if rule.FillColor != "" {
-		p.Add("fillcolor", rule.FillColor)
+	if !pattern.MatchString(nodeID) {
+		return nil
 	}
 
-	if rule.Style != "" {
-		p.Add("style", rule.Style)
-	}
+	p.AddIfNotEmpty("color", rule.Color)
+	p.AddIfNotEmpty("fillcolor", rule.FillColor)
+	p.AddIfNotEmpty("style", rule.Style)
+	p.AddIfNotEmpty("fontcolor", rule.FontColor)
 
-	if rule.FontColor != "" {
-		p.Add("fontcolor", rule.FontColor)
-	}
+	return nil
 }

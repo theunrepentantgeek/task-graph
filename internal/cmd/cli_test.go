@@ -233,7 +233,7 @@ func TestApplyAutoColor_WithNamespacedGraph_GeneratesRulesForNamespaces(t *testi
 		matches[i] = r.Match
 	}
 
-	g.Expect(matches).To(ContainElements("cmd:*", "controllers:*"))
+	g.Expect(matches).To(ContainElements("cmd[-.:]*", "controllers[-.:]*"))
 }
 
 func TestApplyAutoColor_AutoRulesPrependedBeforeUserRules(t *testing.T) {
@@ -258,7 +258,7 @@ func TestApplyAutoColor_AutoRulesPrependedBeforeUserRules(t *testing.T) {
 	g.Expect(cfg.NodeStyleRules).To(HaveLen(2))
 
 	autoRule := cfg.NodeStyleRules[0]
-	g.Expect(autoRule.Match).To(Equal("cmd:*"))
+	g.Expect(autoRule.Match).To(Equal("cmd[-.:]*"))
 
 	userRule := cfg.NodeStyleRules[1]
 	g.Expect(userRule.Match).To(Equal("cmd:build"))

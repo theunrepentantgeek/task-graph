@@ -124,10 +124,13 @@ func TestWriteNodeDefinitionTo_WithFillColorNoStyle_AddsFilled(t *testing.T) {
 
 	iw := indentwriter.New()
 	root := iw.Add("digraph {")
-	writeNodeDefinitionTo(root, node, cfg, safe.NewRegistry())
+
+	err := writeNodeDefinitionTo(root, node, cfg, safe.NewRegistry())
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+
 	root.Add("}")
 
-	_, err := iw.WriteTo(&buf, "  ")
+	_, err = iw.WriteTo(&buf, "  ")
 	g.Expect(err).NotTo(gomega.HaveOccurred())
 
 	output := buf.String()
@@ -149,10 +152,13 @@ func TestWriteNodeDefinitionTo_WithFillColorAndStyle_DoesNotOverrideStyle(t *tes
 
 	iw := indentwriter.New()
 	root := iw.Add("digraph {")
-	writeNodeDefinitionTo(root, node, cfg, safe.NewRegistry())
+
+	err := writeNodeDefinitionTo(root, node, cfg, safe.NewRegistry())
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+
 	root.Add("}")
 
-	_, err := iw.WriteTo(&buf, "  ")
+	_, err = iw.WriteTo(&buf, "  ")
 	g.Expect(err).NotTo(gomega.HaveOccurred())
 
 	output := buf.String()
@@ -173,10 +179,13 @@ func TestWriteNodeDefinitionTo_WithNodeLabel_UsesLabel(t *testing.T) {
 
 	iw := indentwriter.New()
 	root := iw.Add("digraph {")
-	writeNodeDefinitionTo(root, node, cfg, safe.NewRegistry())
+
+	err := writeNodeDefinitionTo(root, node, cfg, safe.NewRegistry())
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+
 	root.Add("}")
 
-	_, err := iw.WriteTo(&buf, "  ")
+	_, err = iw.WriteTo(&buf, "  ")
 	g.Expect(err).NotTo(gomega.HaveOccurred())
 
 	output := buf.String()
@@ -196,10 +205,13 @@ func TestWriteNodeDefinitionTo_WithLongDescription_WrapsText(t *testing.T) {
 
 	iw := indentwriter.New()
 	root := iw.Add("digraph {")
-	writeNodeDefinitionTo(root, node, cfg, safe.NewRegistry())
+
+	err := writeNodeDefinitionTo(root, node, cfg, safe.NewRegistry())
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+
 	root.Add("}")
 
-	_, err := iw.WriteTo(&buf, "  ")
+	_, err = iw.WriteTo(&buf, "  ")
 	g.Expect(err).NotTo(gomega.HaveOccurred())
 
 	output := buf.String()

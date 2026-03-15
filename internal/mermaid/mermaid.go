@@ -5,7 +5,6 @@ import (
 	"errors"
 	"io"
 	"os"
-	"path"
 	"slices"
 	"sort"
 	"strings"
@@ -15,6 +14,7 @@ import (
 	"github.com/theunrepentantgeek/task-graph/internal/config"
 	"github.com/theunrepentantgeek/task-graph/internal/graph"
 	"github.com/theunrepentantgeek/task-graph/internal/indentwriter"
+	"github.com/theunrepentantgeek/task-graph/internal/namespace"
 	"github.com/theunrepentantgeek/task-graph/internal/safe"
 )
 
@@ -61,13 +61,8 @@ func WriteTo(
 	reg := safe.NewRegistry()
 	reg.Prepare(nodeIDs)
 
-	direction := "TD"
-	if cfg != nil && cfg.Mermaid != nil && cfg.Mermaid.Direction != "" {
-		direction = cfg.Mermaid.Direction
-	}
-
 	iw := indentwriter.New()
-	root := iw.Addf("flowchart %s", direction)
+	root := iw.Addf("flowchart %s", flowchartDirection(cfg))
 
 	if cfg != nil && cfg.GroupByNamespace {
 		writeGroupedNodesTo(root, nodes, reg)
@@ -75,14 +70,27 @@ func WriteTo(
 		writeNodesTo(root, nodes, reg)
 	}
 
-	writeStyleRulesTo(root, nodes, cfg, reg)
+	err := writeStyleRulesTo(root, nodes, cfg, reg)
+	if err != nil {
+		return err
+	}
 
-	_, err := iw.WriteTo(w, indent)
+	_, err = iw.WriteTo(w, indent)
 	if err != nil {
 		return eris.Wrap(err, "failed to write mermaid output")
 	}
 
 	return nil
+}
+
+// flowchartDirection returns the mermaid flowchart direction from config,
+// defaulting to "TD" (top-down).
+func flowchartDirection(cfg *config.Config) string {
+	if cfg != nil && cfg.Mermaid != nil && cfg.Mermaid.Direction != "" {
+		return cfg.Mermaid.Direction
+	}
+
+	return "TD"
 }
 
 // writeGroupedNodesTo writes nodes organised into namespace subgraph clusters.
@@ -96,7 +104,7 @@ func writeGroupedNodesTo(
 
 	topLevel := make([]string, 0, len(allNS))
 	for ns := range allNS {
-		if parentNamespace(ns) == "" {
+		if namespace.Parent(ns) == "" {
 			topLevel = append(topLevel, ns)
 		}
 	}
@@ -115,7 +123,7 @@ func findAllNamespaces(nsToNodes map[string][]*graph.Node) map[string]bool {
 	allNS := make(map[string]bool)
 
 	for ns := range nsToNodes {
-		for current := ns; current != ""; current = parentNamespace(current) {
+		for current := ns; current != ""; current = namespace.Parent(current) {
 			allNS[current] = true
 		}
 	}
@@ -127,7 +135,7 @@ func indexNodesByNamespace(nodes []*graph.Node) map[string][]*graph.Node {
 	nsToNodes := make(map[string][]*graph.Node)
 
 	for _, node := range nodes {
-		ns := nodeNamespace(node.ID())
+		ns := namespace.Namespace(node.ID())
 		nsToNodes[ns] = append(nsToNodes[ns], node)
 	}
 
@@ -146,7 +154,7 @@ func writeNamespaceSubgraphTo(
 
 	children := make([]string, 0, len(allNS))
 	for candidate := range allNS {
-		if parentNamespace(candidate) == ns {
+		if namespace.Parent(candidate) == ns {
 			children = append(children, candidate)
 		}
 	}
@@ -224,14 +232,19 @@ func writeStyleRulesTo(
 	nodes []*graph.Node,
 	cfg *config.Config,
 	reg *safe.Registry,
-) {
+) error {
 	if cfg == nil || len(cfg.NodeStyleRules) == 0 {
-		return
+		return nil
 	}
 
 	for i, rule := range cfg.NodeStyleRules {
-		writeStyleRuleTo(root, nodes, i, rule, reg)
+		err := writeStyleRuleTo(root, nodes, i, rule, reg)
+		if err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
 func writeStyleRuleTo(
@@ -240,31 +253,41 @@ func writeStyleRuleTo(
 	index int,
 	rule config.NodeStyleRule,
 	reg *safe.Registry,
-) {
+) error {
 	classDef := buildClassDef(rule)
 	if classDef == "" {
-		return
+		return nil
 	}
 
-	matchingIDs := findMatchingNodeIDs(nodes, rule.Match, reg)
+	matchingIDs, err := findMatchingNodeIDs(nodes, rule.Match, reg)
+	if err != nil {
+		return err
+	}
+
 	if len(matchingIDs) > 0 {
 		sort.Strings(matchingIDs)
 		root.Addf("classDef rule%d %s", index, classDef)
 		root.Addf("class %s rule%d", strings.Join(matchingIDs, ","), index)
 	}
+
+	return nil
 }
 
-func findMatchingNodeIDs(nodes []*graph.Node, pattern string, reg *safe.Registry) []string {
+func findMatchingNodeIDs(nodes []*graph.Node, pattern string, reg *safe.Registry) ([]string, error) {
+	re, err := namespace.CompileMatchPattern(pattern)
+	if err != nil {
+		return nil, eris.Wrapf(err, "failed to compile match pattern %q", pattern)
+	}
+
 	var matchingIDs []string
 
 	for _, node := range nodes {
-		matched, err := path.Match(pattern, node.ID())
-		if err == nil && matched {
+		if re.MatchString(node.ID()) {
 			matchingIDs = append(matchingIDs, reg.ID(node.ID()))
 		}
 	}
 
-	return matchingIDs
+	return matchingIDs, nil
 }
 
 // buildClassDef constructs a Mermaid classDef value string from a NodeStyleRule.
@@ -285,28 +308,6 @@ func buildClassDef(rule config.NodeStyleRule) string {
 	}
 
 	return strings.Join(parts, ",")
-}
-
-// nodeNamespace returns the namespace portion of a node ID (everything before the last colon).
-// Returns an empty string if the ID has no colon.
-func nodeNamespace(id string) string {
-	idx := strings.LastIndex(id, ":")
-	if idx < 0 {
-		return ""
-	}
-
-	return id[:idx]
-}
-
-// parentNamespace returns the parent namespace of a namespace.
-// Returns an empty string if the namespace has no parent (i.e., no colon).
-func parentNamespace(ns string) string {
-	idx := strings.LastIndex(ns, ":")
-	if idx < 0 {
-		return ""
-	}
-
-	return ns[:idx]
 }
 
 // nodeDisplayLabel returns the display label for a node.
