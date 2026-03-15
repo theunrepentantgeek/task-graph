@@ -1,11 +1,19 @@
 package graphviz
 
 import (
+	"sync"
+
 	"github.com/rotisserie/eris"
 
 	"github.com/theunrepentantgeek/task-graph/internal/config"
 	"github.com/theunrepentantgeek/task-graph/internal/namespace"
 )
+
+type matchPattern interface {
+	MatchString(string) bool
+}
+
+var nodeStylePatternCache sync.Map // map[string]matchPattern
 
 type nodeProperties struct {
 	properties
@@ -48,12 +56,23 @@ func (p nodeProperties) AddStyleRuleAttributes(
 	nodeID string,
 	rule config.NodeStyleRule,
 ) error {
-	re, err := namespace.CompileMatchPattern(rule.Match)
-	if err != nil {
-		return eris.Wrapf(err, "failed to compile match pattern %q", rule.Match)
+	value, ok := nodeStylePatternCache.Load(rule.Match)
+	if !ok {
+		re, err := namespace.CompileMatchPattern(rule.Match)
+		if err != nil {
+			return eris.Wrapf(err, "failed to compile match pattern %q", rule.Match)
+		}
+
+		nodeStylePatternCache.Store(rule.Match, re)
+		value = re
 	}
 
-	if !re.MatchString(nodeID) {
+	pattern, ok := value.(matchPattern)
+	if !ok {
+		return eris.New("cached node style pattern does not implement MatchString")
+	}
+
+	if !pattern.MatchString(nodeID) {
 		return nil
 	}
 
