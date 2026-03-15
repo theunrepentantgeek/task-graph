@@ -88,9 +88,9 @@ func CompileMatchPattern(pattern string) (*regexp.Regexp, error)
 // MatchPattern returns a glob-style pattern string matching all nodes in the given namespace.
 // The returned pattern is intended for storage in NodeStyleRule.Match and will be compiled
 // via CompileMatchPattern when applied.
-// For formal namespaces (containing ":"): returns "ns:*" (e.g., "cmd:*")
-// For informal namespaces: returns "ns[-.].*" (e.g., "build[-.].*")
-// The "[...]" character class syntax is supported by CompileMatchPattern.
+// For namespaces containing ":" (clearly formal): returns "ns:*" (e.g., "cmd:test:*")
+// For namespaces without ":" (ambiguous tier): returns "ns[-.:].*" (e.g., "build[-.:].*")
+// The ambiguous case matches all delimiter types, handling mixed-tier graphs correctly.
 func MatchPattern(ns string) string
 ```
 
@@ -119,8 +119,9 @@ func MatchPattern(ns string) string
 
 - Replace local `nodeNamespace()` / `parentNamespace()` / `sortNamespaces` with `namespace.Namespace()` / `namespace.Parent()` / `namespace.Depth()`
 - Pattern generation changes from `ns + ":*"` to `namespace.MatchPattern(ns)`:
-  - Formal namespace `cmd` → `cmd:*`
-  - Informal namespace `build` → `build[-.].*`
+  - Formal namespace `cmd:test` → `cmd:test:*`
+  - Ambiguous namespace `build` → `build[-.:].*` (matches `build:x`, `build-x`, `build.x`)
+  - A single rule per namespace handles mixed-tier graphs correctly
 - Delete local namespace helper functions
 
 #### graphviz
@@ -161,8 +162,8 @@ Autocolor uses `namespace.MatchPattern(ns)` to generate the `Match` field for ea
 | User config: `match: "build*"` | `build*` | `^build.*$` | `build`, `build-bin`, `buildall` |
 | User config: `match: "*test*"` | `*test*` | `^.*test.*$` | `test`, `mytest`, `test-unit` |
 | User config: `match: "cmd:*"` | `cmd:*` | `^cmd:.*$` | `cmd:build`, `cmd:test` |
-| Autocolor formal: `MatchPattern("cmd")` | `cmd:*` | `^cmd:.*$` | `cmd:build`, `cmd:test` |
-| Autocolor informal: `MatchPattern("build")` | `build[-.].*` | `^build[-\.].*$` | `build-bin`, `build.image` |
+| Autocolor formal: `MatchPattern("cmd:test")` | `cmd:test:*` | `^cmd:test:.*$` | `cmd:test:unit`, `cmd:test:e2e` |
+| Autocolor ambiguous: `MatchPattern("build")` | `build[-.:].*` | `^build[-\.:].*$` | `build-bin`, `build.image`, `build:x` |
 
 ### Edge cases
 
@@ -204,8 +205,8 @@ Core parsing logic:
 - `TestCompileMatchPattern_SpecialChars_Escaped` — dots/parens in literal positions are escaped
 - `TestCompileMatchPattern_CharacterClass_PassedThrough` — `build[-.].*` → `^build[-.].*$` (brackets and contents passed through literally; dot is literal inside character classes regardless)
 - `TestCompileMatchPattern_InvalidPattern_ReturnsError`
-- `TestMatchPattern_FormalNamespace_ReturnsGlobPattern` — `cmd` → `cmd:*`
-- `TestMatchPattern_InformalNamespace_ReturnsBracketPattern` — `build` → `build[-.].*`
+- `TestMatchPattern_FormalNamespace_ReturnsColonPattern` — `cmd:test` → `cmd:test:*`
+- `TestMatchPattern_AmbiguousNamespace_ReturnsAllDelimiterPattern` — `build` → `build[-.:].*`
 
 ### Updated golden tests
 
