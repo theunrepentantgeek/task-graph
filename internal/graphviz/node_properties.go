@@ -1,9 +1,10 @@
 package graphviz
 
 import (
-	"path"
+	"github.com/rotisserie/eris"
 
 	"github.com/theunrepentantgeek/task-graph/internal/config"
+	"github.com/theunrepentantgeek/task-graph/internal/namespace"
 )
 
 type nodeProperties struct {
@@ -46,10 +47,14 @@ func (p nodeProperties) AddAttributes(
 func (p nodeProperties) AddStyleRuleAttributes(
 	nodeID string,
 	rule config.NodeStyleRule,
-) {
-	matched, err := path.Match(rule.Match, nodeID)
-	if err != nil || !matched {
-		return
+) error {
+	re, err := namespace.CompileMatchPattern(rule.Match)
+	if err != nil {
+		return eris.Wrapf(err, "failed to compile match pattern %q", rule.Match)
+	}
+
+	if !re.MatchString(nodeID) {
+		return nil
 	}
 
 	if rule.Color != "" {
@@ -67,4 +72,6 @@ func (p nodeProperties) AddStyleRuleAttributes(
 	if rule.FontColor != "" {
 		p.Add("fontcolor", rule.FontColor)
 	}
+
+	return nil
 }

@@ -184,9 +184,10 @@ func TestNodePropertiesAddStyleRuleAttributes_WhenPatternMatchesExactName_Applie
 	}
 
 	// Act
-	p.AddStyleRuleAttributes("alpha", rule)
+	err := p.AddStyleRuleAttributes("alpha", rule)
 
 	// Assert
+	g.Expect(err).NotTo(HaveOccurred())
 	g.Expect(p.properties).To(HaveKeyWithValue("color", "red"))
 }
 
@@ -202,9 +203,10 @@ func TestNodePropertiesAddStyleRuleAttributes_WhenPatternDoesNotMatch_LeavesProp
 	}
 
 	// Act
-	p.AddStyleRuleAttributes("beta", rule)
+	err := p.AddStyleRuleAttributes("beta", rule)
 
 	// Assert
+	g.Expect(err).NotTo(HaveOccurred())
 	g.Expect(p.properties).NotTo(HaveKey("color"))
 }
 
@@ -237,9 +239,11 @@ func TestNodePropertiesAddStyleRuleAttributes_WhenPatternUsesWildcard_MatchesMul
 			}
 
 			// Act
-			p.AddStyleRuleAttributes(c.nodeID, rule)
+			err := p.AddStyleRuleAttributes(c.nodeID, rule)
 
 			// Assert
+			g.Expect(err).NotTo(HaveOccurred())
+
 			if c.matches {
 				g.Expect(p.properties).To(HaveKeyWithValue("color", "red"))
 			} else {
@@ -264,9 +268,10 @@ func TestNodePropertiesAddStyleRuleAttributes_WhenRuleHasAllFields_AppliesAllAtt
 	}
 
 	// Act
-	p.AddStyleRuleAttributes("alpha", rule)
+	err := p.AddStyleRuleAttributes("alpha", rule)
 
 	// Assert
+	g.Expect(err).NotTo(HaveOccurred())
 	g.Expect(p.properties).To(HaveKeyWithValue("color", "red"))
 	g.Expect(p.properties).To(HaveKeyWithValue("fillcolor", "lightyellow"))
 	g.Expect(p.properties).To(HaveKeyWithValue("style", "filled"))
@@ -283,8 +288,11 @@ func TestNodePropertiesAddStyleRuleAttributes_LastRuleWins_WhenMultipleRulesMatc
 	rule2 := config.NodeStyleRule{Match: "alpha", Color: "blue"}
 
 	// Act
-	p.AddStyleRuleAttributes("alpha", rule1)
-	p.AddStyleRuleAttributes("alpha", rule2)
+	err := p.AddStyleRuleAttributes("alpha", rule1)
+	g.Expect(err).NotTo(HaveOccurred())
+
+	err = p.AddStyleRuleAttributes("alpha", rule2)
+	g.Expect(err).NotTo(HaveOccurred())
 
 	// Assert
 	g.Expect(p.properties).To(HaveKeyWithValue("color", "blue"))

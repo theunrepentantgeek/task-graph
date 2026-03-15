@@ -40,7 +40,7 @@ func TestGenerateRules_SingleNamespace_ReturnsOneRule(t *testing.T) {
 
 	// Assert
 	g.Expect(rules).To(HaveLen(1))
-	g.Expect(rules[0].Match).To(Equal("cmd:*"))
+	g.Expect(rules[0].Match).To(Equal("cmd[-.:]*"))
 	g.Expect(rules[0].FillColor).To(Equal(palette[0]))
 	g.Expect(rules[0].Style).To(Equal("filled"))
 }
@@ -62,11 +62,11 @@ func TestGenerateRules_MultipleNamespaces_AssignsColorsAlphabetically(t *testing
 	g.Expect(rules).To(HaveLen(2))
 
 	cmd := rules[0]
-	g.Expect(cmd.Match).To(Equal("cmd:*"))
+	g.Expect(cmd.Match).To(Equal("cmd[-.:]*"))
 	g.Expect(cmd.FillColor).To(Equal(palette[0]))
 
 	controllers := rules[1]
-	g.Expect(controllers.Match).To(Equal("controllers:*"))
+	g.Expect(controllers.Match).To(Equal("controllers[-.:]*"))
 	g.Expect(controllers.FillColor).To(Equal(palette[1]))
 }
 
@@ -89,7 +89,7 @@ func TestGenerateRules_NestedNamespaces_GeneratesRulesForAll(t *testing.T) {
 
 	// "cmd" comes first (shallower), then "cmd:test"
 	cmd := rules[0]
-	g.Expect(cmd.Match).To(Equal("cmd:*"))
+	g.Expect(cmd.Match).To(Equal("cmd[-.:]*"))
 	g.Expect(cmd.FillColor).To(Equal(palette[0]))
 
 	cmdTest := rules[1]
@@ -172,7 +172,7 @@ func TestGenerateRules_MixedTopLevelAndNested_ShallowerFirst(t *testing.T) {
 		matches[i] = r.Match
 	}
 
-	g.Expect(matches).To(Equal([]string{"cmd:*", "cmd:test:*"}))
+	g.Expect(matches).To(Equal([]string{"cmd[-.:]*", "cmd:test:*"}))
 }
 
 func TestGenerateRules_SingleNamespace_IncludesExpectedFieldValues(t *testing.T) {
@@ -190,7 +190,7 @@ func TestGenerateRules_SingleNamespace_IncludesExpectedFieldValues(t *testing.T)
 	g.Expect(rules).To(HaveLen(1))
 
 	rule := rules[0]
-	g.Expect(rule.Match).To(Equal("cmd:*"))
+	g.Expect(rule.Match).To(Equal("cmd[-.:]*"))
 	g.Expect(rule.FillColor).NotTo(BeEmpty())
 	g.Expect(rule.Style).To(Equal("filled"))
 	g.Expect(rule.Color).To(BeEmpty())

@@ -3,10 +3,10 @@ package autocolor
 import (
 	"cmp"
 	"slices"
-	"strings"
 
 	"github.com/theunrepentantgeek/task-graph/internal/config"
 	"github.com/theunrepentantgeek/task-graph/internal/graph"
+	"github.com/theunrepentantgeek/task-graph/internal/namespace"
 )
 
 // palette is the ordered list of fill colors used for auto-coloring namespaces.
@@ -41,7 +41,7 @@ func GenerateRules(gr *graph.Graph) []config.NodeStyleRule {
 	for i, ns := range namespaces {
 		color := palette[i%len(palette)]
 		rules = append(rules, config.NodeStyleRule{
-			Match:     ns + ":*",
+			Match:     namespace.MatchPattern(ns),
 			FillColor: color,
 			Style:     "filled",
 		})
@@ -50,17 +50,16 @@ func GenerateRules(gr *graph.Graph) []config.NodeStyleRule {
 	return rules
 }
 
-// collectAllNamespaces returns all distinct namespaces found in the graph.
-// A namespace is any prefix prior to a colon in a node ID, including parent namespaces.
-// For example, a node "cmd:test:unit" contributes namespaces "cmd:test" and "cmd".
+// collectAllNamespaces returns all distinct namespaces found in the graph,
+// including parent namespaces.
 func collectAllNamespaces(gr *graph.Graph) []string {
 	seen := make(map[string]bool)
 
 	for node := range gr.Nodes() {
-		ns := nodeNamespace(node.ID())
+		ns := namespace.Namespace(node.ID())
 		for ns != "" {
 			seen[ns] = true
-			ns = parentNamespace(ns)
+			ns = namespace.Parent(ns)
 		}
 	}
 
@@ -72,12 +71,12 @@ func collectAllNamespaces(gr *graph.Graph) []string {
 	return result
 }
 
-// sortNamespaces sorts namespaces so that shallower ones come first (fewer colons),
+// sortNamespaces sorts namespaces so that shallower ones come first,
 // and within the same depth, sorts alphabetically for deterministic color assignment.
 func sortNamespaces(namespaces []string) {
 	slices.SortFunc(namespaces, func(a, b string) int {
-		depthA := strings.Count(a, ":")
-		depthB := strings.Count(b, ":")
+		depthA := namespace.Depth(a)
+		depthB := namespace.Depth(b)
 
 		if depthA != depthB {
 			return cmp.Compare(depthA, depthB)
@@ -85,26 +84,4 @@ func sortNamespaces(namespaces []string) {
 
 		return cmp.Compare(a, b)
 	})
-}
-
-// nodeNamespace returns the namespace portion of a node ID (everything before the last colon).
-// Returns an empty string if the ID has no colon.
-func nodeNamespace(id string) string {
-	idx := strings.LastIndex(id, ":")
-	if idx < 0 {
-		return ""
-	}
-
-	return id[:idx]
-}
-
-// parentNamespace returns the parent namespace of a namespace.
-// Returns an empty string if the namespace has no parent (i.e., no colon).
-func parentNamespace(ns string) string {
-	idx := strings.LastIndex(ns, ":")
-	if idx < 0 {
-		return ""
-	}
-
-	return ns[:idx]
 }

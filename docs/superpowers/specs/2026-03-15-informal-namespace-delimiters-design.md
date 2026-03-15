@@ -30,15 +30,15 @@ Recognized delimiters: `:`, `-`, `.`
 
 Examples:
 
-| Node ID | Namespace | Parent | Notes |
-|---|---|---|---|
-| `cmd:test:unit` | `cmd:test` | `cmd` | Formal, nested |
-| `cmd:build` | `cmd` | (none) | Formal |
-| `build-bin` | `build` | (none) | Informal hyphen |
-| `tidy.format` | `tidy` | (none) | Informal dot |
-| `build-bin.linux` | `build-bin` | `build` | Informal, nested |
-| `build-bin:test` | `build-bin` | `build` | Formal takes precedence; hyphen is literal in node ID but informal splitting applies to extracted namespace |
-| `deploy` | (none) | N/A | No delimiter |
+| Node ID           | Namespace   | Parent  | Notes                                                                                                       |
+| ----------------- | ----------- | ------- | ----------------------------------------------------------------------------------------------------------- |
+| `cmd:test:unit`   | `cmd:test`  | `cmd`   | Formal, nested                                                                                              |
+| `cmd:build`       | `cmd`       | (none)  | Formal                                                                                                      |
+| `build-bin`       | `build`     | (none)  | Informal hyphen                                                                                             |
+| `tidy.format`     | `tidy`      | (none)  | Informal dot                                                                                                |
+| `build-bin.linux` | `build-bin` | `build` | Informal, nested                                                                                            |
+| `build-bin:test`  | `build-bin` | `build` | Formal takes precedence; hyphen is literal in node ID but informal splitting applies to extracted namespace |
+| `deploy`          | (none)      | N/A     | No delimiter                                                                                                |
 
 ### Activation
 
@@ -157,13 +157,13 @@ Autocolor uses `namespace.MatchPattern(ns)` to generate the `Match` field for ea
 
 **End-to-end pattern flow:**
 
-| Source | Pattern (glob) | CompileMatchPattern output (regex) | Matches |
-|---|---|---|---|
-| User config: `match: "build*"` | `build*` | `^build.*$` | `build`, `build-bin`, `buildall` |
-| User config: `match: "*test*"` | `*test*` | `^.*test.*$` | `test`, `mytest`, `test-unit` |
-| User config: `match: "cmd:*"` | `cmd:*` | `^cmd:.*$` | `cmd:build`, `cmd:test` |
-| Autocolor formal: `MatchPattern("cmd:test")` | `cmd:test:*` | `^cmd:test:.*$` | `cmd:test:unit`, `cmd:test:e2e` |
-| Autocolor ambiguous: `MatchPattern("build")` | `build[-.:]*` | `^build[-.:].*$` | `build-bin`, `build.image`, `build:x` |
+| Source                                       | Pattern (glob) | CompileMatchPattern output (regex) | Matches                               |
+| -------------------------------------------- | -------------- | ---------------------------------- | ------------------------------------- |
+| User config: `match: "build*"`               | `build*`       | `^build.*$`                        | `build`, `build-bin`, `buildall`      |
+| User config: `match: "*test*"`               | `*test*`       | `^.*test.*$`                       | `test`, `mytest`, `test-unit`         |
+| User config: `match: "cmd:*"`                | `cmd:*`        | `^cmd:.*$`                         | `cmd:build`, `cmd:test`               |
+| Autocolor formal: `MatchPattern("cmd:test")` | `cmd:test:*`   | `^cmd:test:.*$`                    | `cmd:test:unit`, `cmd:test:e2e`       |
+| Autocolor ambiguous: `MatchPattern("build")` | `build[-.:]*`  | `^build[-.:].*$`                   | `build-bin`, `build.image`, `build:x` |
 
 ### Edge cases
 
