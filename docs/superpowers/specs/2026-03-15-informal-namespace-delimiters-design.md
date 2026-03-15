@@ -37,7 +37,7 @@ Examples:
 | `build-bin` | `build` | (none) | Informal hyphen |
 | `tidy.format` | `tidy` | (none) | Informal dot |
 | `build-bin.linux` | `build-bin` | `build` | Informal, nested |
-| `build-bin:test` | `build-bin` | (none) | Formal takes precedence; hyphen is literal |
+| `build-bin:test` | `build-bin` | `build` | Formal takes precedence; hyphen is literal in node ID but informal splitting applies to extracted namespace |
 | `deploy` | (none) | N/A | No delimiter |
 
 ### Activation
@@ -78,6 +78,7 @@ func Parent(ns string) string
 //   Tier 1 (contains ":"): counts colons. "cmd:test" → 1
 //   Tier 2 (no ":"): counts hyphens and dots. "build-bin" → 1, "build-bin.linux" → 2
 // A top-level namespace (no internal delimiters) has depth 0.
+// Note: Tier selection is based on the input string. "cmd:build-bin" has depth 1 (one colon; tier 1).
 func Depth(ns string) int
 
 // CompileMatchPattern converts a glob-style pattern (using * and ?) to a compiled regexp.
@@ -201,7 +202,7 @@ Core parsing logic:
 - `TestCompileMatchPattern_GlobStar_ConvertsToRegex` — `build*` → `^build.*$`
 - `TestCompileMatchPattern_GlobQuestion_ConvertsToRegex` — `build?` → `^build.$`
 - `TestCompileMatchPattern_SpecialChars_Escaped` — dots/parens in literal positions are escaped
-- `TestCompileMatchPattern_CharacterClass_PassedThrough` — `build[-.].*` → `^build[-\.].*$` (brackets preserved, dot inside escaped)
+- `TestCompileMatchPattern_CharacterClass_PassedThrough` — `build[-.].*` → `^build[-.].*$` (brackets and contents passed through literally; dot is literal inside character classes regardless)
 - `TestCompileMatchPattern_InvalidPattern_ReturnsError`
 - `TestMatchPattern_FormalNamespace_ReturnsGlobPattern` — `cmd` → `cmd:*`
 - `TestMatchPattern_InformalNamespace_ReturnsBracketPattern` — `build` → `build[-.].*`
