@@ -47,7 +47,7 @@
 	"remoteUser": "vscode",
 	// to allow docker use from inside container: https://github.com/microsoft/vscode-dev-containers/tree/main/containers/docker-from-docker
 	"mounts": [
-		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",
 	],
-	"overrideCommand": false
+	"overrideCommand": false,
 }
