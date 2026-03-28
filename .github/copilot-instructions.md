@@ -98,19 +98,7 @@ task tidy   # runs gofumpt, go mod tidy, and golangci-lint --fix
 
 ## Coding Conventions
 
-- **Error wrapping**: Always use `eris.Wrap`, `eris.Wrapf`, or `eris.New` (from `github.com/rotisserie/eris`); never `fmt.Errorf`.
-- **Interface assertions**: Always add `var _ TheInterface = &MyStruct{}` when a struct implements an interface. Group multiple assertions in `var ( ... )`.
-- **Test naming**: Use Roy Osherove style: `Test<Subject>_<Scenario>_<Expectation>`.
-- **Test structure**: Mark tests with `t.Parallel()` unless not possible. Mark helpers with `t.Helper()`. Use Arrange/Act/Assert comments.
-- **Table tests**: Use `cases := map[string]struct{...}{...}` with `for name, c := range cases`.
-- **Test ordering**: In a test file, earlier tests assert foundational properties that later tests may rely on.
-- **Goldie golden tests**: Use for verifying file/output content; refresh with `go test ./... -update`.
-- **Gomega**: Use `gomega` (`Expect`, `Ω`, `Eventually`, etc.) for assertions; never `testify`.
-- **Formatting**: Code is formatted with `gofumpt` (stricter than `gofmt`).
-- **Import order** (enforced by `gci`): standard → dot imports → alias imports → default → local module.
-- **Function length**: Keep functions under 60 lines (excluding comments).
-- **Line length**: Maximum 120 characters.
-- **TODO tracking**: If you notice issues unrelated to your current task, add them to `TODO.md` at the repo root rather than fixing them immediately.
+See `DEVELOPMENT.md` in the repository root for all coding conventions, testing practices, and design philosophy. The same standards apply to AI-generated code.
 
 ## Configuration
 
