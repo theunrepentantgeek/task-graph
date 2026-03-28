@@ -91,6 +91,8 @@ Include a brief code example for the interface assertion pattern.
 - **Structure**: Use `// Arrange`, `// Act`, `// Assert` comments; if a test does not fit this shape, it may be doing too much
 - **Table tests**: `cases := map[string]struct{...}{...}` with `for name, c := range cases`; each sub-test gets `t.Parallel()` too
 - **Test ordering**: Earlier tests in a file assert foundational properties that later tests may rely on. When diagnosing failures, start at the first failing test.
+- **Test grouping**: Tests for a given method should be grouped together with a leading comment
+- **Prefer table tests**: When multiple tests share similar structure, prefer a table test to avoid duplication
 - **Test packages**: Only use a `_test` package suffix if needed to break circular imports
 
 Include a brief table test example showing the naming, map pattern, and Arrange/Act/Assert comments.
@@ -118,7 +120,7 @@ Include a brief table test example showing the naming, map pattern, and Arrange/
 
 ### 2. `.github/copilot-instructions.md` (update)
 
-**Remove** the duplicated "Coding Conventions" section (lines 99–113 in the current file).
+**Remove** the duplicated "Coding Conventions" section.
 **Replace** with a short reference:
 
 ```markdown
