@@ -1,0 +1,14 @@
+flowchart TD
+  build["build"]
+  build --> test
+  
+  test["test"]
+  
+  var_PACKAGE("PACKAGE: github.com/example/project")
+  build ==> var_PACKAGE
+  
+  var_VERSION("VERSION: sh: git describe --tags")
+  build ==> var_VERSION
+  
+  classDef varStyle fill:#e8e8e8,stroke:#666
+  class var_PACKAGE,var_VERSION varStyle
