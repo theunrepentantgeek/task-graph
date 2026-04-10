@@ -1,0 +1,51 @@
+digraph {
+  "build" [
+    color="black"
+    label="{build | Build the project}"
+    shape="Mrecord"
+  ]
+  
+  "release" [
+    color="black"
+    label="{release | Create a release}"
+    shape="Mrecord"
+  ]
+  "release" -> "build" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  "release" -> "test" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  
+  "test" [
+    color="black"
+    label="{test | Run tests}"
+    shape="Mrecord"
+  ]
+  
+  "var_OUTPUT_DIR" [
+    color="black"
+    label="{OUTPUT_DIR | ./build}"
+    shape="Mrecord"
+  ]
+  "var_OUTPUT_DIR" -> "build"
+  
+  "var_PACKAGE" [
+    color="black"
+    label="{PACKAGE | github.com/example/project}"
+    shape="Mrecord"
+  ]
+  "var_PACKAGE" -> "build"
+  
+  "var_VERSION" [
+    color="black"
+    label="{VERSION | sh: git describe \n--tags}"
+    shape="Mrecord"
+  ]
+  "var_VERSION" -> "release"
+  
+}
