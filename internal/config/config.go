@@ -18,6 +18,10 @@ type Config struct {
 	// namespace found in the taskfile. User-defined NodeStyleRules take precedence.
 	AutoColor bool `json:"autoColor,omitempty" yaml:"autoColor,omitempty"`
 
+	// IncludeGlobalVars controls whether global Taskfile variables are included
+	// as nodes in the generated graph, with edges to the tasks that reference them.
+	IncludeGlobalVars bool `json:"includeGlobalVars,omitempty" yaml:"includeGlobalVars,omitempty"`
+
 	// NodeStyleRules are additional style rules applied to matching task nodes, in order.
 	// All matching rules are applied; in case of conflicts, the last matching rule wins.
 	// These rules work across all graph types.
@@ -52,6 +56,16 @@ func New() *Config {
 			},
 			TaskNodes: &GraphvizNode{
 				Color: "black",
+			},
+			VariableNodes: &GraphvizNode{
+				Color:     "#666666",
+				FillColor: "#e8e8e8",
+				Style:     "filled",
+			},
+			VariableEdges: &GraphvizEdge{
+				Color: "green",
+				Width: 1,
+				Style: "dotted",
 			},
 		},
 		Mermaid: &Mermaid{

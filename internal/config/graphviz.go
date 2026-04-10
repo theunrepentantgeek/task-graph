@@ -17,6 +17,12 @@ type Graphviz struct {
 
 	// TaskNodes is the presentation for task nodes
 	TaskNodes *GraphvizNode `json:"taskNodes,omitempty" yaml:"taskNodes,omitempty"`
+
+	// VariableNodes is the presentation for global variable nodes
+	VariableNodes *GraphvizNode `json:"variableNodes,omitempty" yaml:"variableNodes,omitempty"`
+
+	// VariableEdges is the presentation for edges from variables to tasks
+	VariableEdges *GraphvizEdge `json:"variableEdges,omitempty" yaml:"variableEdges,omitempty"`
 }
 
 type GraphvizNode struct {
