@@ -66,7 +66,9 @@ func (c *CLI) Run(
 		"taskfile", c.Taskfile,
 		"tasks", tf.Tasks.Len())
 
-	gr := taskgraph.New(tf).Build()
+	builder := taskgraph.New(tf)
+	builder.IncludeGlobalVars = flags.Config.IncludeGlobalVars
+	gr := builder.Build()
 
 	applyAutoColor(flags.Config, gr)
 
