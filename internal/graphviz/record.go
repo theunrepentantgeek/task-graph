@@ -20,7 +20,7 @@ func newRecord() *record {
 // add adds a part to the record.
 func (r *record) add(text string) {
 	if len(text) > 0 {
-		r.parts = append(r.parts, text)
+		r.parts = append(r.parts, strings.ReplaceAll(text, "|", `\|`))
 	}
 }
 

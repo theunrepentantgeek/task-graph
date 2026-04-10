@@ -24,7 +24,7 @@ digraph {
     style="filled"
   ]
   "var_PACKAGE" -> "build" [
-    color="green"
+    color="#228B22"
     penwidth="1"
     style="dotted"
   ]
@@ -37,7 +37,7 @@ digraph {
     style="filled"
   ]
   "var_VERSION" -> "build" [
-    color="green"
+    color="#228B22"
     penwidth="1"
     style="dotted"
   ]

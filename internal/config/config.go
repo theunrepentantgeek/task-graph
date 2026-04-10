@@ -63,7 +63,7 @@ func New() *Config {
 				Style:     "filled",
 			},
 			VariableEdges: &GraphvizEdge{
-				Color: "green",
+				Color: "#228B22",
 				Width: 1,
 				Style: "dotted",
 			},
