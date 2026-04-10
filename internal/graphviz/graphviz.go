@@ -59,16 +59,7 @@ func WriteTo(
 	reg := safe.NewRegistry()
 	reg.Prepare(nodeIDs)
 
-	var taskNodes []*graph.Node
-	var varNodes []*graph.Node
-
-	for _, n := range nodes {
-		if n.Kind == graph.NodeKindVariable {
-			varNodes = append(varNodes, n)
-		} else {
-			taskNodes = append(taskNodes, n)
-		}
-	}
+	taskNodes, varNodes := splitNodesByKind(nodes)
 
 	iw := indentwriter.New()
 	root := iw.Add("digraph {")
@@ -386,17 +377,9 @@ func writeVariableNodeDefinitionTo(
 	props.Addf("shape", "record")
 	props.Add("label", rec.String())
 
-	if cfg != nil && cfg.Graphviz != nil {
-		props.AddAttributes(cfg.Graphviz.VariableNodes)
-	}
-
-	if cfg != nil {
-		for _, rule := range cfg.NodeStyleRules {
-			err := props.AddStyleRuleAttributes(node.ID(), rule)
-			if err != nil {
-				return err
-			}
-		}
+	err := applyVariableNodeConfig(&props, node, cfg)
+	if err != nil {
+		return err
 	}
 
 	if props.ContainsKey("fillcolor") && !props.ContainsKey("style") {
@@ -415,4 +398,35 @@ func nodeLabel(node *graph.Node) string {
 	}
 
 	return node.ID()
+}
+
+func splitNodesByKind(nodes []*graph.Node) (taskNodes []*graph.Node, varNodes []*graph.Node) {
+	for _, n := range nodes {
+		if n.Kind == graph.NodeKindVariable {
+			varNodes = append(varNodes, n)
+		} else {
+			taskNodes = append(taskNodes, n)
+		}
+	}
+
+	return taskNodes, varNodes
+}
+
+func applyVariableNodeConfig(props *nodeProperties, node *graph.Node, cfg *config.Config) error {
+	if cfg == nil {
+		return nil
+	}
+
+	if cfg.Graphviz != nil {
+		props.AddAttributes(cfg.Graphviz.VariableNodes)
+	}
+
+	for _, rule := range cfg.NodeStyleRules {
+		err := props.AddStyleRuleAttributes(node.ID(), rule)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

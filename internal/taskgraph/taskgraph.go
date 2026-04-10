@@ -111,7 +111,11 @@ func (b *Builder) addGlobalVariables(g *graph.Graph) {
 		return
 	}
 
-	// Create variable nodes
+	b.addVariableNodes(g)
+	b.addVariableEdges(g)
+}
+
+func (b *Builder) addVariableNodes(g *graph.Graph) {
 	for name, v := range b.taskfile.Vars.All() {
 		nodeID := "var:" + name
 		node := g.AddNode(nodeID)
@@ -119,25 +123,31 @@ func (b *Builder) addGlobalVariables(g *graph.Graph) {
 		node.Label = name
 		node.Description = varDescription(v)
 	}
+}
 
-	// Scan tasks for variable references and create edges
+func (b *Builder) addVariableEdges(g *graph.Graph) {
 	for taskName, task := range b.taskfile.Tasks.All(alphaNumeric) {
 		refs := b.scanTaskVarRefs(task)
-		for varName := range refs {
-			varNodeID := "var:" + varName
-			varNode, ok := g.Node(varNodeID)
-			if !ok {
-				continue
-			}
+		b.addEdgesForVarRefs(g, taskName, refs)
+	}
+}
 
-			taskNode, ok := g.Node(taskName)
-			if !ok {
-				continue
-			}
+func (*Builder) addEdgesForVarRefs(g *graph.Graph, taskName string, refs map[string]bool) {
+	for varName := range refs {
+		varNodeID := "var:" + varName
 
-			edge := varNode.AddEdge(taskNode)
-			edge.SetClass("var")
+		varNode, ok := g.Node(varNodeID)
+		if !ok {
+			continue
 		}
+
+		taskNode, ok := g.Node(taskName)
+		if !ok {
+			continue
+		}
+
+		edge := varNode.AddEdge(taskNode)
+		edge.SetClass("var")
 	}
 }
 
@@ -161,62 +171,7 @@ func (b *Builder) scanTaskVarRefs(task *ast.Task) map[string]bool {
 	refs := make(map[string]bool)
 	globalVarNames := b.globalVarNames()
 
-	var strings []string
-
-	// Commands
-	for _, cmd := range task.Cmds {
-		strings = append(strings, cmd.Cmd, cmd.Task)
-	}
-
-	// Dependencies
-	for _, dep := range task.Deps {
-		strings = append(strings, dep.Task)
-	}
-
-	// Other string fields
-	strings = append(strings, task.Dir, task.Label)
-
-	// Env vars
-	if task.Env != nil {
-		for _, v := range task.Env.All() {
-			if v.Value != nil {
-				strings = append(strings, fmt.Sprintf("%v", v.Value))
-			}
-		}
-	}
-
-	// Task-local vars (values may reference globals)
-	if task.Vars != nil {
-		for _, v := range task.Vars.All() {
-			if v.Value != nil {
-				strings = append(strings, fmt.Sprintf("%v", v.Value))
-			}
-			if v.Sh != nil {
-				strings = append(strings, *v.Sh)
-			}
-		}
-	}
-
-	// Sources
-	for _, src := range task.Sources {
-		strings = append(strings, src.Glob)
-	}
-
-	// Generates
-	for _, gen := range task.Generates {
-		strings = append(strings, gen.Glob)
-	}
-
-	// Status
-	strings = append(strings, task.Status...)
-
-	// Preconditions
-	for _, pre := range task.Preconditions {
-		strings = append(strings, pre.Sh, pre.Msg)
-	}
-
-	// Extract var refs from all collected strings
-	for _, s := range strings {
+	for _, s := range collectTaskStrings(task) {
 		for _, name := range extractVarRefs(s) {
 			if globalVarNames[name] {
 				refs[name] = true
@@ -227,8 +182,73 @@ func (b *Builder) scanTaskVarRefs(task *ast.Task) map[string]bool {
 	return refs
 }
 
+func collectTaskStrings(task *ast.Task) []string {
+	var result []string //nolint:prealloc // Size unknown upfront.
+
+	for _, cmd := range task.Cmds {
+		result = append(result, cmd.Cmd, cmd.Task)
+	}
+
+	for _, dep := range task.Deps {
+		result = append(result, dep.Task)
+	}
+
+	result = append(result, task.Dir, task.Label)
+	result = collectEnvStrings(result, task.Env)
+	result = collectVarStrings(result, task.Vars)
+
+	for _, src := range task.Sources {
+		result = append(result, src.Glob)
+	}
+
+	for _, gen := range task.Generates {
+		result = append(result, gen.Glob)
+	}
+
+	result = append(result, task.Status...)
+
+	for _, pre := range task.Preconditions {
+		result = append(result, pre.Sh, pre.Msg)
+	}
+
+	return result
+}
+
+func collectEnvStrings(result []string, env *ast.Vars) []string {
+	if env == nil {
+		return result
+	}
+
+	for _, v := range env.All() {
+		if v.Value != nil {
+			result = append(result, fmt.Sprintf("%v", v.Value))
+		}
+	}
+
+	return result
+}
+
+func collectVarStrings(result []string, vars *ast.Vars) []string {
+	if vars == nil {
+		return result
+	}
+
+	for _, v := range vars.All() {
+		if v.Value != nil {
+			result = append(result, fmt.Sprintf("%v", v.Value))
+		}
+
+		if v.Sh != nil {
+			result = append(result, *v.Sh)
+		}
+	}
+
+	return result
+}
+
 func (b *Builder) globalVarNames() map[string]bool {
 	names := make(map[string]bool)
+
 	if b.taskfile.Vars != nil {
 		for name := range b.taskfile.Vars.All() {
 			names[name] = true

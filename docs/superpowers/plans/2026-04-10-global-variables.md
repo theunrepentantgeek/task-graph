@@ -12,27 +12,27 @@
 
 ## File Structure
 
-| Action | File | Responsibility |
-|--------|------|---------------|
-| Modify | `internal/graph/node.go` | Add `NodeKind` type and `Kind` field to `Node` |
-| Modify | `internal/graph/node_test.go` | Tests for `Kind` field |
-| Create | `internal/taskgraph/scanner.go` | Template reference scanner (extract var names from strings) |
-| Create | `internal/taskgraph/scanner_test.go` | Table-driven tests for scanner |
-| Modify | `internal/taskgraph/taskgraph.go` | Add `IncludeGlobalVars` option to Builder, variable node/edge creation |
-| Modify | `internal/taskgraph/testgraph_test.go` | Golden file test for builder with variables |
-| Create | `internal/taskgraph/testdata/global-vars-taskfile.yml` | Test taskfile with global variables |
-| Create | `internal/taskgraph/testdata/global-vars-taskfile.golden` | Golden file for builder output with variables |
-| Modify | `internal/config/config.go` | Add `IncludeGlobalVars` field and defaults for variable styling |
-| Modify | `internal/config/graphviz.go` | Add `VariableNodes` and `VariableEdges` fields |
-| Modify | `internal/config/mermaid.go` | Add `VariableNodes` and `VariableEdges` fields |
-| Modify | `internal/cmd/cli.go` | Add `--include-global-vars` flag, wire through to builder |
-| Modify | `internal/cmd/cli_test.go` | Test CLI flag |
-| Modify | `internal/graphviz/graphviz.go` | Variable node rendering, `rank=sink` layout, variable edge styling |
-| Modify | `internal/graphviz/graphviz_test.go` | Golden file tests for variable nodes |
-| Create | `internal/graphviz/testdata/sample_graph_with_variables.golden` | Golden file |
-| Modify | `internal/mermaid/mermaid.go` | Variable node rendering, stadium shape, thick edges |
-| Modify | `internal/mermaid/mermaid_test.go` | Golden file tests for variable nodes |
-| Create | `internal/mermaid/testdata/sample_graph_with_variables.golden` | Golden file |
+| Action | File                                                            | Responsibility                                                         |
+| ------ | --------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Modify | `internal/graph/node.go`                                        | Add `NodeKind` type and `Kind` field to `Node`                         |
+| Modify | `internal/graph/node_test.go`                                   | Tests for `Kind` field                                                 |
+| Create | `internal/taskgraph/scanner.go`                                 | Template reference scanner (extract var names from strings)            |
+| Create | `internal/taskgraph/scanner_test.go`                            | Table-driven tests for scanner                                         |
+| Modify | `internal/taskgraph/taskgraph.go`                               | Add `IncludeGlobalVars` option to Builder, variable node/edge creation |
+| Modify | `internal/taskgraph/testgraph_test.go`                          | Golden file test for builder with variables                            |
+| Create | `internal/taskgraph/testdata/global-vars-taskfile.yml`          | Test taskfile with global variables                                    |
+| Create | `internal/taskgraph/testdata/global-vars-taskfile.golden`       | Golden file for builder output with variables                          |
+| Modify | `internal/config/config.go`                                     | Add `IncludeGlobalVars` field and defaults for variable styling        |
+| Modify | `internal/config/graphviz.go`                                   | Add `VariableNodes` and `VariableEdges` fields                         |
+| Modify | `internal/config/mermaid.go`                                    | Add `VariableNodes` and `VariableEdges` fields                         |
+| Modify | `internal/cmd/cli.go`                                           | Add `--include-global-vars` flag, wire through to builder              |
+| Modify | `internal/cmd/cli_test.go`                                      | Test CLI flag                                                          |
+| Modify | `internal/graphviz/graphviz.go`                                 | Variable node rendering, `rank=sink` layout, variable edge styling     |
+| Modify | `internal/graphviz/graphviz_test.go`                            | Golden file tests for variable nodes                                   |
+| Create | `internal/graphviz/testdata/sample_graph_with_variables.golden` | Golden file                                                            |
+| Modify | `internal/mermaid/mermaid.go`                                   | Variable node rendering, stadium shape, thick edges                    |
+| Modify | `internal/mermaid/mermaid_test.go`                              | Golden file tests for variable nodes                                   |
+| Create | `internal/mermaid/testdata/sample_graph_with_variables.golden`  | Golden file                                                            |
 
 ---
 

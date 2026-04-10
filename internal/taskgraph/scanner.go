@@ -4,10 +4,10 @@ import (
 	"regexp"
 )
 
-// templateBlockRe matches Go template blocks: {{ ... }}
+// templateBlockRe matches Go template blocks: {{ ... }}.
 var templateBlockRe = regexp.MustCompile(`\{\{(.+?)\}\}`)
 
-// varRefRe matches variable references within a template block: .IDENTIFIER
+// varRefRe matches variable references within a template block: .IDENTIFIER.
 // It requires at least one character after the dot to avoid matching {{.}} (current context).
 var varRefRe = regexp.MustCompile(`\.([A-Za-z_][A-Za-z0-9_]*)`)
 

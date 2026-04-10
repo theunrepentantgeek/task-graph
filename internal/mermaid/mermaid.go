@@ -61,16 +61,7 @@ func WriteTo(
 	reg := safe.NewRegistry()
 	reg.Prepare(nodeIDs)
 
-	var taskNodes []*graph.Node
-	var varNodes []*graph.Node
-
-	for _, n := range nodes {
-		if n.Kind == graph.NodeKindVariable {
-			varNodes = append(varNodes, n)
-		} else {
-			taskNodes = append(taskNodes, n)
-		}
-	}
+	taskNodes, varNodes := splitNodesByKind(nodes)
 
 	iw := indentwriter.New()
 	root := iw.Addf("flowchart %s", flowchartDirection(cfg))
@@ -385,30 +376,10 @@ func writeVariableClassDef(
 	cfg *config.Config,
 	reg *safe.Registry,
 ) {
-	var parts []string
-
-	if cfg != nil && cfg.Mermaid != nil && cfg.Mermaid.VariableNodes != nil {
-		vs := cfg.Mermaid.VariableNodes
-		if vs.Fill != "" {
-			parts = append(parts, "fill:"+vs.Fill)
-		}
-
-		if vs.Stroke != "" {
-			parts = append(parts, "stroke:"+vs.Stroke)
-		}
-
-		if vs.Color != "" {
-			parts = append(parts, "color:"+vs.Color)
-		}
-	}
-
-	if len(parts) == 0 {
-		parts = append(parts, "fill:#e8e8e8", "stroke:#666")
-	}
-
+	parts := variableClassDefParts(cfg)
 	classDef := strings.Join(parts, ",")
 
-	var ids []string
+	ids := make([]string, 0, len(nodes))
 	for _, n := range nodes {
 		ids = append(ids, reg.ID(n.ID()))
 	}
@@ -416,4 +387,44 @@ func writeVariableClassDef(
 	sort.Strings(ids)
 	root.Addf("classDef varStyle %s", classDef)
 	root.Addf("class %s varStyle", strings.Join(ids, ","))
+}
+
+func variableClassDefParts(cfg *config.Config) []string {
+	if cfg == nil || cfg.Mermaid == nil || cfg.Mermaid.VariableNodes == nil {
+		return []string{"fill:#e8e8e8", "stroke:#666"}
+	}
+
+	vs := cfg.Mermaid.VariableNodes
+
+	var parts []string
+
+	if vs.Fill != "" {
+		parts = append(parts, "fill:"+vs.Fill)
+	}
+
+	if vs.Stroke != "" {
+		parts = append(parts, "stroke:"+vs.Stroke)
+	}
+
+	if vs.Color != "" {
+		parts = append(parts, "color:"+vs.Color)
+	}
+
+	if len(parts) > 0 {
+		return parts
+	}
+
+	return []string{"fill:#e8e8e8", "stroke:#666"}
+}
+
+func splitNodesByKind(nodes []*graph.Node) (taskNodes []*graph.Node, varNodes []*graph.Node) {
+	for _, n := range nodes {
+		if n.Kind == graph.NodeKindVariable {
+			varNodes = append(varNodes, n)
+		} else {
+			taskNodes = append(taskNodes, n)
+		}
+	}
+
+	return taskNodes, varNodes
 }

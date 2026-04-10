@@ -59,6 +59,7 @@ The `taskgraph.Builder` scans task fields to detect which tasks reference which 
 **Edge direction:** Variable → task. This matches data flow (variables feed into tasks) and produces upward-pointing arrows when variables are laid out below tasks.
 
 **Known limitations:**
+
 - Variable-to-variable template references (within `sh:` expressions) are not scanned.
 - Variables referenced via `env:` at the task level or through included taskfile variable forwarding are not detected.
 - Template expressions using Go template functions that indirectly reference variables are not detected.
@@ -72,16 +73,19 @@ These are acceptable simplifications; the scanner catches the most common usage 
 **Config field:** `IncludeGlobalVars bool` on the `Config` struct with JSON/YAML tags. Three-layer override: defaults (`false`) → config file → CLI flag.
 
 **Graphviz config additions** on the `Graphviz` struct:
+
 - `VariableNodes *GraphvizNode` — default: `record` shape (rectangular, distinct from task nodes' `Mrecord`), fill `#e8e8e8` (light gray), style `filled`.
 - `VariableEdges *GraphvizEdge` — default: color `green`, style `dotted`, width `1`.
 
 **Mermaid config additions** on the `Mermaid` struct:
+
 - `VariableNodes` — styling for the variable `classDef` (fill, stroke, etc.).
 - `VariableEdges` — edge styling (limited by Mermaid; mainly connector style).
 
 ### Graphviz Rendering
 
 **Node shape:** Variable nodes use `record` shape instead of `Mrecord` (rectangular vs rounded corners — a subtle but visible distinction). The record label shows `name | value`, e.g.:
+
 - `"PACKAGE | github.com/Azure/azure-service-operator/v2"`
 - `"VERSION | sh: scripts/build_version.py v2"`
 
@@ -125,6 +129,7 @@ All tests follow existing conventions: Roy Osherove naming, gomega assertions, `
 ### Template Scanner
 
 Table-driven tests covering:
+
 - Simple reference: `{{.FOO}}` → extracts `FOO`
 - Piped expression: `{{.FOO | lowercase}}` → extracts `FOO`
 - Multiple variables: `{{printf "%s" .FOO .BAR}}` → extracts `FOO`, `BAR`
@@ -149,6 +154,7 @@ Table-driven tests covering:
 ### Graphviz Renderer
 
 Golden file tests for:
+
 - Variable nodes with default styling and `rank=sink` layout
 - Variable edges with `"var"` class styling
 - Namespace grouping with variables outside subgraphs
@@ -157,6 +163,7 @@ Golden file tests for:
 ### Mermaid Renderer
 
 Golden file tests for:
+
 - Variable node stadium shapes
 - Variable edge thick arrows and `classDef` rules
 - Variables positioned after task nodes in output
