@@ -72,7 +72,7 @@ These are acceptable simplifications; the scanner catches the most common usage 
 **Config field:** `IncludeGlobalVars bool` on the `Config` struct with JSON/YAML tags. Three-layer override: defaults (`false`) → config file → CLI flag.
 
 **Graphviz config additions** on the `Graphviz` struct:
-- `VariableNodes *GraphvizNode` — default: `box` shape, fill `#e8e8e8` (light gray), style `filled`.
+- `VariableNodes *GraphvizNode` — default: `record` shape (rectangular, distinct from task nodes' `Mrecord`), fill `#e8e8e8` (light gray), style `filled`.
 - `VariableEdges *GraphvizEdge` — default: color `green`, style `dotted`, width `1`.
 
 **Mermaid config additions** on the `Mermaid` struct:
@@ -81,7 +81,7 @@ These are acceptable simplifications; the scanner catches the most common usage 
 
 ### Graphviz Rendering
 
-**Node shape:** Variable nodes use `box` shape instead of `Mrecord`. The record label shows `name | value`, e.g.:
+**Node shape:** Variable nodes use `record` shape instead of `Mrecord` (rectangular vs rounded corners — a subtle but visible distinction). The record label shows `name | value`, e.g.:
 - `"PACKAGE | github.com/Azure/azure-service-operator/v2"`
 - `"VERSION | sh: scripts/build_version.py v2"`
 
@@ -101,7 +101,7 @@ Long values are wrapped using the existing `indentwriter.Wrap` logic.
 
 **Node label:** Shows name and value: `var_PACKAGE("PACKAGE: github.com/Azure/...v2")`. For shell variables: `var_VERSION("VERSION: sh: scripts/build_version.py v2")`.
 
-**Layout:** In Mermaid `flowchart TD`, variable node definitions are written after all task nodes. Edges go from task to variable (task → variable, reversed from Graphviz) so that Mermaid's layout algorithm pushes variables below tasks. Arrows point downward — acceptable tradeoff per requirements since positioning below is the priority.
+**Layout:** In Mermaid `flowchart TD`, variable node definitions are written after all task nodes. The graph model stores variable→task edges, but the Mermaid renderer writes them visually reversed (task → variable) so that Mermaid's layout algorithm pushes variables below tasks. Arrows point downward — acceptable tradeoff per requirements since positioning below is the priority.
 
 **Edge style:** Variable edges use `==>` (thick arrow), distinct from `-->` (dependency) and `-.->` (call). A `classDef` applies the configured color (default green).
 
