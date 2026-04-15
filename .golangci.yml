@@ -56,6 +56,7 @@ linters:
     - noinlineerr
     - noctx
     - nolintlint
+    - nonamedreturns
     - paralleltest
     - perfsprint
     - prealloc
