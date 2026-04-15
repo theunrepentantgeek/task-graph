@@ -173,7 +173,7 @@ if should-install "$TOOL_DEST/golangci-lint"; then
     write-info "Installing golangci-lint"
     # golangci-lint is provided by base image if in devcontainer
     # this command copied from there
-    go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.7.2
+    go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.11.4
 fi
 
 if should-install "$TOOL_DEST/golangci-lint-custom"; then
