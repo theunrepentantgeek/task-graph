@@ -13,13 +13,16 @@ linters:
     - dupl
     - dupword
     - durationcheck
+    - embeddedstructfieldcheck
     - errchkjson
     - errname
     - errorlint
     - exhaustive
     - exptostd
     - fatcontext
+    - forbidigo
     - forcetypeassert
+    - funcorder
     - funlen
     - ginkgolinter
     - gocheckcompilerdirectives
@@ -36,6 +39,7 @@ linters:
     - iface
     - inamedparam
     - intrange
+    - iotamixing
     - loggercheck
     - maintidx
     - makezero
@@ -84,6 +88,10 @@ linters:
   settings:
     cyclop:
       max-complexity: 10
+    forbidigo:
+      forbid:
+        - pattern: 'fmt\.Errorf'
+          msg: "use eris.Wrap, eris.Wrapf, or eris.New instead of fmt.Errorf"
     exhaustive:
       default-signifies-exhaustive: true
     funlen:
