@@ -40,13 +40,17 @@ func FindExecutable(dotPath string) (string, error) {
 // If a dot executable is found, its path is returned.
 func findInDirectory(directory string) (string, error) {
 	candidate := filepath.Join(directory, "dot")
-	if _, statErr := os.Stat(candidate); statErr == nil {
+
+	_, statErr := os.Stat(candidate)
+	if statErr == nil {
 		return candidate, nil
 	}
 
 	// Try with .exe extension on Windows
 	candidateExe := candidate + ".exe"
-	if _, statErr := os.Stat(candidateExe); statErr == nil {
+
+	_, statErr = os.Stat(candidateExe)
+	if statErr == nil {
 		return candidateExe, nil
 	}
 

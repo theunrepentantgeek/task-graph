@@ -21,7 +21,8 @@ func main() {
 		ctx.Exit(1)
 	}
 
-	if err = cli.ExportConfigToFile(cfg); err != nil {
+	err = cli.ExportConfigToFile(cfg)
+	if err != nil {
 		log.Error("Error exporting config", "error", err)
 		ctx.Exit(1)
 	}

@@ -88,7 +88,8 @@ func (c *CLI) Run(
 	)
 
 	if c.RenderImage != "" {
-		if err = c.renderImage(ctx, flags); err != nil {
+		err = c.renderImage(ctx, flags)
+		if err != nil {
 			return err
 		}
 	}
@@ -155,7 +156,8 @@ func (c *CLI) CreateConfig() (*config.Config, error) {
 	cfg := config.New()
 
 	if c.Config != "" {
-		if err := c.loadConfigFile(cfg); err != nil {
+		err := c.loadConfigFile(cfg)
+		if err != nil {
 			return nil, err
 		}
 	}
@@ -238,7 +240,8 @@ func (c *CLI) loadConfigFile(cfg *config.Config) error {
 		err = json.Unmarshal(raw, cfg)
 	default:
 		// Attempt YAML first, then JSON, for unknown extensions.
-		if yamlErr := yaml.Unmarshal(raw, cfg); yamlErr == nil {
+		yamlErr := yaml.Unmarshal(raw, cfg)
+		if yamlErr == nil {
 			return nil
 		}
 
@@ -283,7 +286,8 @@ func (c *CLI) ExportConfigToFile(cfg *config.Config) error {
 		return eris.Errorf("unsupported file extension for config export: %s", ext)
 	}
 
-	if err = os.WriteFile(c.ExportConfig, data, 0o600); err != nil {
+	err = os.WriteFile(c.ExportConfig, data, 0o600)
+	if err != nil {
 		return eris.Wrapf(err, "failed to write config file: %s", c.ExportConfig)
 	}
 

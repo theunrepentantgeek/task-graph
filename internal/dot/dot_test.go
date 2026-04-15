@@ -14,7 +14,8 @@ func TestFindExecutable_EmptyDotPath_FindsOnPath(t *testing.T) {
 
 	// This test requires dot to be available on PATH.
 	// If dot is not installed, we skip the test.
-	if _, err := findDotOnPath(); err != nil {
+	_, err := findDotOnPath()
+	if err != nil {
 		t.Skip("dot not found on PATH, skipping")
 	}
 
@@ -60,7 +61,8 @@ func TestFindExecutable_EmptyDotPathNoDot_ReturnsError(t *testing.T) {
 	g := NewWithT(t)
 
 	// If dot is already on PATH, we can't test this case.
-	if _, err := findDotOnPath(); err == nil {
+	_, err := findDotOnPath()
+	if err == nil {
 		t.Skip("dot is on PATH, cannot test missing dot")
 	}
 

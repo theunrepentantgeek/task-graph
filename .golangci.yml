@@ -19,9 +19,11 @@ linters:
     - exhaustive
     - exptostd
     - fatcontext
+    - forcetypeassert
     - funlen
     - ginkgolinter
     - gocheckcompilerdirectives
+    - gochecknoinits
     - gochecksumtype
     - gocognit
     - goconst
@@ -47,6 +49,7 @@ linters:
     - nilnesserr
     - nilnil
     - nlreturn
+    - noinlineerr
     - noctx
     - nolintlint
     - paralleltest
@@ -58,6 +61,7 @@ linters:
     - recvcheck
     - revive
     - rowserrcheck
+    - sloglint
     - spancheck
     - sqlclosecheck
     - staticcheck
