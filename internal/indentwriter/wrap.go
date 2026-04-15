@@ -17,7 +17,6 @@ func WordWrap(text string, width int) []string {
 		return []string{text}
 	}
 
-	//nolint:prealloc // Number of lines is not easily predictable, so we don't preallocate the slice
 	var result []string
 
 	start := 0
