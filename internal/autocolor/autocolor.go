@@ -37,9 +37,18 @@ func GenerateRules(gr *graph.Graph) []config.NodeStyleRule {
 	namespaces := collectAllNamespaces(gr)
 	sortNamespaces(namespaces)
 
-	rules := make([]config.NodeStyleRule, 0, len(namespaces))
+	rules := make([]config.NodeStyleRule, 0, len(namespaces)*2)
 	for i, ns := range namespaces {
 		color := palette[i%len(palette)]
+
+		// Exact match for the namespace task itself (e.g. "tidy")
+		rules = append(rules, config.NodeStyleRule{
+			Match:     ns,
+			FillColor: color,
+			Style:     "filled",
+		})
+
+		// Children match for subtasks (e.g. "tidy:gofumpt", "tidy:lint")
 		rules = append(rules, config.NodeStyleRule{
 			Match:     namespace.MatchPattern(ns),
 			FillColor: color,
