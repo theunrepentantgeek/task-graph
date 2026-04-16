@@ -35,14 +35,14 @@ where the linter's overall value justifies them.
 Already-enabled linters have gained new rules and features that may produce new
 findings on existing code:
 
-| Linter | Key changes since v2.6.2 |
-|--------|--------------------------|
-| gosec | ~17 new rules (G113, G116–G123, G408, G602, G701–G707) |
-| revive | New rules: `package-naming`, `epoch-naming`, `use-slices-sort`, `enforce-switch-style`, `forbidden-call-in-wg-go`, `unnecessary-if`, `inefficient-map-lookup`, `time-date`, `unnecessary-format`, `use-fmt-print` |
-| staticcheck | 0.6.1 → 0.7.0 |
-| modernize | New analyzers: `stringscut`, `unsafefuncs` |
-| wsl_v5 | 5.3.0 → 5.6.0 (new `after-block` rule) |
-| errcheck | Excludes `crypto/rand.Read` by default |
+| Linter      | Key changes since v2.6.2                                                                                                                                                                                          |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| gosec       | ~17 new rules (G113, G116–G123, G408, G602, G701–G707)                                                                                                                                                            |
+| revive      | New rules: `package-naming`, `epoch-naming`, `use-slices-sort`, `enforce-switch-style`, `forbidden-call-in-wg-go`, `unnecessary-if`, `inefficient-map-lookup`, `time-date`, `unnecessary-format`, `use-fmt-print` |
+| staticcheck | 0.6.1 → 0.7.0                                                                                                                                                                                                     |
+| modernize   | New analyzers: `stringscut`, `unsafefuncs`                                                                                                                                                                        |
+| wsl_v5      | 5.3.0 → 5.6.0 (new `after-block` rule)                                                                                                                                                                            |
+| errcheck    | Excludes `crypto/rand.Read` by default                                                                                                                                                                            |
 
 Since revive is configured with `enable-all-rules: true`, new revive rules are
 automatically enabled. If any new rule is too noisy, add a targeted
@@ -97,22 +97,22 @@ Trial and adopt only if the codebase doesn't currently use them.
 
 ### Not adopting
 
-| Linter | Reason |
-|--------|--------|
-| `unqueryvet` | No SQL in the project |
-| `arangolint` | No ArangoDB |
-| `canonicalheader` | No net/http usage |
-| `nosprintfhostport` | No URL construction |
-| `musttag` | Already disabled as "extremely slow" |
-| `mnd` | Magic number detection is typically very noisy |
-| `exhaustruct` | Too noisy — requires initializing every struct field |
-| `ireturn` | Opinionated; would need many suppressions |
-| `testpackage` | Project deliberately uses same-package tests |
-| `lll` | Already covered by revive's `line-length-limit` |
-| `gochecknoglobals` | Existing globals are all effectively constants/caches |
-| `containedctx` | No `context.Context` stored in structs |
-| `varnamelen` | Settings configured but not enabled — likely evaluated and skipped previously |
-| `decorder` | Low value for this codebase size |
+| Linter              | Reason                                                                        |
+| ------------------- | ----------------------------------------------------------------------------- |
+| `unqueryvet`        | No SQL in the project                                                         |
+| `arangolint`        | No ArangoDB                                                                   |
+| `canonicalheader`   | No net/http usage                                                             |
+| `nosprintfhostport` | No URL construction                                                           |
+| `musttag`           | Already disabled as "extremely slow"                                          |
+| `mnd`               | Magic number detection is typically very noisy                                |
+| `exhaustruct`       | Too noisy — requires initializing every struct field                          |
+| `ireturn`           | Opinionated; would need many suppressions                                     |
+| `testpackage`       | Project deliberately uses same-package tests                                  |
+| `lll`               | Already covered by revive's `line-length-limit`                               |
+| `gochecknoglobals`  | Existing globals are all effectively constants/caches                         |
+| `containedctx`      | No `context.Context` stored in structs                                        |
+| `varnamelen`        | Settings configured but not enabled — likely evaluated and skipped previously |
+| `decorder`          | Low value for this codebase size                                              |
 
 ## Implementation Strategy
 
