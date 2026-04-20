@@ -145,13 +145,13 @@ func (c *CLI) ExportConfigToFile(cfg *config.Config) error {
 	case ".yaml", ".yml":
 		data, err = yaml.Marshal(cfg)
 		if err != nil {
-			return eris.Wrapf(err, "failed to marshal config as YAML")
+			return eris.Wrap(err, "failed to marshal config as YAML")
 		}
 
 	case ".json":
 		data, err = json.MarshalIndent(cfg, "", "  ")
 		if err != nil {
-			return eris.Wrapf(err, "failed to marshal config as JSON")
+			return eris.Wrap(err, "failed to marshal config as JSON")
 		}
 
 	default:

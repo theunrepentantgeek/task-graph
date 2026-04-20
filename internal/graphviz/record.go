@@ -30,8 +30,8 @@ func (r *record) String() string {
 	}
 
 	content := strings.Join(r.parts, " | ")
-	for s, r := range escapings {
-		content = strings.ReplaceAll(content, s, r)
+	for s, replacement := range escapings {
+		content = strings.ReplaceAll(content, s, replacement)
 	}
 
 	return fmt.Sprintf("{%s}", content)
