@@ -86,3 +86,40 @@ func TestGraph_Nodes_WithMultipleNodes_IteratesAllNodes(t *testing.T) {
 
 	g.Expect(ids).To(gomega.ConsistOf("alpha", "beta", "gamma"))
 }
+
+func TestGraph_Nodes_WithEarlyTermination_StopsIteration(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	graph := New()
+	graph.AddNode("alpha")
+	graph.AddNode("beta")
+	graph.AddNode("gamma")
+
+	var count int
+
+	graph.Nodes()(func(_ *Node) bool {
+		count++
+
+		return false // stop after first node
+	})
+
+	g.Expect(count).To(gomega.Equal(1))
+}
+
+func TestGraph_Nodes_EmptyGraph_IteratesNothing(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	graph := New()
+
+	var count int
+
+	graph.Nodes()(func(_ *Node) bool {
+		count++
+
+		return true
+	})
+
+	g.Expect(count).To(gomega.Equal(0))
+}
