@@ -32,6 +32,7 @@ network:
   - python
   - rust
   - java
+  - go
 
 checkout:
   fetch: ["*"]     # fetch all remote branches to allow working on PR branches
