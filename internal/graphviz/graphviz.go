@@ -7,7 +7,6 @@ import (
 	"io"
 	"os"
 	"slices"
-	"sort"
 
 	"github.com/rotisserie/eris"
 
@@ -111,7 +110,7 @@ func writeGroupedNodesTo(
 		}
 	}
 
-	sort.Strings(topLevel)
+	slices.Sort(topLevel)
 
 	err := writeNodesTo(root, nsToNodes[""], cfg, reg)
 	if err != nil {
@@ -196,7 +195,7 @@ func childNamespaces(allNS map[string]bool, ns string) []string {
 		}
 	}
 
-	sort.Strings(children)
+	slices.Sort(children)
 
 	return children
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"maps"
 	"slices"
-	"sort"
 	"strings"
 
 	"github.com/theunrepentantgeek/task-graph/internal/indentwriter"
@@ -89,7 +88,7 @@ func (p properties) WriteTo(
 	nested := root.Addf("%s [", label)
 
 	keys := slices.Collect(maps.Keys(p))
-	sort.Strings(keys)
+	slices.Sort(keys)
 
 	for _, key := range keys {
 		value := p[key]

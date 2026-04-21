@@ -25,7 +25,7 @@ func New() *IndentWriter {
 func (iw *IndentWriter) WriteTo(
 	w io.Writer,
 	indent string,
-) (n int64, err error) {
+) (int64, error) {
 	var bytesWritten int64
 
 	for _, line := range iw.lines {
