@@ -19,6 +19,7 @@ import (
 	"github.com/theunrepentantgeek/task-graph/internal/graphviz"
 	"github.com/theunrepentantgeek/task-graph/internal/loader"
 	"github.com/theunrepentantgeek/task-graph/internal/mermaid"
+	"github.com/theunrepentantgeek/task-graph/internal/namespace"
 	"github.com/theunrepentantgeek/task-graph/internal/taskgraph"
 )
 
@@ -42,7 +43,10 @@ type CLI struct {
 
 	//nolint:revive // Intentially long name for clarity in the CLI help.
 	ExportConfig string `help:"Export the effective configuration to a file (YAML or JSON based on file extension)." long:"export-config"`
-	Verbose      bool   `help:"Enable verbose logging."`
+
+	//nolint:revive // Intentially long name for clarity in the CLI help.
+	Focus   string `help:"Show only tasks matching the given patterns together with all their transitive dependencies and dependents. Accepts task names or glob patterns, separated by commas or semicolons." long:"focus"`
+	Verbose bool   `help:"Enable verbose logging."`
 }
 
 // Run executes the CLI command with the given flags.
@@ -64,6 +68,13 @@ func (c *CLI) Run(
 		"tasks", tf.Tasks.Len())
 
 	gr := taskgraph.New(tf).Build()
+
+	if c.Focus != "" {
+		gr, err = applyFocus(gr, c.Focus)
+		if err != nil {
+			return eris.Wrap(err, "failed to apply focus filter")
+		}
+	}
 
 	applyAutoColor(flags.Config, gr)
 
@@ -292,4 +303,41 @@ func (c *CLI) loadConfigFile(cfg *config.Config) error {
 	}
 
 	return nil
+}
+
+// applyFocus returns a new graph containing only the nodes that match any of the
+// given comma-or-semicolon-separated patterns (glob-style), together with all
+// nodes transitively reachable from them in either direction.
+func applyFocus(gr *graph.Graph, focusPatterns string) (*graph.Graph, error) {
+	patterns := strings.FieldsFunc(focusPatterns, func(r rune) bool {
+		return r == ',' || r == ';'
+	})
+
+	seeds := make(map[string]bool)
+
+	for _, raw := range patterns {
+		pattern := strings.TrimSpace(raw)
+		if pattern == "" {
+			continue
+		}
+
+		re, err := namespace.CompileMatchPattern(pattern)
+		if err != nil {
+			return nil, eris.Wrapf(err, "invalid focus pattern %q", pattern)
+		}
+
+		for node := range gr.Nodes() {
+			if re.MatchString(node.ID()) {
+				seeds[node.ID()] = true
+			}
+		}
+	}
+
+	if len(seeds) == 0 {
+		return gr, nil
+	}
+
+	reachable := gr.ReachableFrom(seeds)
+
+	return gr.FilterNodes(reachable), nil
 }
