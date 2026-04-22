@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-04-21T20:14:40Z",
-  "run_id": "24744099840",
+  "last_run": "2026-04-22T03:51:07Z",
+  "run_id": "24759174468",
   "monthly_issue": {
     "number": 48,
     "title": "[Repo Assist] Monthly Activity 2026-04",
@@ -8,13 +8,21 @@
   },
   "prs_created": [
     {
-      "branch": "repo-assist/improve-focus-flag-2026-04-21",
+      "branch": "repo-assist/improve-focus-flag-2026-04-21-0c245df1eefb3409",
       "title": "[Repo Assist] Add --focus flag to filter graph to a task subgraph",
+      "pr_number": 55,
       "task": 10,
       "status": "open"
+    },
+    {
+      "branch": "repo-assist/fix-misplaced-done-log",
+      "title": "[Repo Assist] fix: move \"Done\" log message to end of Run()",
+      "task": 3,
+      "status": "open",
+      "note": "PR number unknown at time of run - check open PRs"
     }
   ],
-  "open_prs_noted": [41],
+  "open_prs_noted": [41, 55],
   "issue_cursor": null,
   "comments_made": {},
   "checked_off_by_maintainer": [
@@ -22,5 +30,5 @@
     "PR #41 (global-vars - checked off but still open, maintainer aware)",
     "PR #49 (test coverage)"
   ],
-  "notes": "Go 1.25.8 now available in sandbox. All direct deps are at latest versions. PR #41 (--include-global-vars) is open and checked off by maintainer - they are working on it. New PR created for --focus flag feature."
+  "notes": "PR #55 (--focus flag) CI shows action_required with 0 jobs - workflow needs approval to run for bot PRs. PR created for misplaced Done log fix (branch: repo-assist/fix-misplaced-done-log). PR #41 (--include-global-vars) still open by maintainer."
 }
