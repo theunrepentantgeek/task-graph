@@ -383,7 +383,7 @@ func writeVariableClassDef(
 		ids = append(ids, reg.ID(n.ID()))
 	}
 
-	sort.Strings(ids)
+	slices.Sort(ids)
 	root.Addf("classDef varStyle %s", classDef)
 	root.Addf("class %s varStyle", strings.Join(ids, ","))
 }

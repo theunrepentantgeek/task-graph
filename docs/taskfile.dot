@@ -205,7 +205,7 @@ digraph {
   
   "update-golden-files" [
     color="black"
-    fillcolor="lightgray"
+    fillcolor="lavender"
     label="{update-golden-files | Update golden files with \ncurrent output}"
     shape="Mrecord"
     style="filled"
