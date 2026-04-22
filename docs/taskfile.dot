@@ -1,8 +1,10 @@
 digraph {
   "build" [
     color="black"
+    fillcolor="lightblue"
     label="{build | Build everything}"
     shape="Mrecord"
+    style="filled"
   ]
   "build" -> "build_bin" [
     color="black"
@@ -78,8 +80,10 @@ digraph {
   
   "docs" [
     color="black"
+    fillcolor="lightgreen"
     label="{docs | Generate documentation}"
     shape="Mrecord"
+    style="filled"
   ]
   "docs" -> "docs_build" [
     color="black"
@@ -141,8 +145,10 @@ digraph {
   
   "tidy" [
     color="black"
+    fillcolor="lightyellow"
     label="{tidy | Tidy up source}"
     shape="Mrecord"
+    style="filled"
   ]
   "tidy" -> "tidy_gofumpt" [
     color="blue"
@@ -199,7 +205,7 @@ digraph {
   
   "update-golden-files" [
     color="black"
-    fillcolor="lavender"
+    fillcolor="lightgray"
     label="{update-golden-files | Update golden files with \ncurrent output}"
     shape="Mrecord"
     style="filled"

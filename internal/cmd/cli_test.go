@@ -278,13 +278,16 @@ func TestApplyAutoColor_AutoRulesPrependedBeforeUserRules(t *testing.T) {
 	// Act
 	applyAutoColor(cfg, gr)
 
-	// Assert: auto-generated rule comes first, user-defined rule comes last
-	g.Expect(cfg.NodeStyleRules).To(HaveLen(2))
+	// Assert: auto-generated rules come first, user-defined rule comes last
+	g.Expect(cfg.NodeStyleRules).To(HaveLen(3))
 
-	autoRule := cfg.NodeStyleRules[0]
-	g.Expect(autoRule.Match).To(Equal("cmd[-.:]*"))
+	exactRule := cfg.NodeStyleRules[0]
+	g.Expect(exactRule.Match).To(Equal("cmd"))
 
-	userRule := cfg.NodeStyleRules[1]
+	childrenRule := cfg.NodeStyleRules[1]
+	g.Expect(childrenRule.Match).To(Equal("cmd[-.:]*"))
+
+	userRule := cfg.NodeStyleRules[2]
 	g.Expect(userRule.Match).To(Equal("cmd:build"))
 	g.Expect(userRule.FillColor).To(Equal("gold"))
 }

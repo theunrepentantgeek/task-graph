@@ -6,6 +6,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/theunrepentantgeek/task-graph/internal/graph"
+	"github.com/theunrepentantgeek/task-graph/internal/namespace"
 )
 
 func TestGenerateRules_NoNamespaces_ReturnsEmptyRules(t *testing.T) {
@@ -25,7 +26,7 @@ func TestGenerateRules_NoNamespaces_ReturnsEmptyRules(t *testing.T) {
 	g.Expect(rules).To(BeEmpty())
 }
 
-func TestGenerateRules_SingleNamespace_ReturnsOneRule(t *testing.T) {
+func TestGenerateRules_SingleNamespace_ReturnsTwoRules(t *testing.T) {
 	t.Parallel()
 	g := NewWithT(t)
 
@@ -38,11 +39,14 @@ func TestGenerateRules_SingleNamespace_ReturnsOneRule(t *testing.T) {
 	// Act
 	rules := GenerateRules(gr)
 
-	// Assert
-	g.Expect(rules).To(HaveLen(1))
-	g.Expect(rules[0].Match).To(Equal("cmd[-.:]*"))
+	// Assert: exact match + children match
+	g.Expect(rules).To(HaveLen(2))
+	g.Expect(rules[0].Match).To(Equal("cmd"))
 	g.Expect(rules[0].FillColor).To(Equal(palette[0]))
 	g.Expect(rules[0].Style).To(Equal("filled"))
+	g.Expect(rules[1].Match).To(Equal("cmd[-.:]*"))
+	g.Expect(rules[1].FillColor).To(Equal(palette[0]))
+	g.Expect(rules[1].Style).To(Equal("filled"))
 }
 
 func TestGenerateRules_MultipleNamespaces_AssignsColorsAlphabetically(t *testing.T) {
@@ -58,16 +62,18 @@ func TestGenerateRules_MultipleNamespaces_AssignsColorsAlphabetically(t *testing
 	rules := GenerateRules(gr)
 
 	// Assert
-	// Alphabetical: "cmd" before "controllers"
-	g.Expect(rules).To(HaveLen(2))
+	// Alphabetical: "cmd" before "controllers", two rules per namespace
+	g.Expect(rules).To(HaveLen(4))
 
-	cmd := rules[0]
-	g.Expect(cmd.Match).To(Equal("cmd[-.:]*"))
-	g.Expect(cmd.FillColor).To(Equal(palette[0]))
+	g.Expect(rules[0].Match).To(Equal("cmd"))
+	g.Expect(rules[0].FillColor).To(Equal(palette[0]))
+	g.Expect(rules[1].Match).To(Equal("cmd[-.:]*"))
+	g.Expect(rules[1].FillColor).To(Equal(palette[0]))
 
-	controllers := rules[1]
-	g.Expect(controllers.Match).To(Equal("controllers[-.:]*"))
-	g.Expect(controllers.FillColor).To(Equal(palette[1]))
+	g.Expect(rules[2].Match).To(Equal("controllers"))
+	g.Expect(rules[2].FillColor).To(Equal(palette[1]))
+	g.Expect(rules[3].Match).To(Equal("controllers[-.:]*"))
+	g.Expect(rules[3].FillColor).To(Equal(palette[1]))
 }
 
 func TestGenerateRules_NestedNamespaces_GeneratesRulesForAll(t *testing.T) {
@@ -84,17 +90,19 @@ func TestGenerateRules_NestedNamespaces_GeneratesRulesForAll(t *testing.T) {
 	rules := GenerateRules(gr)
 
 	// Assert
-	// Expect rules for "cmd" (depth 0) and "cmd:test" (depth 1)
-	g.Expect(rules).To(HaveLen(2))
+	// Expect two rules per namespace: "cmd" (depth 0) and "cmd:test" (depth 1)
+	g.Expect(rules).To(HaveLen(4))
 
 	// "cmd" comes first (shallower), then "cmd:test"
-	cmd := rules[0]
-	g.Expect(cmd.Match).To(Equal("cmd[-.:]*"))
-	g.Expect(cmd.FillColor).To(Equal(palette[0]))
+	g.Expect(rules[0].Match).To(Equal("cmd"))
+	g.Expect(rules[0].FillColor).To(Equal(palette[0]))
+	g.Expect(rules[1].Match).To(Equal("cmd[-.:]*"))
+	g.Expect(rules[1].FillColor).To(Equal(palette[0]))
 
-	cmdTest := rules[1]
-	g.Expect(cmdTest.Match).To(Equal("cmd:test:*"))
-	g.Expect(cmdTest.FillColor).To(Equal(palette[1]))
+	g.Expect(rules[2].Match).To(Equal("cmd:test"))
+	g.Expect(rules[2].FillColor).To(Equal(palette[1]))
+	g.Expect(rules[3].Match).To(Equal("cmd:test:*"))
+	g.Expect(rules[3].FillColor).To(Equal(palette[1]))
 }
 
 func TestGenerateRules_MoreNamespacesThanPalette_CyclesColors(t *testing.T) {
@@ -110,11 +118,12 @@ func TestGenerateRules_MoreNamespacesThanPalette_CyclesColors(t *testing.T) {
 	// Act
 	rules := GenerateRules(gr)
 
-	// Assert
-	g.Expect(rules).To(HaveLen(len(palette) + 1))
+	// Assert: two rules per namespace
+	g.Expect(rules).To(HaveLen((len(palette) + 1) * 2))
 
-	// The last rule should cycle back to the first palette color
-	g.Expect(rules[len(palette)].FillColor).To(Equal(palette[0]))
+	// The last namespace's rules should cycle back to the first palette color
+	g.Expect(rules[len(palette)*2].FillColor).To(Equal(palette[0]))
+	g.Expect(rules[len(palette)*2+1].FillColor).To(Equal(palette[0]))
 }
 
 func TestGenerateRules_EmptyGraph_ReturnsEmptyRules(t *testing.T) {
@@ -164,15 +173,15 @@ func TestGenerateRules_MixedTopLevelAndNested_ShallowerFirst(t *testing.T) {
 	rules := GenerateRules(gr)
 
 	// Assert
-	// Should have rules for "cmd" (depth 0) and "cmd:test" (depth 1)
-	g.Expect(rules).To(HaveLen(2))
+	// Should have two rules per namespace: "cmd" (depth 0) and "cmd:test" (depth 1)
+	g.Expect(rules).To(HaveLen(4))
 
 	matches := make([]string, len(rules))
 	for i, r := range rules {
 		matches[i] = r.Match
 	}
 
-	g.Expect(matches).To(Equal([]string{"cmd[-.:]*", "cmd:test:*"}))
+	g.Expect(matches).To(Equal([]string{"cmd", "cmd[-.:]*", "cmd:test", "cmd:test:*"}))
 }
 
 func TestGenerateRules_SingleNamespace_IncludesExpectedFieldValues(t *testing.T) {
@@ -186,13 +195,52 @@ func TestGenerateRules_SingleNamespace_IncludesExpectedFieldValues(t *testing.T)
 	// Act
 	rules := GenerateRules(gr)
 
-	// Assert
-	g.Expect(rules).To(HaveLen(1))
+	// Assert: two rules per namespace
+	g.Expect(rules).To(HaveLen(2))
 
+	// Check exact-match rule
 	rule := rules[0]
+	g.Expect(rule.Match).To(Equal("cmd"))
+	g.Expect(rule.FillColor).NotTo(BeEmpty())
+	g.Expect(rule.Style).To(Equal("filled"))
+	g.Expect(rule.Color).To(BeEmpty())
+	g.Expect(rule.FontColor).To(BeEmpty())
+
+	// Check children-match rule
+	rule = rules[1]
 	g.Expect(rule.Match).To(Equal("cmd[-.:]*"))
 	g.Expect(rule.FillColor).NotTo(BeEmpty())
 	g.Expect(rule.Style).To(Equal("filled"))
 	g.Expect(rule.Color).To(BeEmpty())
 	g.Expect(rule.FontColor).To(BeEmpty())
+}
+
+func TestGenerateRules_TopLevelTaskMatchesNamespace_GetsColored(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange: tidy is a top-level task; tidy:gofumpt and tidy:lint are subtasks
+	gr := graph.New()
+	gr.AddNode("tidy")
+	gr.AddNode("tidy:gofumpt")
+	gr.AddNode("tidy:lint")
+
+	// Act
+	rules := GenerateRules(gr)
+
+	// Assert: at least one rule should match "tidy" itself
+	matched := false
+
+	for _, rule := range rules {
+		re, err := namespace.CompileMatchPattern(rule.Match)
+		g.Expect(err).NotTo(HaveOccurred())
+
+		if re.MatchString("tidy") {
+			matched = true
+
+			break
+		}
+	}
+
+	g.Expect(matched).To(BeTrue(), "expected a rule matching the top-level task 'tidy'")
 }

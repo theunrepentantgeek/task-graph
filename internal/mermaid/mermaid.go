@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"slices"
-	"sort"
 	"strings"
 
 	"github.com/rotisserie/eris"
@@ -116,7 +115,7 @@ func writeGroupedNodesTo(
 		}
 	}
 
-	sort.Strings(topLevel)
+	slices.Sort(topLevel)
 
 	writeNodesTo(root, nsToNodes[""], reg)
 
@@ -166,7 +165,7 @@ func writeNamespaceSubgraphTo(
 		}
 	}
 
-	sort.Strings(children)
+	slices.Sort(children)
 
 	writeNodesTo(sg, nsToNodes[ns], reg)
 
@@ -272,7 +271,7 @@ func writeStyleRuleTo(
 	}
 
 	if len(matchingIDs) > 0 {
-		sort.Strings(matchingIDs)
+		slices.Sort(matchingIDs)
 		root.Addf("classDef rule%d %s", index, classDef)
 		root.Addf("class %s rule%d", strings.Join(matchingIDs, ","), index)
 	}

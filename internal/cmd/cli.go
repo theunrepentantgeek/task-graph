@@ -93,9 +93,79 @@ func (c *CLI) Run(
 	)
 
 	if c.RenderImage != "" {
-		if err = c.renderImage(ctx, flags); err != nil {
+		err = c.renderImage(ctx, flags)
+		if err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+// CreateLogger builds a slog logger configured from the CLI flags.
+func (c *CLI) CreateLogger() *slog.Logger {
+	level := slog.LevelInfo
+	if c.Verbose {
+		level = slog.LevelDebug
+	}
+
+	opts := &console.HandlerOptions{
+		Level: level,
+	}
+	handler := console.NewHandler(os.Stderr, opts)
+
+	return slog.New(handler)
+}
+
+func (c *CLI) CreateConfig() (*config.Config, error) {
+	cfg := config.New()
+
+	if c.Config != "" {
+		err := c.loadConfigFile(cfg)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	c.applyConfigOverrides(cfg)
+
+	return cfg, nil
+}
+
+// ExportConfigToFile writes the effective configuration to the given file path.
+// The format is determined by the file extension (.yaml, .yml, or .json).
+func (c *CLI) ExportConfigToFile(cfg *config.Config) error {
+	if c.ExportConfig == "" {
+		return nil
+	}
+
+	ext := strings.ToLower(filepath.Ext(c.ExportConfig))
+
+	var (
+		data []byte
+		err  error
+	)
+
+	switch ext {
+	case ".yaml", ".yml":
+		data, err = yaml.Marshal(cfg)
+		if err != nil {
+			return eris.Wrap(err, "failed to marshal config as YAML")
+		}
+
+	case ".json":
+		data, err = json.MarshalIndent(cfg, "", "  ")
+		if err != nil {
+			return eris.Wrap(err, "failed to marshal config as JSON")
+		}
+
+	default:
+		return eris.Errorf("unsupported file extension for config export: %s", ext)
+	}
+
+	err = os.WriteFile(c.ExportConfig, data, 0o600)
+	if err != nil {
+		return eris.Wrapf(err, "failed to write config file: %s", c.ExportConfig)
 	}
 
 	return nil
@@ -139,35 +209,6 @@ func (c *CLI) renderImage(ctx context.Context, flags *Flags) error {
 	)
 
 	return nil
-}
-
-// CreateLogger builds a slog logger configured from the CLI flags.
-func (c *CLI) CreateLogger() *slog.Logger {
-	level := slog.LevelInfo
-	if c.Verbose {
-		level = slog.LevelDebug
-	}
-
-	opts := &console.HandlerOptions{
-		Level: level,
-	}
-	handler := console.NewHandler(os.Stderr, opts)
-
-	return slog.New(handler)
-}
-
-func (c *CLI) CreateConfig() (*config.Config, error) {
-	cfg := config.New()
-
-	if c.Config != "" {
-		if err := c.loadConfigFile(cfg); err != nil {
-			return nil, err
-		}
-	}
-
-	c.applyConfigOverrides(cfg)
-
-	return cfg, nil
 }
 
 // applyConfigOverrides applies CLI flag overrides to the configuration.
@@ -247,7 +288,8 @@ func (c *CLI) loadConfigFile(cfg *config.Config) error {
 		err = json.Unmarshal(raw, cfg)
 	default:
 		// Attempt YAML first, then JSON, for unknown extensions.
-		if yamlErr := yaml.Unmarshal(raw, cfg); yamlErr == nil {
+		yamlErr := yaml.Unmarshal(raw, cfg)
+		if yamlErr == nil {
 			return nil
 		}
 
@@ -256,44 +298,6 @@ func (c *CLI) loadConfigFile(cfg *config.Config) error {
 
 	if err != nil {
 		return eris.Wrapf(err, "failed to parse config file: %s", c.Config)
-	}
-
-	return nil
-}
-
-// ExportConfigToFile writes the effective configuration to the given file path.
-// The format is determined by the file extension (.yaml, .yml, or .json).
-func (c *CLI) ExportConfigToFile(cfg *config.Config) error {
-	if c.ExportConfig == "" {
-		return nil
-	}
-
-	ext := strings.ToLower(filepath.Ext(c.ExportConfig))
-
-	var (
-		data []byte
-		err  error
-	)
-
-	switch ext {
-	case ".yaml", ".yml":
-		data, err = yaml.Marshal(cfg)
-		if err != nil {
-			return eris.Wrapf(err, "failed to marshal config as YAML")
-		}
-
-	case ".json":
-		data, err = json.MarshalIndent(cfg, "", "  ")
-		if err != nil {
-			return eris.Wrapf(err, "failed to marshal config as JSON")
-		}
-
-	default:
-		return eris.Errorf("unsupported file extension for config export: %s", ext)
-	}
-
-	if err = os.WriteFile(c.ExportConfig, data, 0o600); err != nil {
-		return eris.Wrapf(err, "failed to write config file: %s", c.ExportConfig)
 	}
 
 	return nil
