@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-04-22T03:51:07Z",
-  "run_id": "24759174468",
+  "last_run": "2026-04-22T14:19:21Z",
+  "run_id": "24783433514",
   "monthly_issue": {
     "number": 48,
     "title": "[Repo Assist] Monthly Activity 2026-04",
@@ -15,20 +15,29 @@
       "status": "open"
     },
     {
-      "branch": "repo-assist/fix-misplaced-done-log",
+      "branch": "repo-assist/fix-misplaced-done-log-ac1553f102dffea6",
       "title": "[Repo Assist] fix: move \"Done\" log message to end of Run()",
+      "pr_number": 56,
       "task": 3,
-      "status": "open",
-      "note": "PR number unknown at time of run - check open PRs"
+      "status": "open"
+    },
+    {
+      "branch": "repo-assist/test-coverage-taskgraph-indentwriter",
+      "title": "[Repo Assist] test: improve coverage for taskgraph builder and IndentWriter.Addf",
+      "pr_number": 57,
+      "task": 9,
+      "status": "open"
     }
   ],
-  "open_prs_noted": [41, 55],
+  "open_prs_noted": [41, 55, 56, 57],
   "issue_cursor": null,
   "comments_made": {},
   "checked_off_by_maintainer": [
     "PR #45 (golangci-lint upgrade)",
     "PR #41 (global-vars - checked off but still open, maintainer aware)",
-    "PR #49 (test coverage)"
+    "PR #49 (test coverage)",
+    "PR #55 (--focus flag review - checked off in issue #48)",
+    "PR #56 (Done log fix review - checked off in issue #48)"
   ],
-  "notes": "PR #55 (--focus flag) CI shows action_required with 0 jobs - workflow needs approval to run for bot PRs. PR created for misplaced Done log fix (branch: repo-assist/fix-misplaced-done-log). PR #41 (--include-global-vars) still open by maintainer."
+  "notes": "PR #57 (test coverage) just created. PR #55 (--focus flag) and PR #56 (Done log fix) still open; maintainer checked off review items in issue #48. PR #41 (--include-global-vars) is maintainer's own PR still open. Task 3 had nothing to fix this run (no open bug/help-wanted issues)."
 }
