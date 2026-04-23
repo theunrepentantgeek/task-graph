@@ -116,22 +116,28 @@ func (g *Graph) FilterNodes(keep map[string]bool) *Graph {
 			continue
 		}
 
-		fromNode, _ := result.Node(id)
-
-		for _, edge := range node.Edges() {
-			if !keep[edge.To().ID()] {
-				continue
-			}
-
-			toNode, _ := result.Node(edge.To().ID())
-			newEdge := fromNode.AddEdge(toNode)
-			newEdge.SetClass(edge.Class())
-
-			if edge.Label() != "" {
-				newEdge.SetLabel(edge.Label())
-			}
-		}
+		copyFilteredEdges(result, keep, id, node)
 	}
 
 	return result
+}
+
+// copyFilteredEdges copies node's edges into result, skipping edges whose
+// target is not in the keep set.
+func copyFilteredEdges(result *Graph, keep map[string]bool, id string, node *Node) {
+	fromNode, _ := result.Node(id)
+
+	for _, edge := range node.Edges() {
+		if !keep[edge.To().ID()] {
+			continue
+		}
+
+		toNode, _ := result.Node(edge.To().ID())
+		newEdge := fromNode.AddEdge(toNode)
+		newEdge.SetClass(edge.Class())
+
+		if edge.Label() != "" {
+			newEdge.SetLabel(edge.Label())
+		}
+	}
 }

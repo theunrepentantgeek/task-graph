@@ -167,6 +167,7 @@ func TestGraph_ReachableFrom_SeedWithDependency_IncludesTransitiveDependency(t *
 	build := graph.AddNode("build")
 	compile := graph.AddNode("compile")
 	link := graph.AddNode("link")
+
 	build.AddEdge(compile)
 	compile.AddEdge(link)
 
@@ -190,6 +191,7 @@ func TestGraph_ReachableFrom_SeedWithDependent_IncludesDependent(t *testing.T) {
 	ci := graph.AddNode("ci")
 	test := graph.AddNode("test")
 	unitTest := graph.AddNode("unit-test")
+
 	ci.AddEdge(test)
 	test.AddEdge(unitTest)
 
@@ -229,6 +231,7 @@ func TestGraph_ReachableFrom_DisconnectedSubgraph_DoesNotCrossComponent(t *testi
 	b := graph.AddNode("B")
 	c := graph.AddNode("C")
 	d := graph.AddNode("D")
+
 	a.AddEdge(b)
 	c.AddEdge(d)
 
