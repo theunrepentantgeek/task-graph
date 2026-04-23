@@ -53,6 +53,7 @@ Flags:
       --graph-type=STRING       Type of graph to generate (dot or mermaid). Defaults to dot.
       --highlight=STRING        Highlight specific tasks in the graph. Accepts task names or glob patterns, separated by
                                 commas or semicolons.
+      --highlight-color=STRING  Fill color to use when highlighting tasks (e.g. orange, #ff9900). Defaults to yellow.
       --render-image=STRING     Render the graph as an image using graphviz dot. Specify the file type (e.g. png, svg).
       --export-config=STRING    Export the effective configuration to a file (YAML or JSON based on file extension).
       --verbose                 Enable verbose logging.

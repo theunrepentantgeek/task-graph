@@ -38,6 +38,9 @@ type CLI struct {
 	Highlight string `help:"Highlight specific tasks in the graph. Accepts task names or glob patterns, separated by commas or semicolons." long:"highlight"`
 
 	//nolint:revive // Intentially long name for clarity in the CLI help.
+	HighlightColor string `help:"Fill color to use when highlighting tasks (e.g. orange, #ff9900). Defaults to yellow." long:"highlight-color"`
+
+	//nolint:revive // Intentially long name for clarity in the CLI help.
 	RenderImage string `help:"Render the graph as an image using graphviz dot. Specify the file type (e.g. png, svg)." long:"render-image"`
 
 	//nolint:revive // Intentially long name for clarity in the CLI help.
@@ -218,6 +221,10 @@ func (c *CLI) applyConfigOverrides(cfg *config.Config) {
 
 	if c.GraphType != "" {
 		cfg.GraphType = c.GraphType
+	}
+
+	if c.HighlightColor != "" {
+		cfg.HighlightColor = c.HighlightColor
 	}
 
 	if c.Highlight != "" {
