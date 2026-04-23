@@ -49,8 +49,6 @@ type CLI struct {
 func (c *CLI) Run(
 	flags *Flags,
 ) error {
-	flags.Log.Info("Done")
-
 	ctx := context.Background()
 
 	tf, err := loader.Load(ctx, c.Taskfile)
@@ -93,6 +91,8 @@ func (c *CLI) Run(
 			return err
 		}
 	}
+
+	flags.Log.Info("Done")
 
 	return nil
 }
