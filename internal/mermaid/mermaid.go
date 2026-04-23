@@ -101,19 +101,13 @@ func writeGroupedNodesTo(
 	nsToNodes := indexNodesByNamespace(nodes)
 	allNS := findAllNamespaces(nsToNodes)
 
-	topLevel := make([]string, 0, len(allNS))
-	for ns := range allNS {
-		if namespace.Parent(ns) == "" {
-			topLevel = append(topLevel, ns)
-		}
-	}
-
-	slices.Sort(topLevel)
+	// Pre-build parent→children map so each lookup is O(1) rather than O(N).
+	childrenOf := buildChildrenMap(allNS)
 
 	writeNodesTo(root, nsToNodes[""], reg)
 
-	for _, ns := range topLevel {
-		writeNamespaceSubgraphTo(root, ns, nsToNodes, allNS, reg)
+	for _, ns := range childrenOf[""] {
+		writeNamespaceSubgraphTo(root, ns, nsToNodes, childrenOf, reg)
 	}
 }
 
@@ -128,6 +122,25 @@ func findAllNamespaces(nsToNodes map[string][]*graph.Node) map[string]bool {
 	}
 
 	return allNS
+}
+
+// buildChildrenMap builds a parent→sorted-children map from a set of all namespaces.
+// The empty-string key ("") holds the sorted list of top-level namespaces.
+// Building this map once avoids an O(N) scan of allNS for every namespace during
+// the recursive subgraph walk.
+func buildChildrenMap(allNS map[string]bool) map[string][]string {
+	childrenOf := make(map[string][]string, len(allNS)+1)
+
+	for ns := range allNS {
+		parent := namespace.Parent(ns)
+		childrenOf[parent] = append(childrenOf[parent], ns)
+	}
+
+	for key := range childrenOf {
+		slices.Sort(childrenOf[key])
+	}
+
+	return childrenOf
 }
 
 func indexNodesByNamespace(nodes []*graph.Node) map[string][]*graph.Node {
@@ -146,24 +159,15 @@ func writeNamespaceSubgraphTo(
 	parent *indentwriter.Line,
 	ns string,
 	nsToNodes map[string][]*graph.Node,
-	allNS map[string]bool,
+	childrenOf map[string][]string,
 	reg *safe.Registry,
 ) {
 	sg := parent.Addf("subgraph %s[\"%s\"]", reg.IDWithPrefix("sg_", ns), ns)
 
-	children := make([]string, 0, len(allNS))
-	for candidate := range allNS {
-		if namespace.Parent(candidate) == ns {
-			children = append(children, candidate)
-		}
-	}
-
-	slices.Sort(children)
-
 	writeNodesTo(sg, nsToNodes[ns], reg)
 
-	for _, child := range children {
-		writeNamespaceSubgraphTo(sg, child, nsToNodes, allNS, reg)
+	for _, child := range childrenOf[ns] {
+		writeNamespaceSubgraphTo(sg, child, nsToNodes, childrenOf, reg)
 	}
 
 	parent.Add("end")
