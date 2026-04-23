@@ -248,7 +248,7 @@ func writeNodeDefinitionTo(
 	margin := min((len(node.Description)+20)/2, 40)
 
 	rec := newRecord()
-	rec.add(nodeLabel(node))
+	rec.add(node.DisplayLabel())
 	rec.addWrapped(margin, node.Description)
 
 	props := newNodeProperties()
@@ -316,12 +316,4 @@ func writeEdgeTo(
 			reg.ID(edge.From().ID()),
 			reg.ID(edge.To().ID())),
 		root)
-}
-
-func nodeLabel(node *graph.Node) string {
-	if node.Label != "" {
-		return node.Label
-	}
-
-	return node.ID()
 }

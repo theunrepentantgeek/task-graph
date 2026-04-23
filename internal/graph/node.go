@@ -44,3 +44,13 @@ func (n *Node) AddEdge(to *Node) *Edge {
 func (n *Node) Edges() []*Edge {
 	return n.edges
 }
+
+// DisplayLabel returns the label to use when displaying this node.
+// If the node has an explicit Label set, that is returned; otherwise the node ID is used.
+func (n *Node) DisplayLabel() string {
+	if n.Label != "" {
+		return n.Label
+	}
+
+	return n.id
+}

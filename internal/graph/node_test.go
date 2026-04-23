@@ -56,3 +56,24 @@ func TestNode_Edges_WithMultipleEdges_ReturnsAll(t *testing.T) {
 	g.Expect(edges[0]).To(gomega.BeIdenticalTo(edge1))
 	g.Expect(edges[1]).To(gomega.BeIdenticalTo(edge2))
 }
+
+// DisplayLabel
+
+func TestNode_DisplayLabel_WithNoLabel_ReturnsID(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	node := NewNode("my-task")
+
+	g.Expect(node.DisplayLabel()).To(gomega.Equal("my-task"))
+}
+
+func TestNode_DisplayLabel_WithExplicitLabel_ReturnsLabel(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	node := NewNode("my-task")
+	node.Label = "My Task"
+
+	g.Expect(node.DisplayLabel()).To(gomega.Equal("My Task"))
+}

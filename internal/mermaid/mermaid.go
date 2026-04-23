@@ -200,7 +200,7 @@ func writeNodeDefinitionTo(
 	node *graph.Node,
 	reg *safe.Registry,
 ) {
-	label := safe.Label(nodeDisplayLabel(node))
+	label := safe.Label(node.DisplayLabel())
 	root.Addf("%s[\"%s\"]", reg.ID(node.ID()), label)
 }
 
@@ -307,13 +307,4 @@ func buildClassDef(rule config.NodeStyleRule) string {
 	}
 
 	return strings.Join(parts, ",")
-}
-
-// nodeDisplayLabel returns the display label for a node.
-func nodeDisplayLabel(node *graph.Node) string {
-	if node.Label != "" {
-		return node.Label
-	}
-
-	return node.ID()
 }
