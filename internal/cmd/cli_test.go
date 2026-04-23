@@ -187,6 +187,62 @@ func TestCreateConfig_HighlightFlagWithGlobPattern(t *testing.T) {
 	g.Expect(cfg.NodeStyleRules[0].Match).To(Equal("cmd:*"))
 }
 
+func TestCreateConfig_HighlightColorFlagSetsHighlightColor(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	cli := CLI{
+		Highlight:      "build",
+		HighlightColor: "orange",
+	}
+
+	// Act
+	cfg, err := cli.CreateConfig()
+
+	// Assert: HighlightColor is propagated from the CLI flag
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.HighlightColor).To(Equal("orange"))
+}
+
+func TestCreateConfig_HighlightColorFlagOverridesConfigFile(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange: config file sets lightblue, CLI flag sets orange
+	cli := CLI{
+		Config:         filepath.Join("testdata", "highlight_color.yaml"),
+		Highlight:      "build",
+		HighlightColor: "orange",
+	}
+
+	// Act
+	cfg, err := cli.CreateConfig()
+
+	// Assert: CLI flag wins over config file
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.HighlightColor).To(Equal("orange"))
+	// The highlight rule should use the CLI-specified colour
+	g.Expect(cfg.NodeStyleRules).To(HaveLen(1))
+	g.Expect(cfg.NodeStyleRules[0].FillColor).To(Equal("orange"))
+}
+
+func TestCreateConfig_HighlightColorFlagAloneDoesNotAddStyleRules(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange: set --highlight-color without --highlight
+	cli := CLI{HighlightColor: "orange"}
+
+	// Act
+	cfg, err := cli.CreateConfig()
+
+	// Assert: color is stored but no style rules are added
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.HighlightColor).To(Equal("orange"))
+	g.Expect(cfg.NodeStyleRules).To(BeEmpty())
+}
+
 // TestApplyAutoColor
 
 func TestApplyAutoColor_WhenDisabled_LeavesRulesUnchanged(t *testing.T) {
