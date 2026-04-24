@@ -60,13 +60,20 @@ func WriteTo(
 	reg := safe.NewRegistry()
 	reg.Prepare(nodeIDs)
 
+	taskNodes, varNodes := splitNodesByKind(nodes)
+
 	iw := indentwriter.New()
 	root := iw.Addf("flowchart %s", flowchartDirection(cfg))
 
 	if cfg != nil && cfg.GroupByNamespace {
-		writeGroupedNodesTo(root, nodes, reg)
+		writeGroupedNodesTo(root, taskNodes, reg)
 	} else {
-		writeNodesTo(root, nodes, reg)
+		writeNodesTo(root, taskNodes, reg)
+	}
+
+	if len(varNodes) > 0 {
+		writeVariableNodesTo(root, varNodes, reg)
+		writeVariableClassDef(root, varNodes, cfg, reg)
 	}
 
 	err := writeStyleRulesTo(root, nodes, cfg, reg)
@@ -316,4 +323,113 @@ func nodeDisplayLabel(node *graph.Node) string {
 	}
 
 	return node.ID()
+}
+
+func writeVariableNodesTo(
+	root *indentwriter.Line,
+	nodes []*graph.Node,
+	reg *safe.Registry,
+) {
+	for _, node := range nodes {
+		writeVariableNodeDefinitionTo(root, node, reg)
+		writeVariableEdgesTo(root, node, reg)
+		root.Add("")
+	}
+}
+
+func writeVariableNodeDefinitionTo(
+	root *indentwriter.Line,
+	node *graph.Node,
+	reg *safe.Registry,
+) {
+	label := safe.Label(variableDisplayLabel(node))
+	root.Addf("%s(\"%s\")", reg.ID(node.ID()), label)
+}
+
+func writeVariableEdgesTo(
+	root *indentwriter.Line,
+	node *graph.Node,
+	reg *safe.Registry,
+) {
+	for _, edge := range node.Edges() {
+		// Reverse edge direction visually: write as task ==> variable
+		// so Mermaid's layout pushes variables below tasks
+		from := reg.ID(edge.To().ID())
+		to := reg.ID(edge.From().ID())
+		root.Addf("%s ==> %s", from, to)
+	}
+}
+
+func variableDisplayLabel(node *graph.Node) string {
+	label := nodeDisplayLabel(node)
+	if node.Description != "" {
+		return label + ": " + node.Description
+	}
+
+	return label
+}
+
+func writeVariableClassDef(
+	root *indentwriter.Line,
+	nodes []*graph.Node,
+	cfg *config.Config,
+	reg *safe.Registry,
+) {
+	parts := variableClassDefParts(cfg)
+	classDef := strings.Join(parts, ",")
+
+	ids := make([]string, 0, len(nodes))
+	for _, n := range nodes {
+		ids = append(ids, reg.ID(n.ID()))
+	}
+
+	slices.Sort(ids)
+	root.Addf("classDef varStyle %s", classDef)
+	root.Addf("class %s varStyle", strings.Join(ids, ","))
+}
+
+func variableClassDefParts(cfg *config.Config) []string {
+	if cfg == nil || cfg.Mermaid == nil || cfg.Mermaid.VariableNodes == nil {
+		return []string{"fill:#e8e8e8", "stroke:#666"}
+	}
+
+	vs := cfg.Mermaid.VariableNodes
+
+	var parts []string
+
+	if vs.Fill != "" {
+		parts = append(parts, "fill:"+vs.Fill)
+	}
+
+	if vs.Stroke != "" {
+		parts = append(parts, "stroke:"+vs.Stroke)
+	}
+
+	if vs.Color != "" {
+		parts = append(parts, "color:"+vs.Color)
+	}
+
+	if len(parts) > 0 {
+		return parts
+	}
+
+	return []string{"fill:#e8e8e8", "stroke:#666"}
+}
+
+//nolint:revive // Choosing to return two unnamed slices
+func splitNodesByKind(nodes []*graph.Node) ([]*graph.Node, []*graph.Node) {
+	var (
+		taskNodes []*graph.Node
+		varNodes  []*graph.Node
+	)
+
+	for _, n := range nodes {
+		if n.Kind == graph.NodeKindVariable {
+			varNodes = append(varNodes, n)
+		} else {
+			taskNodes = append(taskNodes, n)
+		}
+	}
+
+	return taskNodes, varNodes
 }

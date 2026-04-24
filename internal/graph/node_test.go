@@ -30,6 +30,31 @@ func TestNode_AddEdge_ToTargetNode_AppendsEdge(t *testing.T) {
 	g.Expect(edge.To()).To(gomega.BeIdenticalTo(target))
 }
 
+func TestNode_Kind_DefaultsToTask(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Arrange & Act
+	node := NewNode("test")
+
+	// Assert
+	g.Expect(node.Kind).To(gomega.Equal(NodeKindTask))
+}
+
+func TestNode_Kind_CanBeSetToVariable(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Arrange
+	node := NewNode("var:FOO")
+
+	// Act
+	node.Kind = NodeKindVariable
+
+	// Assert
+	g.Expect(node.Kind).To(gomega.Equal(NodeKindVariable))
+}
+
 func TestNode_Edges_WithNoEdges_ReturnsEmpty(t *testing.T) {
 	t.Parallel()
 	g := gomega.NewWithT(t)

@@ -136,5 +136,5 @@ tasks:
       - "{{.BUILD_DIR}}/task-graph"
       - "Taskfile.yml"
     cmds:
-      - "{{.BUILD_DIR}}/task-graph {{.ROOT_DIR}}/Taskfile.yml --output {{.DOCS_DIR}}/taskfile.dot --auto-color"
+      - "{{.BUILD_DIR}}/task-graph {{.ROOT_DIR}}/Taskfile.yml --output {{.DOCS_DIR}}/taskfile.dot --auto-color --include-global-vars"
       - "dot -Tpng {{.DOCS_DIR}}/taskfile.dot -o {{.DOCS_DIR}}/taskfile.png"

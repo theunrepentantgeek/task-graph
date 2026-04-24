@@ -17,6 +17,12 @@ type Graphviz struct {
 
 	// TaskNodes is the presentation for task nodes
 	TaskNodes *GraphvizNode `json:"taskNodes,omitempty" yaml:"taskNodes,omitempty"`
+
+	// VariableNodes is the presentation for global variable nodes
+	VariableNodes *GraphvizNode `json:"variableNodes,omitempty" yaml:"variableNodes,omitempty"`
+
+	// VariableEdges is the presentation for edges from variables to tasks
+	VariableEdges *GraphvizEdge `json:"variableEdges,omitempty" yaml:"variableEdges,omitempty"`
 }
 
 type GraphvizNode struct {
@@ -48,4 +54,34 @@ type GraphvizEdge struct {
 	// Style is the style of the edge. It can be any valid Graphviz style.
 	// https://graphviz.org/docs/attr-types/style/
 	Style string `json:"style,omitempty" yaml:"style,omitempty"`
+}
+
+func newGraphViz() *Graphviz {
+	return &Graphviz{
+		Font:     "Verdana",
+		FontSize: 16,
+		DependencyEdges: &GraphvizEdge{
+			Color: "black",
+			Width: 1,
+			Style: "solid",
+		},
+		CallEdges: &GraphvizEdge{
+			Color: "blue",
+			Width: 1,
+			Style: "dashed",
+		},
+		TaskNodes: &GraphvizNode{
+			Color: "black",
+		},
+		VariableNodes: &GraphvizNode{
+			Color:     "#666666",
+			FillColor: "#e8e8e8",
+			Style:     "filled",
+		},
+		VariableEdges: &GraphvizEdge{
+			Color: "#228B22",
+			Width: 1,
+			Style: "dotted",
+		},
+	}
 }

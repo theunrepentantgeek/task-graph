@@ -17,7 +17,7 @@ func WordWrap(text string, width int) []string {
 		return []string{text}
 	}
 
-	var result []string
+	result := make([]string, 0, len(text))
 
 	start := 0
 	for start < len(text) {

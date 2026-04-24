@@ -119,3 +119,33 @@ func TestString_NoParts_ReturnsEmptyBraces(t *testing.T) {
 	// Assert
 	g.Expect(result).To(Equal("{}"))
 }
+
+func TestAdd_PartContainsPipe_EscapesPipeCharacter(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	r := newRecord()
+
+	// Act
+	r.add("cmd1 | cmd2")
+
+	// Assert
+	g.Expect(r.parts).To(Equal([]string{`cmd1 \| cmd2`}))
+}
+
+func TestString_PartWithPipe_EscapesPipeInOutput(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	r := newRecord()
+	r.add("name")
+	r.add("echo foo | bar")
+
+	// Act
+	result := r.String()
+
+	// Assert
+	g.Expect(result).To(Equal(`{name | echo foo \| bar}`))
+}

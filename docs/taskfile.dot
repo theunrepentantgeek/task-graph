@@ -205,10 +205,69 @@ digraph {
   
   "update-golden-files" [
     color="black"
-    fillcolor="lightgray"
+    fillcolor="lavender"
     label="{update-golden-files | Update golden files with \ncurrent output}"
     shape="Mrecord"
     style="filled"
   ]
   
+  "var_BUILD_DIR" [
+    color="#666666"
+    fillcolor="lightgray"
+    label="{BUILD_DIR | \{\{ list .ROOT_DIR \"build\" \| join \n\"/\" \| osClean \}\}}"
+    shape="record"
+    style="filled"
+  ]
+  "var_BUILD_DIR" -> "build_bin" [
+    color="#228B22"
+    penwidth="1"
+    style="dotted"
+  ]
+  "var_BUILD_DIR" -> "build_dir" [
+    color="#228B22"
+    penwidth="1"
+    style="dotted"
+  ]
+  "var_BUILD_DIR" -> "build_sbom" [
+    color="#228B22"
+    penwidth="1"
+    style="dotted"
+  ]
+  "var_BUILD_DIR" -> "docs_build" [
+    color="#228B22"
+    penwidth="1"
+    style="dotted"
+  ]
+  "var_BUILD_DIR" -> "samples" [
+    color="#228B22"
+    penwidth="1"
+    style="dotted"
+  ]
+  
+  "var_DOCS_DIR" [
+    color="#666666"
+    fillcolor="lightgray"
+    label="{DOCS_DIR | \{\{ list .ROOT_DIR \"docs\" \| join \n\"/\" \| osClean \}\}}"
+    shape="record"
+    style="filled"
+  ]
+  "var_DOCS_DIR" -> "docs_build" [
+    color="#228B22"
+    penwidth="1"
+    style="dotted"
+  ]
+  
+  "var_TOOLS_DIR" [
+    color="#666666"
+    fillcolor="lightgray"
+    label="{TOOLS_DIR | \{\{ list .ROOT_DIR \"tools\" \| join \n\"/\" \| osClean \}\}}"
+    shape="record"
+    style="filled"
+  ]
+  
+  { rank=sink
+    "var_BUILD_DIR"
+    "var_DOCS_DIR"
+    "var_TOOLS_DIR"
+  }
 }
