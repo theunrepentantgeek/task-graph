@@ -31,6 +31,26 @@ func TestIndentWriter_WriteTo_EmptyWriter_WritesBlankLine(t *testing.T) {
 	gg.Assert(t, "empty_writer", buf.Bytes())
 }
 
+func TestIndentWriter_Addf_FormatsAndAddsLine(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Arrange
+	iw := New()
+
+	// Act
+	line := iw.Addf("item %d: %s", 42, "hello")
+
+	// Assert
+	g.Expect(line).NotTo(gomega.BeNil())
+
+	var buf bytes.Buffer
+
+	_, err := iw.WriteTo(&buf, "  ")
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+	g.Expect(buf.String()).To(gomega.Equal("item 42: hello\n"))
+}
+
 func TestIndentWriter_WriteTo_NestedLines_WritesIndentedStructure(t *testing.T) {
 	t.Parallel()
 	g := gomega.NewWithT(t)
