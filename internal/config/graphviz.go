@@ -55,3 +55,33 @@ type GraphvizEdge struct {
 	// https://graphviz.org/docs/attr-types/style/
 	Style string `json:"style,omitempty" yaml:"style,omitempty"`
 }
+
+func newGraphViz() *Graphviz {
+	return &Graphviz{
+		Font:     "Verdana",
+		FontSize: 16,
+		DependencyEdges: &GraphvizEdge{
+			Color: "black",
+			Width: 1,
+			Style: "solid",
+		},
+		CallEdges: &GraphvizEdge{
+			Color: "blue",
+			Width: 1,
+			Style: "dashed",
+		},
+		TaskNodes: &GraphvizNode{
+			Color: "black",
+		},
+		VariableNodes: &GraphvizNode{
+			Color:     "#666666",
+			FillColor: "#e8e8e8",
+			Style:     "filled",
+		},
+		VariableEdges: &GraphvizEdge{
+			Color: "#228B22",
+			Width: 1,
+			Style: "dotted",
+		},
+	}
+}

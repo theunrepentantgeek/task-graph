@@ -13,6 +13,8 @@ import (
 type Builder struct {
 	taskfile *ast.Taskfile
 
+	globalVars map[string]bool
+
 	// IncludeGlobalVars controls whether global variables are added as nodes
 	// to the graph, with edges pointing to the tasks that reference them.
 	IncludeGlobalVars bool
@@ -247,13 +249,17 @@ func collectVarStrings(result []string, vars *ast.Vars) []string {
 }
 
 func (b *Builder) globalVarNames() map[string]bool {
-	names := make(map[string]bool)
+	if b.globalVars != nil {
+		return b.globalVars
+	}
+
+	b.globalVars = make(map[string]bool)
 
 	if b.taskfile.Vars != nil {
 		for name := range b.taskfile.Vars.All() {
-			names[name] = true
+			b.globalVars[name] = true
 		}
 	}
 
-	return names
+	return b.globalVars
 }
