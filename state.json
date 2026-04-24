@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-04-24T04:01:26Z",
-  "run_id": "24871469335",
+  "last_run": "2026-04-24T14:16:36Z",
+  "run_id": "24894160471",
   "monthly_issue": {
     "number": 48,
     "title": "[Repo Assist] Monthly Activity 2026-04",
@@ -15,24 +15,10 @@
       "status": "open"
     },
     {
-      "branch": "repo-assist/test-coverage-taskgraph-indentwriter-822c1246a90e85a1",
-      "title": "[Repo Assist] test: improve coverage for taskgraph builder and IndentWriter.Addf",
-      "pr_number": 57,
-      "task": 9,
-      "status": "open"
-    },
-    {
-      "branch": "repo-assist/improve-display-label-node-method",
+      "branch": "repo-assist/improve-display-label-node-method-b80990b0a1022eb1",
       "title": "[Repo Assist] refactor: add Node.DisplayLabel() to eliminate duplicated label-resolution logic",
       "pr_number": 58,
       "task": 5,
-      "status": "open"
-    },
-    {
-      "branch": "repo-assist/perf-precompute-namespace-children",
-      "title": "[Repo Assist] perf: precompute parent->children namespace map in grouped rendering",
-      "pr_number": 59,
-      "task": 8,
       "status": "open"
     },
     {
@@ -47,24 +33,29 @@
       "title": "[Repo Assist] feat: add --highlight-color CLI flag",
       "pr_number": 61,
       "task": 10,
-      "status": "open"
+      "status": "open",
+      "conflict_fixed": "2026-04-24"
     },
     {
-      "branch": "repo-assist/perf-buffered-output-2026-04-24",
+      "branch": "repo-assist/perf-buffered-output-2026-04-24-64b9e8c21eb68a40",
       "title": "[Repo Assist] perf: improve I/O efficiency in output writing pipeline",
-      "pr_number": 62,
+      "pr_number": 65,
       "task": "4+8",
       "status": "open"
     }
   ],
-  "open_prs_noted": [41, 55, 57, 58, 59, 60, 61, 62],
+  "open_prs_noted": [55, 58, 60, 61, 65],
   "issue_cursor": null,
-  "comments_made": {},
+  "comments_made": {
+    "62": "2026-04-24T14:16:36Z"
+  },
   "checked_off_by_maintainer": [
     "PR #45 (golangci-lint upgrade)",
-    "PR #41 (global-vars - checked off but still open, maintainer aware)",
-    "PR #49 (test coverage)",
-    "PR #56 (Done log fix - merged)"
+    "PR #41 (global-vars - merged 2026-04-24)",
+    "PR #49 (test coverage - merged)",
+    "PR #56 (Done log fix - merged)",
+    "PR #57 (test coverage taskgraph/indentwriter - merged)",
+    "PR #59 (precompute namespace children - merged)"
   ],
-  "notes": "7 open Repo Assist PRs: #55 (--focus flag), #57 (test coverage taskgraph/indentwriter), #58 (Node.DisplayLabel refactor), #59 (precompute namespace children), #60 (test coverage dot/loader), #61 (--highlight-color flag), #62 (I/O efficiency: io.WriteString in indentwriter + bufio.Writer in SaveTo). PR #62 number is estimated - verify next run. Note: task lint (golangci-lint-custom) not run this cycle (not installed in sandbox); CI will verify. All PRs based off main at 5e22b14."
+  "notes": "5 open Repo Assist PRs: #55 (--focus flag), #58 (Node.DisplayLabel refactor), #60 (test coverage dot/loader), #61 (--highlight-color flag - merge conflict with global-vars feature fixed 2026-04-24), #65 (I/O efficiency: io.WriteString in indentwriter + bufio.Writer in SaveTo). PR #41 (global variables), #57 (test coverage), #59 (precompute namespace) all merged into main as of 2026-04-24. New issues: #62 (colour blind - commented with implementation approach), #63 (easter eggs - off topic), #64 (other build tools - needs triage). action_required CI status on PRs is infrastructure approval issue, not code failure."
 }
