@@ -399,7 +399,13 @@ func nodeLabel(node *graph.Node) string {
 	return node.ID()
 }
 
-func splitNodesByKind(nodes []*graph.Node) (taskNodes []*graph.Node, varNodes []*graph.Node) {
+//nolint:revive // Choosing to return two unnamed slices
+func splitNodesByKind(nodes []*graph.Node) ([]*graph.Node, []*graph.Node) {
+	var (
+		taskNodes []*graph.Node
+		varNodes  []*graph.Node
+	)
+
 	for _, n := range nodes {
 		if n.Kind == graph.NodeKindVariable {
 			varNodes = append(varNodes, n)
