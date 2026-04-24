@@ -111,15 +111,11 @@ func writeGroupedNodesTo(
 	// Collect all unique namespaces, including intermediate ones
 	allNS := findAllNamespaces(nsToNodes)
 
-	// Find and sort top-level namespaces (those with no parent)
-	topLevel := make([]string, 0, len(allNS))
-	for ns := range allNS {
-		if namespace.Parent(ns) == "" {
-			topLevel = append(topLevel, ns)
-		}
-	}
+	// Pre-build parent→children map so each lookup is O(1) rather than O(N).
+	childrenOf := buildChildrenMap(allNS)
 
-	slices.Sort(topLevel)
+	// Find and sort top-level namespaces (those with no parent)
+	topLevel := childrenOf[""]
 
 	err := writeNodesTo(root, nsToNodes[""], cfg, reg)
 	if err != nil {
@@ -127,7 +123,7 @@ func writeGroupedNodesTo(
 	}
 
 	for _, ns := range topLevel {
-		err := writeNamespaceSubgraphTo(root, ns, nsToNodes, allNS, cfg, reg)
+		err := writeNamespaceSubgraphTo(root, ns, nsToNodes, childrenOf, cfg, reg)
 		if err != nil {
 			return err
 		}
@@ -136,6 +132,8 @@ func writeGroupedNodesTo(
 	return nil
 }
 
+// findAllNamespaces takes a map of namespaces to their directly contained nodes
+// and returns a set of all namespaces.
 // findAllNamespaces takes a map of namespaces to their directly contained nodes
 // and returns a set of all namespaces.
 func findAllNamespaces(nsToNodes map[string][]*graph.Node) map[string]bool {
@@ -148,6 +146,25 @@ func findAllNamespaces(nsToNodes map[string][]*graph.Node) map[string]bool {
 	}
 
 	return allNS
+}
+
+// buildChildrenMap builds a parent→sorted-children map from a set of all namespaces.
+// The empty-string key ("") holds the sorted list of top-level namespaces.
+// Building this map once avoids an O(N) scan of allNS for every namespace during
+// the recursive subgraph walk.
+func buildChildrenMap(allNS map[string]bool) map[string][]string {
+	childrenOf := make(map[string][]string, len(allNS)+1)
+
+	for ns := range allNS {
+		parent := namespace.Parent(ns)
+		childrenOf[parent] = append(childrenOf[parent], ns)
+	}
+
+	for key := range childrenOf {
+		slices.Sort(childrenOf[key])
+	}
+
+	return childrenOf
 }
 
 func indexNodesByNamespace(nodes []*graph.Node) map[string][]*graph.Node {
@@ -167,14 +184,12 @@ func writeNamespaceSubgraphTo(
 	parent *indentwriter.Line,
 	ns string,
 	nsToNodes map[string][]*graph.Node,
-	allNS map[string]bool,
+	childrenOf map[string][]string,
 	cfg *config.Config,
 	reg *safe.Registry,
 ) error {
 	subgraph := parent.Addf("subgraph %s {", reg.IDWithPrefix("cluster_", ns))
 	subgraph.Addf("label=%q", ns)
-
-	children := childNamespaces(allNS, ns)
 
 	// Write nodes directly in this namespace, then child subgraphs, with blank lines between items
 	err := writeNodesTo(subgraph, nsToNodes[ns], cfg, reg)
@@ -182,8 +197,8 @@ func writeNamespaceSubgraphTo(
 		return err
 	}
 
-	for _, child := range children {
-		err := writeNamespaceSubgraphTo(subgraph, child, nsToNodes, allNS, cfg, reg)
+	for _, child := range childrenOf[ns] {
+		err := writeNamespaceSubgraphTo(subgraph, child, nsToNodes, childrenOf, cfg, reg)
 		if err != nil {
 			return err
 		}
@@ -192,21 +207,6 @@ func writeNamespaceSubgraphTo(
 	parent.Add("}")
 
 	return nil
-}
-
-// childNamespaces returns sorted child namespaces of the given namespace.
-func childNamespaces(allNS map[string]bool, ns string) []string {
-	children := make([]string, 0, len(allNS))
-
-	for candidate := range allNS {
-		if namespace.Parent(candidate) == ns {
-			children = append(children, candidate)
-		}
-	}
-
-	slices.Sort(children)
-
-	return children
 }
 
 // writeNodesTo writes all nodes and their edges to the graphviz output.
