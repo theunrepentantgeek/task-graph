@@ -185,7 +185,7 @@ func (b *Builder) scanTaskVarRefs(task *ast.Task) map[string]bool {
 }
 
 func collectTaskStrings(task *ast.Task) []string {
-	var result []string //nolint:prealloc // Size unknown upfront.
+	var result []string
 
 	for _, cmd := range task.Cmds {
 		result = append(result, cmd.Cmd, cmd.Task)
