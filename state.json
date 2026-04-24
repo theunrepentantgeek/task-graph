@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-04-23T14:22:16Z",
-  "run_id": "24840607747",
+  "last_run": "2026-04-24T02:01:35Z",
+  "run_id": "24868357934",
   "monthly_issue": {
     "number": 48,
     "title": "[Repo Assist] Monthly Activity 2026-04",
@@ -12,13 +12,6 @@
       "title": "[Repo Assist] Add --focus flag to filter graph to a task subgraph",
       "pr_number": 55,
       "task": 10,
-      "status": "open"
-    },
-    {
-      "branch": "repo-assist/fix-misplaced-done-log-ac1553f102dffea6",
-      "title": "[Repo Assist] fix: move \"Done\" log message to end of Run()",
-      "pr_number": 56,
-      "task": 3,
       "status": "open"
     },
     {
@@ -43,27 +36,28 @@
       "status": "open"
     },
     {
-      "branch": "repo-assist/test-coverage-dot-loader-2026-04-23",
+      "branch": "repo-assist/test-coverage-dot-loader-2026-04-23-920bb6284434938c",
       "title": "[Repo Assist] test: improve coverage for dot and loader packages",
       "pr_number": 60,
       "task": 9,
       "status": "open"
     },
     {
-      "branch": "repo-assist/feature-highlight-color-flag",
+      "branch": "repo-assist/feature-highlight-color-flag-027b24b2310209b3",
       "title": "[Repo Assist] feat: add --highlight-color CLI flag",
       "pr_number": 61,
       "task": 10,
       "status": "open"
     }
   ],
-  "open_prs_noted": [41, 55, 56, 57, 58, 59, 60, 61],
+  "open_prs_noted": [41, 55, 57, 58, 59, 60, 61],
   "issue_cursor": null,
   "comments_made": {},
   "checked_off_by_maintainer": [
     "PR #45 (golangci-lint upgrade)",
     "PR #41 (global-vars - checked off but still open, maintainer aware)",
-    "PR #49 (test coverage)"
+    "PR #49 (test coverage)",
+    "PR #56 (Done log fix - merged)"
   ],
-  "notes": "7 open Repo Assist PRs: #55 (--focus flag, CI fixed this run), #56 (Done log fix), #57 (test coverage taskgraph/indentwriter), #58 (Node.DisplayLabel refactor), #59 (precompute namespace children), #60 (test coverage dot/loader), #61 (--highlight-color flag). PR #41 is maintainer's own PR still open. Monthly issue #48 updated. NOTE: PR numbers 60 and 61 are assumed; verify if not found."
+  "notes": "6 open Repo Assist PRs: #55 (--focus flag), #57 (test coverage taskgraph/indentwriter - CI fixed this run), #58 (Node.DisplayLabel refactor), #59 (precompute namespace children), #60 (test coverage dot/loader), #61 (--highlight-color flag). PRs #55/#60/#61 are 2 commits behind main but no conflicts. action_required on CI runs is GitHub infrastructure security (not code failures). PR #56 merged by maintainer."
 }
