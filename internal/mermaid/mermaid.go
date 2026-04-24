@@ -1,6 +1,7 @@
 package mermaid
 
 import (
+	"bufio"
 	"cmp"
 	"errors"
 	"io"
@@ -30,7 +31,13 @@ func SaveTo(
 
 	defer f.Close()
 
-	return WriteTo(f, gr, cfg)
+	bw := bufio.NewWriter(f)
+
+	if err = WriteTo(bw, gr, cfg); err != nil {
+		return err
+	}
+
+	return eris.Wrap(bw.Flush(), "failed to flush mermaid output")
 }
 
 // WriteTo writes the Mermaid flowchart representation of the graph to the given writer.
