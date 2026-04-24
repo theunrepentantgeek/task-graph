@@ -58,12 +58,21 @@ func WriteTo(
 	reg := safe.NewRegistry()
 	reg.Prepare(nodeIDs)
 
+	taskNodes, varNodes := splitNodesByKind(nodes)
+
 	iw := indentwriter.New()
 	root := iw.Add("digraph {")
 
-	err := writeAllNodesTo(root, nodes, cfg, reg)
+	err := writeAllNodesTo(root, taskNodes, cfg, reg)
 	if err != nil {
 		return err
+	}
+
+	if len(varNodes) > 0 {
+		err = writeVariableNodesTo(root, varNodes, cfg, reg)
+		if err != nil {
+			return err
+		}
 	}
 
 	iw.Add("}")
@@ -305,6 +314,8 @@ func writeEdgeTo(
 			props.AddAttributes(cfg.Graphviz.DependencyEdges)
 		case "call":
 			props.AddAttributes(cfg.Graphviz.CallEdges)
+		case "var":
+			props.AddAttributes(cfg.Graphviz.VariableEdges)
 		default:
 			// Nothing
 		}
@@ -316,4 +327,103 @@ func writeEdgeTo(
 			reg.ID(edge.From().ID()),
 			reg.ID(edge.To().ID())),
 		root)
+}
+
+func writeVariableNodesTo(
+	root *indentwriter.Line,
+	nodes []*graph.Node,
+	cfg *config.Config,
+	reg *safe.Registry,
+) error {
+	for _, node := range nodes {
+		err := writeVariableNodeDefinitionTo(root, node, cfg, reg)
+		if err != nil {
+			return err
+		}
+
+		for _, edge := range node.Edges() {
+			writeEdgeTo(root, edge, cfg, reg)
+		}
+
+		root.Add("")
+	}
+
+	// Add rank=sink to force variables to bottom
+	sink := root.Add("{ rank=sink")
+
+	for _, node := range nodes {
+		sink.Addf("\"%s\"", reg.ID(node.ID()))
+	}
+
+	root.Add("}")
+
+	return nil
+}
+
+func writeVariableNodeDefinitionTo(
+	root *indentwriter.Line,
+	node *graph.Node,
+	cfg *config.Config,
+	reg *safe.Registry,
+) error {
+	margin := min((len(node.Description)+20)/2, 40)
+
+	rec := newRecord()
+	rec.add(node.DisplayLabel())
+	rec.addWrapped(margin, node.Description)
+
+	props := newNodeProperties()
+	props.Addf("shape", "record")
+	props.Add("label", rec.String())
+
+	err := applyVariableNodeConfig(&props, node, cfg)
+	if err != nil {
+		return err
+	}
+
+	if props.ContainsKey("fillcolor") && !props.ContainsKey("style") {
+		props.Add("style", "filled")
+	}
+
+	id := fmt.Sprintf("\"%s\"", reg.ID(node.ID()))
+	props.WriteTo(id, root)
+
+	return nil
+}
+
+//nolint:revive // Choosing to return two unnamed slices
+func splitNodesByKind(nodes []*graph.Node) ([]*graph.Node, []*graph.Node) {
+	var (
+		taskNodes []*graph.Node
+		varNodes  []*graph.Node
+	)
+
+	for _, n := range nodes {
+		if n.Kind == graph.NodeKindVariable {
+			varNodes = append(varNodes, n)
+		} else {
+			taskNodes = append(taskNodes, n)
+		}
+	}
+
+	return taskNodes, varNodes
+}
+
+func applyVariableNodeConfig(props *nodeProperties, node *graph.Node, cfg *config.Config) error {
+	if cfg == nil {
+		return nil
+	}
+
+	if cfg.Graphviz != nil {
+		props.AddAttributes(cfg.Graphviz.VariableNodes)
+	}
+
+	for _, rule := range cfg.NodeStyleRules {
+		err := props.AddStyleRuleAttributes(node.ID(), rule)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

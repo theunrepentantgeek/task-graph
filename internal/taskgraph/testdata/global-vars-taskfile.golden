@@ -1,0 +1,74 @@
+digraph {
+  "build" [
+    color="black"
+    label="{build | Build the project}"
+    shape="Mrecord"
+  ]
+  
+  "release" [
+    color="black"
+    label="{release | Create a release}"
+    shape="Mrecord"
+  ]
+  "release" -> "build" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  "release" -> "test" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  
+  "test" [
+    color="black"
+    label="{test | Run tests}"
+    shape="Mrecord"
+  ]
+  
+  "var_OUTPUT_DIR" [
+    color="#666666"
+    fillcolor="#e8e8e8"
+    label="{OUTPUT_DIR | ./build}"
+    shape="record"
+    style="filled"
+  ]
+  "var_OUTPUT_DIR" -> "build" [
+    color="#228B22"
+    penwidth="1"
+    style="dotted"
+  ]
+  
+  "var_PACKAGE" [
+    color="#666666"
+    fillcolor="#e8e8e8"
+    label="{PACKAGE | github.com/example/project}"
+    shape="record"
+    style="filled"
+  ]
+  "var_PACKAGE" -> "build" [
+    color="#228B22"
+    penwidth="1"
+    style="dotted"
+  ]
+  
+  "var_VERSION" [
+    color="#666666"
+    fillcolor="#e8e8e8"
+    label="{VERSION | sh: git describe \n--tags}"
+    shape="record"
+    style="filled"
+  ]
+  "var_VERSION" -> "release" [
+    color="#228B22"
+    penwidth="1"
+    style="dotted"
+  ]
+  
+  { rank=sink
+    "var_OUTPUT_DIR"
+    "var_PACKAGE"
+    "var_VERSION"
+  }
+}

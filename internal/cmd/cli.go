@@ -32,6 +32,9 @@ type CLI struct {
 
 	AutoColor bool `help:"Automatically color nodes by namespace using a built-in palette." long:"auto-color"`
 
+	//nolint:revive // Intentionally long name for clarity in the CLI help.
+	IncludeGlobalVars bool `help:"Include global variables as nodes in the graph, with edges to consuming tasks." long:"include-global-vars"`
+
 	GraphType string `help:"Type of graph to generate (dot or mermaid). Defaults to dot." long:"graph-type"`
 
 	//nolint:revive // Intentially long line for clarity in the CLI help.
@@ -49,8 +52,6 @@ type CLI struct {
 func (c *CLI) Run(
 	flags *Flags,
 ) error {
-	flags.Log.Info("Done")
-
 	ctx := context.Background()
 
 	tf, err := loader.Load(ctx, c.Taskfile)
@@ -63,7 +64,9 @@ func (c *CLI) Run(
 		"taskfile", c.Taskfile,
 		"tasks", tf.Tasks.Len())
 
-	gr := taskgraph.New(tf).Build()
+	builder := taskgraph.New(tf)
+	builder.IncludeGlobalVars = flags.Config.IncludeGlobalVars
+	gr := builder.Build()
 
 	applyAutoColor(flags.Config, gr)
 
@@ -93,6 +96,8 @@ func (c *CLI) Run(
 			return err
 		}
 	}
+
+	flags.Log.Info("Done")
 
 	return nil
 }
@@ -218,6 +223,10 @@ func (c *CLI) applyConfigOverrides(cfg *config.Config) {
 
 	if c.GraphType != "" {
 		cfg.GraphType = c.GraphType
+	}
+
+	if c.IncludeGlobalVars {
+		cfg.IncludeGlobalVars = true
 	}
 
 	if c.Highlight != "" {

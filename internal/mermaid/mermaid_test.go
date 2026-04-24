@@ -155,6 +155,24 @@ func TestWriteTo_WithNodeLabel_UsesLabel(t *testing.T) {
 	g.Expect(buf.String()).To(gomega.ContainSubstring(`test-node["Custom Label"]`))
 }
 
+func TestWriteTo_WithVariableNodes_WritesVariableNodesAfterTasks(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	gr := buildGraphWithVariables(t)
+
+	cfg := config.New()
+	err := WriteTo(&buf, gr, cfg)
+
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+
+	gg := goldie.New(t)
+	g.Expect(gg.WithFixtureDir("testdata")).To(gomega.Succeed())
+
+	gg.Assert(t, "sample_graph_with_variables", buf.Bytes())
+}
+
 func buildSampleGraph(t *testing.T) *graph.Graph {
 	t.Helper()
 
@@ -190,6 +208,39 @@ func buildNamespacedGraph(t *testing.T) *graph.Graph {
 
 	dep2 := cmdBuild.AddEdge(cmdTestGolden)
 	dep2.SetClass("dep")
+
+	return gr
+}
+
+func buildGraphWithVariables(t *testing.T) *graph.Graph {
+	t.Helper()
+
+	gr := graph.New()
+
+	// Task nodes
+	build := gr.AddNode("build")
+	build.Description = "Build the project"
+	test := gr.AddNode("test")
+
+	build.AddEdge(test).SetClass("dep")
+
+	// Variable nodes
+	pkg := gr.AddNode("var:PACKAGE")
+	pkg.Kind = graph.NodeKindVariable
+	pkg.Label = "PACKAGE"
+	pkg.Description = "github.com/example/project"
+
+	ver := gr.AddNode("var:VERSION")
+	ver.Kind = graph.NodeKindVariable
+	ver.Label = "VERSION"
+	ver.Description = "sh: git describe --tags"
+
+	// Variable edges (variable -> task in graph model)
+	pkgEdge := pkg.AddEdge(build)
+	pkgEdge.SetClass("var")
+
+	verEdge := ver.AddEdge(build)
+	verEdge.SetClass("var")
 
 	return gr
 }

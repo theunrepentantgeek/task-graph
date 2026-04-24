@@ -10,6 +10,7 @@ import (
 	"github.com/sebdah/goldie/v2"
 
 	"github.com/theunrepentantgeek/task-graph/internal/config"
+	"github.com/theunrepentantgeek/task-graph/internal/graph"
 	"github.com/theunrepentantgeek/task-graph/internal/graphviz"
 	"github.com/theunrepentantgeek/task-graph/internal/loader"
 )
@@ -59,4 +60,34 @@ func TestTaskGraphBuilder_Graphviz(t *testing.T) {
 			gg.Assert(t, c.goldenName, buf.Bytes())
 		})
 	}
+}
+
+func TestTaskGraphBuilder_WithGlobalVars_Graphviz(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	taskfilePath := filepath.Join("testdata", "global-vars-taskfile.yml")
+
+	tf, err := loader.Load(t.Context(), taskfilePath)
+	g.Expect(err).NotTo(HaveOccurred())
+
+	builder := New(tf)
+	builder.IncludeGlobalVars = true
+	gr := builder.Build()
+
+	// Verify variable nodes exist
+	varNode, ok := gr.Node("var:PACKAGE")
+	g.Expect(ok).To(BeTrue())
+	g.Expect(varNode.Kind).To(Equal(graph.NodeKindVariable))
+
+	buf := bytes.Buffer{}
+	cfg := config.New()
+
+	err = graphviz.WriteTo(&buf, gr, cfg)
+	g.Expect(err).NotTo(HaveOccurred())
+
+	gg := goldie.New(t)
+	g.Expect(gg.WithFixtureDir("testdata")).To(Succeed())
+
+	gg.Assert(t, "global-vars-taskfile", buf.Bytes())
 }

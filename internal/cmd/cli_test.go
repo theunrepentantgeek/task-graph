@@ -187,6 +187,30 @@ func TestCreateConfig_HighlightFlagWithGlobPattern(t *testing.T) {
 	g.Expect(cfg.NodeStyleRules[0].Match).To(Equal("cmd:*"))
 }
 
+func TestCreateConfig_IncludeGlobalVarsFlagSetsConfig(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{IncludeGlobalVars: true}
+
+	cfg, err := cli.CreateConfig()
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.IncludeGlobalVars).To(BeTrue())
+}
+
+func TestCreateConfig_DefaultIncludeGlobalVarsIsFalse(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{}
+
+	cfg, err := cli.CreateConfig()
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.IncludeGlobalVars).To(BeFalse())
+}
+
 // TestApplyAutoColor
 
 func TestApplyAutoColor_WhenDisabled_LeavesRulesUnchanged(t *testing.T) {
