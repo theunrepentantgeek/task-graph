@@ -45,6 +45,7 @@ func TestIndentWriter_Addf_FormatsAndAddsLine(t *testing.T) {
 	g.Expect(line).NotTo(gomega.BeNil())
 
 	var buf bytes.Buffer
+
 	_, err := iw.WriteTo(&buf, "  ")
 	g.Expect(err).NotTo(gomega.HaveOccurred())
 	g.Expect(buf.String()).To(gomega.Equal("item 42: hello\n"))
