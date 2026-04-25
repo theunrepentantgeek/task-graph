@@ -19,6 +19,7 @@ import (
 	"github.com/theunrepentantgeek/task-graph/internal/graphviz"
 	"github.com/theunrepentantgeek/task-graph/internal/loader"
 	"github.com/theunrepentantgeek/task-graph/internal/mermaid"
+	"github.com/theunrepentantgeek/task-graph/internal/namespace"
 	"github.com/theunrepentantgeek/task-graph/internal/taskgraph"
 )
 
@@ -37,18 +38,23 @@ type CLI struct {
 
 	GraphType string `help:"Type of graph to generate (dot or mermaid). Defaults to dot." long:"graph-type"`
 
-	//nolint:revive // Intentially long line for clarity in the CLI help.
+	//nolint:revive // Intentionally long line for clarity in the CLI help.
 	Highlight string `help:"Highlight specific tasks in the graph. Accepts task names or glob patterns, separated by commas or semicolons." long:"highlight"`
 
-	//nolint:revive // Intentially long name for clarity in the CLI help.
+	//nolint:revive // Intentionally long name for clarity in the CLI help.
 	RenderImage string `help:"Render the graph as an image using graphviz dot. Specify the file type (e.g. png, svg)." long:"render-image"`
 
-	//nolint:revive // Intentially long name for clarity in the CLI help.
+	//nolint:revive // Intentionally long name for clarity in the CLI help.
 	ExportConfig string `help:"Export the effective configuration to a file (YAML or JSON based on file extension)." long:"export-config"`
-	Verbose      bool   `help:"Enable verbose logging."`
+
+	//nolint:revive // Intentionally long name for clarity in the CLI help.
+	Focus   string `help:"Show only tasks matching the given patterns together with all their transitive dependencies and dependents. Accepts task names or glob patterns, separated by commas or semicolons." long:"focus"`
+	Verbose bool   `help:"Enable verbose logging."`
 }
 
 // Run executes the CLI command with the given flags.
+//
+//nolint:revive // Difficult to simplify
 func (c *CLI) Run(
 	flags *Flags,
 ) error {
@@ -68,27 +74,19 @@ func (c *CLI) Run(
 	builder.IncludeGlobalVars = flags.Config.IncludeGlobalVars
 	gr := builder.Build()
 
+	if c.Focus != "" {
+		gr, err = applyFocus(gr, c.Focus)
+		if err != nil {
+			return eris.Wrap(err, "failed to apply focus filter")
+		}
+	}
+
 	applyAutoColor(flags.Config, gr)
 
-	graphType := c.resolveGraphType(flags)
-
-	switch graphType {
-	case "dot":
-		err = graphviz.SaveTo(c.Output, gr, flags.Config)
-	case "mermaid":
-		err = mermaid.SaveTo(c.Output, gr, flags.Config)
-	default:
-		return eris.Errorf("unsupported graph type: %q, must be dot or mermaid", graphType)
-	}
-
+	err = c.saveGraph(gr, flags)
 	if err != nil {
-		return eris.Wrap(err, "failed to save graph")
+		return err
 	}
-
-	flags.Log.Info(
-		"Saved graph",
-		"output", c.Output,
-	)
 
 	if c.RenderImage != "" {
 		err = c.renderImage(ctx, flags)
@@ -167,6 +165,35 @@ func (c *CLI) ExportConfigToFile(cfg *config.Config) error {
 	if err != nil {
 		return eris.Wrapf(err, "failed to write config file: %s", c.ExportConfig)
 	}
+
+	return nil
+}
+
+func (c *CLI) saveGraph(
+	gr *graph.Graph,
+	flags *Flags,
+) error {
+	graphType := c.resolveGraphType(flags)
+
+	var err error
+
+	switch graphType {
+	case "dot":
+		err = graphviz.SaveTo(c.Output, gr, flags.Config)
+	case "mermaid":
+		err = mermaid.SaveTo(c.Output, gr, flags.Config)
+	default:
+		return eris.Errorf("unsupported graph type: %q, must be dot or mermaid", graphType)
+	}
+
+	if err != nil {
+		return eris.Wrap(err, "failed to save graph")
+	}
+
+	flags.Log.Info(
+		"Saved graph",
+		"output", c.Output,
+	)
 
 	return nil
 }
@@ -301,4 +328,48 @@ func (c *CLI) loadConfigFile(cfg *config.Config) error {
 	}
 
 	return nil
+}
+
+// applyFocus returns a new graph containing only the nodes that match any of the
+// given comma-or-semicolon-separated patterns (glob-style), together with all
+// nodes transitively reachable from them in either direction.
+//
+//nolint:revive // Difficult to simplify
+func applyFocus(
+	gr *graph.Graph,
+	focusPatterns string,
+) (*graph.Graph, error) {
+	patterns := strings.FieldsFunc(
+		focusPatterns,
+		func(r rune) bool {
+			return r == ',' || r == ';'
+		})
+
+	seeds := make(map[string]bool)
+
+	for _, raw := range patterns {
+		pattern := strings.TrimSpace(raw)
+		if pattern == "" {
+			continue
+		}
+
+		re, err := namespace.CompileMatchPattern(pattern)
+		if err != nil {
+			return nil, eris.Wrapf(err, "invalid focus pattern %q", pattern)
+		}
+
+		for node := range gr.Nodes() {
+			if re.MatchString(node.ID()) {
+				seeds[node.ID()] = true
+			}
+		}
+	}
+
+	if len(seeds) == 0 {
+		return gr, nil
+	}
+
+	reachable := gr.ReachableFrom(seeds)
+
+	return gr.FilterNodes(reachable), nil
 }

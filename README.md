@@ -55,6 +55,9 @@ Flags:
                                 commas or semicolons.
       --render-image=STRING     Render the graph as an image using graphviz dot. Specify the file type (e.g. png, svg).
       --export-config=STRING    Export the effective configuration to a file (YAML or JSON based on file extension).
+      --focus=STRING            Show only tasks matching the given patterns together with all their transitive
+                                dependencies and dependents. Accepts task names or glob patterns, separated by commas
+                                or semicolons.
       --verbose                 Enable verbose logging.
 ```
 
