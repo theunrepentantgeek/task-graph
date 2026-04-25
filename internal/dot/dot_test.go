@@ -53,7 +53,7 @@ func TestFindExecutable_DirectoryWithDot_ReturnsDotPath(t *testing.T) {
 	// Arrange: create a directory containing a file named "dot"
 	dir := t.TempDir()
 	dotPath := filepath.Join(dir, "dot")
-	err := os.WriteFile(dotPath, []byte("fake dot"), 0o755)
+	err := os.WriteFile(dotPath, []byte("fake dot"), 0o600)
 	g.Expect(err).NotTo(HaveOccurred())
 
 	// Act
@@ -84,7 +84,7 @@ func TestFindExecutable_SpecificFilePath_ReturnsPath(t *testing.T) {
 	// Arrange: create a temp file to serve as a fake executable
 	dir := t.TempDir()
 	fakeDot := filepath.Join(dir, "dot")
-	err := os.WriteFile(fakeDot, []byte("fake dot"), 0o755)
+	err := os.WriteFile(fakeDot, []byte("fake dot"), 0o600)
 	g.Expect(err).NotTo(HaveOccurred())
 
 	// Act: pass the direct file path (not a directory)
@@ -132,7 +132,9 @@ func TestRenderImage_ExecutableFails_ReturnsError(t *testing.T) {
 
 	// Arrange: use /bin/false which always exits with an error
 	falseExe := "/bin/false"
-	if _, statErr := os.Stat(falseExe); statErr != nil {
+
+	_, statErr := os.Stat(falseExe)
+	if statErr != nil {
 		t.Skip("/bin/false not available, skipping")
 	}
 

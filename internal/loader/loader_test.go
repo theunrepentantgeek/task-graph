@@ -83,7 +83,7 @@ func TestLoad_InvalidYAML_ReturnsError(t *testing.T) {
 	// Arrange: write a temp file with invalid YAML content
 	dir := t.TempDir()
 	badFile := filepath.Join(dir, "Taskfile.yml")
-	err := os.WriteFile(badFile, []byte("not: valid: yaml: content: :::"), 0o644)
+	err := os.WriteFile(badFile, []byte("not: valid: yaml: content: :::"), 0o600)
 	g.Expect(err).NotTo(HaveOccurred())
 
 	// Act
@@ -93,4 +93,3 @@ func TestLoad_InvalidYAML_ReturnsError(t *testing.T) {
 	g.Expect(err).To(HaveOccurred())
 	g.Expect(tf).To(BeNil())
 }
-
