@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-04-24T14:16:36Z",
-  "run_id": "24894160471",
+  "last_run": "2026-04-25T03:43:53Z",
+  "run_id": "24921768719",
   "monthly_issue": {
     "number": 48,
     "title": "[Repo Assist] Monthly Activity 2026-04",
@@ -34,7 +34,7 @@
       "pr_number": 61,
       "task": 10,
       "status": "open",
-      "conflict_fixed": "2026-04-24"
+      "conflict_fixed": "2026-04-25"
     },
     {
       "branch": "repo-assist/perf-buffered-output-2026-04-24-64b9e8c21eb68a40",
@@ -57,5 +57,5 @@
     "PR #57 (test coverage taskgraph/indentwriter - merged)",
     "PR #59 (precompute namespace children - merged)"
   ],
-  "notes": "5 open Repo Assist PRs: #55 (--focus flag), #58 (Node.DisplayLabel refactor), #60 (test coverage dot/loader), #61 (--highlight-color flag - merge conflict with global-vars feature fixed 2026-04-24), #65 (I/O efficiency: io.WriteString in indentwriter + bufio.Writer in SaveTo). PR #41 (global variables), #57 (test coverage), #59 (precompute namespace) all merged into main as of 2026-04-24. New issues: #62 (colour blind - commented with implementation approach), #63 (easter eggs - off topic), #64 (other build tools - needs triage). action_required CI status on PRs is infrastructure approval issue, not code failure."
+  "notes": "5 open Repo Assist PRs: #55 (--focus flag), #58 (Node.DisplayLabel refactor), #60 (test coverage dot/loader), #61 (--highlight-color flag - merge conflict fixed 2026-04-25 against IncludeGlobalVars from PR #41), #65 (I/O efficiency: io.WriteString in indentwriter + bufio.Writer in SaveTo). Issues labelled this run: #62 (enhancement), #63 (off topic - Easter eggs), #64 (enhancement + help wanted - other build tools). Issue #66 is automated failure issue (patch size exceeded on previous run) - resolved. PR #41 (global variables), #57 (test coverage), #59 (precompute namespace) all merged into main."
 }
