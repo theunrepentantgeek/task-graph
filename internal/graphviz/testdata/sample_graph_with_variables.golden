@@ -1,0 +1,49 @@
+digraph {
+  "build" [
+    color="black"
+    label="{build | Build the project}"
+    shape="Mrecord"
+  ]
+  "build" -> "test" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  
+  "test" [
+    color="black"
+    label="test"
+    shape="Mrecord"
+  ]
+  
+  "var_PACKAGE" [
+    color="#666666"
+    fillcolor="#e8e8e8"
+    label="{PACKAGE | github.com/example/project}"
+    shape="record"
+    style="filled"
+  ]
+  "var_PACKAGE" -> "build" [
+    color="#228B22"
+    penwidth="1"
+    style="dotted"
+  ]
+  
+  "var_VERSION" [
+    color="#666666"
+    fillcolor="#e8e8e8"
+    label="{VERSION | sh: git describe \n--tags}"
+    shape="record"
+    style="filled"
+  ]
+  "var_VERSION" -> "build" [
+    color="#228B22"
+    penwidth="1"
+    style="dotted"
+  ]
+  
+  { rank=sink
+    "var_PACKAGE"
+    "var_VERSION"
+  }
+}

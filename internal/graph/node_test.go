@@ -30,6 +30,31 @@ func TestNode_AddEdge_ToTargetNode_AppendsEdge(t *testing.T) {
 	g.Expect(edge.To()).To(gomega.BeIdenticalTo(target))
 }
 
+func TestNode_Kind_DefaultsToTask(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Arrange & Act
+	node := NewNode("test")
+
+	// Assert
+	g.Expect(node.Kind).To(gomega.Equal(NodeKindTask))
+}
+
+func TestNode_Kind_CanBeSetToVariable(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Arrange
+	node := NewNode("var:FOO")
+
+	// Act
+	node.Kind = NodeKindVariable
+
+	// Assert
+	g.Expect(node.Kind).To(gomega.Equal(NodeKindVariable))
+}
+
 func TestNode_Edges_WithNoEdges_ReturnsEmpty(t *testing.T) {
 	t.Parallel()
 	g := gomega.NewWithT(t)
@@ -55,4 +80,25 @@ func TestNode_Edges_WithMultipleEdges_ReturnsAll(t *testing.T) {
 	g.Expect(edges).To(gomega.HaveLen(2))
 	g.Expect(edges[0]).To(gomega.BeIdenticalTo(edge1))
 	g.Expect(edges[1]).To(gomega.BeIdenticalTo(edge2))
+}
+
+// DisplayLabel
+
+func TestNode_DisplayLabel_WithNoLabel_ReturnsID(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	node := NewNode("my-task")
+
+	g.Expect(node.DisplayLabel()).To(gomega.Equal("my-task"))
+}
+
+func TestNode_DisplayLabel_WithExplicitLabel_ReturnsLabel(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	node := NewNode("my-task")
+	node.Label = "My Task"
+
+	g.Expect(node.DisplayLabel()).To(gomega.Equal("My Task"))
 }
