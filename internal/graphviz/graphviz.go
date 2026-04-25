@@ -254,29 +254,7 @@ func writeNodeDefinitionTo(
 	cfg *config.Config,
 	reg *safe.Registry,
 ) error {
-	margin := min((len(node.Description)+20)/2, 40)
-
-	rec := newRecord()
-	rec.add(node.DisplayLabel())
-	rec.addWrapped(margin, node.Description)
-
-	props := newNodeProperties()
-	props.Addf("shape", "Mrecord")
-	props.Add("label", rec.String())
-
-	err := applyNodeConfig(&props, node, cfg)
-	if err != nil {
-		return err
-	}
-
-	if props.ContainsKey("fillcolor") && !props.ContainsKey("style") {
-		props.Add("style", "filled")
-	}
-
-	id := fmt.Sprintf("\"%s\"", reg.ID(node.ID()))
-	props.WriteTo(id, root)
-
-	return nil
+	return writeNodeDefinitionWithShapeTo(root, node, cfg, reg, "Mrecord", applyNodeConfig)
 }
 
 func applyNodeConfig(props *nodeProperties, node *graph.Node, cfg *config.Config) error {
@@ -366,6 +344,17 @@ func writeVariableNodeDefinitionTo(
 	cfg *config.Config,
 	reg *safe.Registry,
 ) error {
+	return writeNodeDefinitionWithShapeTo(root, node, cfg, reg, "record", applyVariableNodeConfig)
+}
+
+func writeNodeDefinitionWithShapeTo(
+	root *indentwriter.Line,
+	node *graph.Node,
+	cfg *config.Config,
+	reg *safe.Registry,
+	shape string,
+	configFunc func(*nodeProperties, *graph.Node, *config.Config) error,
+) error {
 	margin := min((len(node.Description)+20)/2, 40)
 
 	rec := newRecord()
@@ -373,10 +362,10 @@ func writeVariableNodeDefinitionTo(
 	rec.addWrapped(margin, node.Description)
 
 	props := newNodeProperties()
-	props.Addf("shape", "record")
+	props.Add("shape", shape)
 	props.Add("label", rec.String())
 
-	err := applyVariableNodeConfig(&props, node, cfg)
+	err := configFunc(&props, node, cfg)
 	if err != nil {
 		return err
 	}
