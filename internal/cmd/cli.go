@@ -50,6 +50,8 @@ type CLI struct {
 }
 
 // Run executes the CLI command with the given flags.
+//
+//nolint:revive // Difficult to simplify
 func (c *CLI) Run(
 	flags *Flags,
 ) error {
@@ -78,25 +80,10 @@ func (c *CLI) Run(
 
 	applyAutoColor(flags.Config, gr)
 
-	graphType := c.resolveGraphType(flags)
-
-	switch graphType {
-	case "dot":
-		err = graphviz.SaveTo(c.Output, gr, flags.Config)
-	case "mermaid":
-		err = mermaid.SaveTo(c.Output, gr, flags.Config)
-	default:
-		return eris.Errorf("unsupported graph type: %q, must be dot or mermaid", graphType)
-	}
-
+	err = c.saveGraph(gr, flags)
 	if err != nil {
-		return eris.Wrap(err, "failed to save graph")
+		return err
 	}
-
-	flags.Log.Info(
-		"Saved graph",
-		"output", c.Output,
-	)
 
 	if c.RenderImage != "" {
 		err = c.renderImage(ctx, flags)
@@ -173,6 +160,35 @@ func (c *CLI) ExportConfigToFile(cfg *config.Config) error {
 	if err != nil {
 		return eris.Wrapf(err, "failed to write config file: %s", c.ExportConfig)
 	}
+
+	return nil
+}
+
+func (c *CLI) saveGraph(
+	gr *graph.Graph,
+	flags *Flags,
+) error {
+	graphType := c.resolveGraphType(flags)
+
+	var err error
+
+	switch graphType {
+	case "dot":
+		err = graphviz.SaveTo(c.Output, gr, flags.Config)
+	case "mermaid":
+		err = mermaid.SaveTo(c.Output, gr, flags.Config)
+	default:
+		return eris.Errorf("unsupported graph type: %q, must be dot or mermaid", graphType)
+	}
+
+	if err != nil {
+		return eris.Wrap(err, "failed to save graph")
+	}
+
+	flags.Log.Info(
+		"Saved graph",
+		"output", c.Output,
+	)
 
 	return nil
 }
@@ -308,10 +324,17 @@ func (c *CLI) loadConfigFile(cfg *config.Config) error {
 // applyFocus returns a new graph containing only the nodes that match any of the
 // given comma-or-semicolon-separated patterns (glob-style), together with all
 // nodes transitively reachable from them in either direction.
-func applyFocus(gr *graph.Graph, focusPatterns string) (*graph.Graph, error) {
-	patterns := strings.FieldsFunc(focusPatterns, func(r rune) bool {
-		return r == ',' || r == ';'
-	})
+//
+//nolint:revive // Difficult to simplify
+func applyFocus(
+	gr *graph.Graph,
+	focusPatterns string,
+) (*graph.Graph, error) {
+	patterns := strings.FieldsFunc(
+		focusPatterns,
+		func(r rune) bool {
+			return r == ',' || r == ';'
+		})
 
 	seeds := make(map[string]bool)
 

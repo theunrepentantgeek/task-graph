@@ -303,6 +303,7 @@ func TestGraph_FilterNodes_SubsetOfNodes_EdgesToExcludedNodesAreDropped(t *testi
 	a := graph.AddNode("A")
 	b := graph.AddNode("B")
 	c := graph.AddNode("C")
+
 	a.AddEdge(b)
 	b.AddEdge(c)
 
