@@ -22,6 +22,19 @@ var palette = []string{
 	"peachpuff",
 }
 
+// ColorblindPalette is the Okabe-Ito palette, designed to be distinguishable by
+// people with the most common forms of colour vision deficiency (deuteranopia,
+// protanopia, tritanopia). See https://jfly.uni-koeln.de/color/ for details.
+var ColorblindPalette = []string{
+	"#E69F00", // orange
+	"#56B4E9", // sky blue
+	"#009E73", // bluish green
+	"#F0E442", // yellow
+	"#0072B2", // blue
+	"#D55E00", // vermillion
+	"#CC79A7", // reddish purple
+}
+
 // GenerateRules generates a NodeStyleRule for each distinct namespace found in the graph.
 // Colors are assigned from the Palette in order: shallower namespaces first, then
 // alphabetically within the same depth. When there are more namespaces than palette entries,
@@ -30,7 +43,14 @@ var palette = []string{
 // The generated rules should be prepended to any existing NodeStyleRules so that
 // user-defined rules take precedence over the auto-generated ones.
 func GenerateRules(gr *graph.Graph) []config.NodeStyleRule {
-	if len(palette) == 0 {
+	return GenerateRulesWithPalette(gr, palette)
+}
+
+// GenerateRulesWithPalette is like GenerateRules but uses the supplied palette instead of
+// the built-in default. It is useful when callers want to supply an accessibility-optimised
+// palette (e.g. ColorblindPalette) while reusing the same namespace-detection logic.
+func GenerateRulesWithPalette(gr *graph.Graph, p []string) []config.NodeStyleRule {
+	if len(p) == 0 {
 		return nil
 	}
 
@@ -39,7 +59,7 @@ func GenerateRules(gr *graph.Graph) []config.NodeStyleRule {
 
 	rules := make([]config.NodeStyleRule, 0, len(namespaces)*2)
 	for i, ns := range namespaces {
-		color := palette[i%len(palette)]
+		color := p[i%len(p)]
 
 		// Exact match for the namespace task itself (e.g. "tidy")
 		rules = append(rules, config.NodeStyleRule{

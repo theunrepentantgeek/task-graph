@@ -34,6 +34,9 @@ type CLI struct {
 	AutoColor bool `help:"Automatically color nodes by namespace using a built-in palette." long:"auto-color"`
 
 	//nolint:revive // Intentionally long name for clarity in the CLI help.
+	ColorblindMode bool `help:"Use an accessibility-optimised colour palette (Okabe-Ito) for --auto-color instead of the default palette." long:"colorblind-mode"`
+
+	//nolint:revive // Intentionally long name for clarity in the CLI help.
 	IncludeGlobalVars bool `help:"Include global variables as nodes in the graph, with edges to consuming tasks." long:"include-global-vars"`
 
 	GraphType string `help:"Type of graph to generate (dot or mermaid). Defaults to dot." long:"graph-type"`
@@ -248,6 +251,10 @@ func (c *CLI) applyConfigOverrides(cfg *config.Config) {
 		cfg.AutoColor = true
 	}
 
+	if c.ColorblindMode {
+		cfg.ColorblindMode = true
+	}
+
 	if c.GraphType != "" {
 		cfg.GraphType = c.GraphType
 	}
@@ -296,7 +303,13 @@ func applyAutoColor(cfg *config.Config, gr *graph.Graph) {
 		return
 	}
 
-	autoRules := autocolor.GenerateRules(gr)
+	var autoRules []config.NodeStyleRule
+	if cfg.ColorblindMode {
+		autoRules = autocolor.GenerateRulesWithPalette(gr, autocolor.ColorblindPalette)
+	} else {
+		autoRules = autocolor.GenerateRules(gr)
+	}
+
 	cfg.NodeStyleRules = append(autoRules, cfg.NodeStyleRules...)
 }
 
