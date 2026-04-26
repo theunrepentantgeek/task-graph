@@ -79,6 +79,8 @@ func Depth(ns string) int {
 func CompileMatchPattern(pattern string) (*regexp.Regexp, error) {
 	var b strings.Builder
 
+	// Pre-allocate: worst case each byte expands to `\x` (2 bytes), plus `^` and `$`.
+	b.Grow(len(pattern)*2 + 2)
 	b.WriteString("^")
 
 	inBracket := false
@@ -117,10 +119,26 @@ func convertGlobChar(b *strings.Builder, c byte, inBracket bool) bool {
 	case c == '?':
 		b.WriteByte('.')
 	default:
-		b.WriteString(regexp.QuoteMeta(string(c)))
+		// Inline escaping avoids the two heap allocations in regexp.QuoteMeta(string(c)).
+		if isRegexpMeta(c) {
+			b.WriteByte('\\')
+		}
+
+		b.WriteByte(c)
 	}
 
 	return inBracket
+}
+
+// isRegexpMeta reports whether c is a Go regexp metacharacter that must be escaped.
+// This covers all characters handled by regexp.QuoteMeta.
+func isRegexpMeta(c byte) bool {
+	switch c {
+	case '\\', '.', '+', '*', '?', '(', ')', '|', '[', ']', '{', '}', '^', '$':
+		return true
+	}
+
+	return false
 }
 
 // MatchPattern returns a glob-style pattern string matching all nodes
