@@ -33,7 +33,8 @@ func SaveTo(
 
 	bw := bufio.NewWriter(f)
 
-	if err = WriteTo(bw, gr, cfg); err != nil {
+	err = WriteTo(bw, gr, cfg)
+	if err != nil {
 		return err
 	}
 
