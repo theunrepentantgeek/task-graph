@@ -1,13 +1,13 @@
 {
-  "last_run": "2026-04-27T14:37:37Z",
-  "run_id": "25001341284",
+  "last_run": "2026-04-28T04:25:08Z",
+  "run_id": "25033787559",
   "monthly_issue": 48,
   "monthly_issue_month": "2026-04",
   "issue_cursor": 70,
-  "pr_cursor": 73,
+  "pr_cursor": 77,
   "comments_made": {
     "62": "2026-04-25T13:47:00Z",
-    "64": "2026-04-27T04:11:00Z"
+    "64": "2026-04-28T04:25:00Z"
   },
   "prs_created": [
     {"branch": "repo-assist/feature-highlight-color-flag-027b24b2310209b3", "pr": 61, "status": "open", "run": "24840607747"},
@@ -17,12 +17,13 @@
     {"branch": "repo-assist/perf-compile-match-pattern-2026-04-26-1b318db81007a45d", "pr": 71, "status": "open", "run": "24958201192"},
     {"branch": "repo-assist/test-coverage-mermaid-taskgraph-2026-04-26-571fea59e56cdd51", "pr": 72, "status": "open", "run": "24958201192"},
     {"branch": "repo-assist/test-coverage-cmd-2026-04-27", "pr": 73, "status": "open", "run": "24976109944"},
-    {"branch": "repo-assist/test-coverage-graphviz-2026-04-27", "pr": null, "status": "pending", "run": "25001341284"},
-    {"branch": "repo-assist/eng-testreport-2026-04-27", "pr": null, "status": "pending", "run": "25001341284"}
+    {"branch": "repo-assist/test-coverage-graphviz-2026-04-27-e2db621fe97c2fcf", "pr": 74, "status": "open", "run": "25001341284"},
+    {"branch": "repo-assist/eng-testreport-2026-04-27-908245657d0d3fa0", "pr": 75, "status": "open", "run": "25001341284"},
+    {"branch": "repo-assist/eng-bundle-dependabot-2026-04-28", "pr": null, "status": "pending", "run": "25033787559"}
   ],
-  "issues_created": [69, 70],
+  "issues_created": [69, 70, "aw_designiss"],
   "perf_topics_done": ["buffered-output", "avoid-rune-alloc", "compile-match-pattern"],
   "test_coverage_done": ["dot", "loader", "taskgraph-builder", "indentwriter-addf", "mermaid", "taskgraph-vars", "cmd", "graphviz"],
-  "eng_topics_done": ["testreport"],
-  "notes": "PRs for graphviz test coverage and go-testreport re-enable are pending (no PR numbers yet). Graphviz coverage 90→94.3%. Many open Repo Assist PRs accumulating; consider focusing future runs on maintaining existing PRs (Task 6) if CI issues arise. cmd coverage 39% on main (PR #73 not yet merged)."
+  "eng_topics_done": ["testreport", "bundle-dependabot"],
+  "notes": "Design issue for multi-loader architecture opened (aw_designiss) — awaiting maintainer approval before beginning step 1 (extract Taskfile loader). 10 open Repo Assist PRs. Dependabot bundle PR pending (no PR number yet). Once design issue is approved, proceed with loader refactor: extract internal/loader/taskfile/loader.go implementing Loader interface."
 }
