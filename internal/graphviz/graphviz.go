@@ -380,7 +380,6 @@ func writeNodeDefinitionWithShapeTo(
 	return nil
 }
 
-//nolint:revive // Choosing to return two unnamed slices
 func splitNodesByKind(nodes []*graph.Node) ([]*graph.Node, []*graph.Node) {
 	var (
 		taskNodes []*graph.Node
