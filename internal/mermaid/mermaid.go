@@ -410,7 +410,6 @@ func variableClassDefParts(cfg *config.Config) []string {
 	return []string{"fill:#e8e8e8", "stroke:#666"}
 }
 
-//nolint:revive // Choosing to return two unnamed slices
 func splitNodesByKind(nodes []*graph.Node) ([]*graph.Node, []*graph.Node) {
 	var (
 		taskNodes []*graph.Node
