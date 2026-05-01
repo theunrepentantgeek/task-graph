@@ -1,10 +1,10 @@
 {
-  "last_run": "2026-04-30T14:43:26Z",
-  "run_id": "25171483013",
-  "monthly_issue": 48,
-  "monthly_issue_month": "2026-04",
+  "last_run": "2026-05-01T04:39:05Z",
+  "run_id": "25202443159",
+  "monthly_issue": "aw_may2026",
+  "monthly_issue_month": "2026-05",
   "issue_cursor": 81,
-  "pr_cursor": 84,
+  "pr_cursor": 85,
   "comments_made": {
     "62": "2026-04-25T13:47:00Z",
     "63": "2026-04-30T14:43:00Z",
@@ -13,18 +13,19 @@
   "prs_created": [
     {"branch": "repo-assist/feature-highlight-color-flag-027b24b2310209b3", "pr": 61, "status": "open", "run": "24840607747"},
     {"branch": "repo-assist/perf-buffered-output-2026-04-24-64b9e8c21eb68a40", "pr": 65, "status": "open", "run": "24871469335"},
-    {"branch": "repo-assist/fix-issue-62-colorblind-mode-51753dea7cd1bc23", "pr": 67, "status": "open-ci-fixed", "run": "24932316467"},
-    {"branch": "repo-assist/test-coverage-mermaid-taskgraph-2026-04-26-571fea59e56cdd51", "pr": 71, "status": "open-ci-fixed", "run": "24958201192"},
-    {"branch": "repo-assist/test-coverage-cmd-2026-04-27-9094415e3bc97421", "pr": 73, "status": "open-ci-fixed", "run": "24976109944"},
+    {"branch": "repo-assist/fix-issue-62-colorblind-mode-51753dea7cd1bc23", "pr": 67, "status": "open-superseded", "run": "24932316467"},
+    {"branch": "repo-assist/test-coverage-mermaid-taskgraph-2026-04-26-571fea59e56cdd51", "pr": 71, "status": "open-has-bad-commit", "run": "24958201192"},
+    {"branch": "repo-assist/test-coverage-cmd-2026-04-27-9094415e3bc97421", "pr": 73, "status": "open-has-bad-commit", "run": "24976109944"},
     {"branch": "repo-assist/eng-testreport-2026-04-27-908245657d0d3fa0", "pr": 75, "status": "open", "run": "25001341284"},
-    {"branch": "repo-assist/eng-bundle-dependabot-2026-04-28-32e00b5202459df8", "pr": null, "status": "blocked-protected-file", "run": "25033787559"},
     {"branch": "repo-assist/test-coverage-graphviz-2026-04-29-ece57fe254661cad", "pr": 82, "status": "merged", "run": "25090465509"},
-    {"branch": "repo-assist/fix-unused-nolint-revive-2026-04-29-26350bc8dae7187f", "pr": 83, "status": "open", "run": "25115471843"},
-    {"branch": "repo-assist/eng-task-tool-v3.50.0-2026-04-30", "pr": null, "status": "pending-creation", "run": "25171483013"}
+    {"branch": "repo-assist/fix-unused-nolint-revive-2026-04-29-26350bc8dae7187f", "pr": 83, "status": "closed-rejected", "run": "25115471843"},
+    {"branch": "repo-assist/eng-task-tool-v3.50.0-2026-04-30-88c7d3324f642b0c", "pr": 84, "status": "merged", "run": "25171483013"},
+    {"branch": "repo-assist/fix-issue-62-colorblind-rebased-2026-05-01", "pr": null, "status": "pending-creation", "run": "25202443159"},
+    {"branch": "repo-assist/test-coverage-indentwriter-errors-2026-05-01", "pr": null, "status": "pending-creation", "run": "25202443159"}
   ],
   "issues_created": [69, 70, 79],
   "perf_topics_done": ["buffered-output", "avoid-rune-alloc", "compile-match-pattern"],
-  "test_coverage_done": ["dot", "loader", "taskgraph-builder", "indentwriter-addf", "mermaid", "taskgraph-vars", "cmd", "graphviz", "graphviz-2"],
+  "test_coverage_done": ["dot", "loader", "taskgraph-builder", "indentwriter-addf", "mermaid", "taskgraph-vars", "cmd", "graphviz", "graphviz-2", "indentwriter-errors"],
   "eng_topics_done": ["testreport", "bundle-dependabot", "remove-unused-nolint", "task-tool-v3.50.0"],
-  "notes": "PR #83 is the nolint fix (key blocker for all open PRs). PR for task binary update (branch repo-assist/eng-task-tool-v3.50.0-2026-04-30) was submitted this run - check next run for PR number. Commented on #63 (new human response from timmy-wright). Design issue #79 for multi-loader architecture awaiting maintainer approval."
+  "notes": "Maintainer rejected PR #83 (nolint removal) with 'Incorrect fixes'. Keep nolint directives in place. PR #67 had bad nolint-removal commit; rebased clean version created this run. PRs #71/#73 also have bad commits - may need clean rebases next run. Monthly issue #48 (April) closed; new May issue created (aw_may2026). PR #84 (task-tool v3.50.0) was merged."
 }
