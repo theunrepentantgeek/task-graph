@@ -399,3 +399,67 @@ func TestExportConfigToFile_UnknownExtensionReturnsError(t *testing.T) {
 
 	g.Expect(err).To(MatchError(ContainSubstring("unsupported file extension")))
 }
+
+// TestCreateConfig_ColorblindMode
+
+func TestCreateConfig_ColorblindModeFlagSetsConfig(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{ColorblindMode: true}
+
+	cfg, err := cli.CreateConfig()
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.ColorblindMode).To(BeTrue())
+}
+
+// TestApplyAutoColor_ColorblindMode
+
+func TestApplyAutoColor_ColorblindMode_UsesOkabeItoPalette(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	cfg := config.New()
+	cfg.AutoColor = true
+	cfg.ColorblindMode = true
+
+	gr := graph.New()
+	gr.AddNode("cmd:build")
+	gr.AddNode("cmd:test")
+
+	// Act
+	applyAutoColor(cfg, gr)
+
+	// Assert: rules are generated and use Okabe-Ito hex colors, not the default named colors
+	g.Expect(cfg.NodeStyleRules).NotTo(BeEmpty())
+
+	fillColors := make([]string, len(cfg.NodeStyleRules))
+	for i, r := range cfg.NodeStyleRules {
+		fillColors[i] = r.FillColor
+	}
+
+	// Okabe-Ito palette uses hex strings; default palette uses named CSS colors
+	g.Expect(fillColors[0]).To(HavePrefix("#"), "expected Okabe-Ito hex color, got named color")
+}
+
+func TestApplyAutoColor_ColorblindModeDisabled_UsesDefaultPalette(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	cfg := config.New()
+	cfg.AutoColor = true
+	cfg.ColorblindMode = false
+
+	gr := graph.New()
+	gr.AddNode("cmd:build")
+
+	// Act
+	applyAutoColor(cfg, gr)
+
+	// Assert: default palette uses named CSS colors, not hex strings
+	g.Expect(cfg.NodeStyleRules).NotTo(BeEmpty())
+	g.Expect(cfg.NodeStyleRules[0].FillColor).NotTo(HavePrefix("#"))
+}
