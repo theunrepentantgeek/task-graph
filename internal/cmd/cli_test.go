@@ -399,3 +399,189 @@ func TestExportConfigToFile_UnknownExtensionReturnsError(t *testing.T) {
 
 	g.Expect(err).To(MatchError(ContainSubstring("unsupported file extension")))
 }
+
+// TestCreateConfig_GraphTypeFlagSetsConfig
+
+func TestCreateConfig_GraphTypeFlagSetsConfig(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{GraphType: graphTypeMermaid}
+
+	cfg, err := cli.CreateConfig()
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.GraphType).To(Equal(graphTypeMermaid))
+}
+
+// TestLoadConfigFile
+
+func TestLoadConfigFile_UnknownExtensionFallsBackToYAML(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{
+		Config: filepath.Join("testdata", "config.conf"),
+	}
+
+	cfg, err := cli.CreateConfig()
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.Graphviz.Font).To(Equal("Courier New"))
+	g.Expect(cfg.Graphviz.FontSize).To(Equal(11))
+}
+
+// TestResolveGraphType
+
+func TestResolveGraphType_DefaultsToDot(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{}
+	flags := &Flags{Config: config.New()}
+
+	result := cli.resolveGraphType(flags)
+
+	g.Expect(result).To(Equal(graphTypeDot))
+}
+
+func TestResolveGraphType_CLIFlagTakesPrecedence(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{GraphType: graphTypeMermaid}
+	cfg := config.New()
+	cfg.GraphType = graphTypeDot
+	flags := &Flags{Config: cfg}
+
+	result := cli.resolveGraphType(flags)
+
+	g.Expect(result).To(Equal(graphTypeMermaid))
+}
+
+func TestResolveGraphType_FallsBackToConfigWhenFlagEmpty(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{}
+	cfg := config.New()
+	cfg.GraphType = graphTypeMermaid
+	flags := &Flags{Config: cfg}
+
+	result := cli.resolveGraphType(flags)
+
+	g.Expect(result).To(Equal(graphTypeMermaid))
+}
+
+// TestApplyFocus
+
+func TestApplyFocus_NoMatchingPatterns_ReturnsSameGraph(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	gr := graph.New()
+	gr.AddNode("build")
+	gr.AddNode("test")
+
+	// Act
+	result, err := applyFocus(gr, "deploy")
+
+	// Assert
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(result).To(Equal(gr))
+}
+
+func TestApplyFocus_ExactMatch_ReturnsMatchedNode(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	gr := graph.New()
+	gr.AddNode("build")
+	gr.AddNode("test")
+	gr.AddNode("deploy")
+
+	// Act
+	result, err := applyFocus(gr, "build")
+
+	// Assert
+	g.Expect(err).NotTo(HaveOccurred())
+
+	ids := collectNodeIDs(result)
+	g.Expect(ids).To(ConsistOf("build"))
+}
+
+func TestApplyFocus_GlobPattern_MatchesMultipleNodes(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	gr := graph.New()
+	gr.AddNode("cmd:build")
+	gr.AddNode("cmd:test")
+	gr.AddNode("api:serve")
+
+	// Act
+	result, err := applyFocus(gr, "cmd:*")
+
+	// Assert
+	g.Expect(err).NotTo(HaveOccurred())
+
+	ids := collectNodeIDs(result)
+	g.Expect(ids).To(ConsistOf("cmd:build", "cmd:test"))
+}
+
+func TestApplyFocus_IncludesTransitiveDependencies(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	gr := graph.New()
+	compile := gr.AddNode("compile")
+	testNode := gr.AddNode("test")
+	deploy := gr.AddNode("deploy")
+
+	compile.AddEdge(testNode)
+	testNode.AddEdge(deploy)
+
+	// Act — focus on "test"; should include "compile" (dependency) and "deploy" (dependent)
+	result, err := applyFocus(gr, "test")
+
+	// Assert
+	g.Expect(err).NotTo(HaveOccurred())
+
+	ids := collectNodeIDs(result)
+	g.Expect(ids).To(ConsistOf("compile", "test", "deploy"))
+}
+
+func TestApplyFocus_MultiplePatternsSeparatedByComma(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	gr := graph.New()
+	gr.AddNode("build")
+	gr.AddNode("test")
+	gr.AddNode("deploy")
+
+	// Act
+	result, err := applyFocus(gr, "build,test")
+
+	// Assert
+	g.Expect(err).NotTo(HaveOccurred())
+
+	ids := collectNodeIDs(result)
+	g.Expect(ids).To(ConsistOf("build", "test"))
+}
+
+// collectNodeIDs returns all node IDs from a graph as a slice.
+func collectNodeIDs(gr *graph.Graph) []string {
+	var ids []string
+
+	for n := range gr.Nodes() {
+		ids = append(ids, n.ID())
+	}
+
+	return ids
+}
