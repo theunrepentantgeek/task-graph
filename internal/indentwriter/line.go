@@ -47,10 +47,18 @@ func (l *Line) writeTo(
 		return bytesWritten, eris.Wrapf(err, "failed to write indent for level %d", level)
 	}
 
-	// Write the text for the current line
-	n, err := w.Write([]byte(l.text + "\n"))
+	// Write the text for the current line, followed by a newline.
+	// Using two io.WriteString calls avoids allocating a concatenated string.
+	n, err := io.WriteString(w, l.text)
 	if err != nil {
 		return bytesWritten, eris.Wrapf(err, "failed to write line: %s", l.text)
+	}
+
+	bytesWritten += int64(n)
+
+	n, err = io.WriteString(w, "\n")
+	if err != nil {
+		return bytesWritten, eris.Wrapf(err, "failed to write newline after: %s", l.text)
 	}
 
 	bytesWritten += int64(n)
@@ -75,9 +83,10 @@ func (*Line) writeIndent(
 ) (int64, error) {
 	var bytesWritten int64
 
-	// Write the indent for the current level
+	// Write the indent for the current level.
+	// Using io.WriteString avoids allocating a []byte for each repetition.
 	for range level {
-		n, err := w.Write([]byte(indent))
+		n, err := io.WriteString(w, indent)
 		if err != nil {
 			return bytesWritten, eris.Wrapf(err, "failed to write indent for level %d", level)
 		}

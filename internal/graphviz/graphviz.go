@@ -1,6 +1,7 @@
 package graphviz
 
 import (
+	"bufio"
 	"cmp"
 	"errors"
 	"fmt"
@@ -29,7 +30,14 @@ func SaveTo(
 
 	defer f.Close()
 
-	return WriteTo(f, gr, cfg)
+	bw := bufio.NewWriter(f)
+
+	err = WriteTo(bw, gr, cfg)
+	if err != nil {
+		return err
+	}
+
+	return eris.Wrap(bw.Flush(), "failed to flush graphviz output")
 }
 
 func WriteTo(
