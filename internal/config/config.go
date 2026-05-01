@@ -18,6 +18,11 @@ type Config struct {
 	// namespace found in the taskfile. User-defined NodeStyleRules take precedence.
 	AutoColor bool `json:"autoColor,omitempty" yaml:"autoColor,omitempty"`
 
+	// ColorblindMode selects an accessibility-optimised colour palette (Okabe-Ito) for
+	// auto-colouring instead of the default one. It has no effect unless AutoColor is
+	// also true.
+	ColorblindMode bool `json:"colorblindMode,omitempty" yaml:"colorblindMode,omitempty"`
+
 	// IncludeGlobalVars controls whether global Taskfile variables are included
 	// as nodes in the generated graph, with edges to the tasks that reference them.
 	IncludeGlobalVars bool `json:"includeGlobalVars,omitempty" yaml:"includeGlobalVars,omitempty"`

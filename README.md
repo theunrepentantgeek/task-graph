@@ -50,6 +50,8 @@ Flags:
   -c, --config=STRING           Path to a config file (YAML or JSON).
       --group-by-namespace      Group tasks in the same namespace together in the output.
       --auto-color              Automatically color nodes by namespace using a built-in palette.
+      --colorblind-mode         Use an accessibility-optimised colour palette (Okabe-Ito) for --auto-color instead of the
+                                default palette.
       --graph-type=STRING       Type of graph to generate (dot or mermaid). Defaults to dot.
       --highlight=STRING        Highlight specific tasks in the graph. Accepts task names or glob patterns, separated by
                                 commas or semicolons.
