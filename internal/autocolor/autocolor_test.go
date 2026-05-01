@@ -244,3 +244,58 @@ func TestGenerateRules_TopLevelTaskMatchesNamespace_GetsColored(t *testing.T) {
 
 	g.Expect(matched).To(BeTrue(), "expected a rule matching the top-level task 'tidy'")
 }
+
+// TestGenerateRulesWithPalette
+
+func TestGenerateRulesWithPalette_EmptyPalette_ReturnsNil(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	gr := graph.New()
+	gr.AddNode("cmd:build")
+
+	// Act
+	rules := GenerateRulesWithPalette(gr, nil)
+
+	// Assert
+	g.Expect(rules).To(BeNil())
+}
+
+func TestGenerateRulesWithPalette_CustomPalette_UsesSuppliedColors(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	gr := graph.New()
+	gr.AddNode("cmd:build")
+
+	customPalette := []string{"#FF0000", "#00FF00"}
+
+	// Act
+	rules := GenerateRulesWithPalette(gr, customPalette)
+
+	// Assert: both rules use the first custom color
+	g.Expect(rules).To(HaveLen(2))
+	g.Expect(rules[0].FillColor).To(Equal("#FF0000"))
+	g.Expect(rules[1].FillColor).To(Equal("#FF0000"))
+}
+
+func TestGenerateRulesWithPalette_ColorblindPalette_UsesHexColors(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	gr := graph.New()
+	gr.AddNode("ns:task")
+
+	// Act
+	rules := GenerateRulesWithPalette(gr, ColorblindPalette)
+
+	// Assert: Okabe-Ito palette entries are hex strings
+	g.Expect(rules).NotTo(BeEmpty())
+
+	for _, r := range rules {
+		g.Expect(r.FillColor).To(HavePrefix("#"), "expected hex color from Okabe-Ito palette")
+	}
+}
