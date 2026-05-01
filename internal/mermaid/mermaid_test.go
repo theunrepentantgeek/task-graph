@@ -191,6 +191,161 @@ func buildSampleGraph(t *testing.T) *graph.Graph {
 	return gr
 }
 
+func TestWriteTo_WithNilConfig_WritesTDFlowchart(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	gr := buildSampleGraph(t)
+
+	err := WriteTo(&buf, gr, nil)
+
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+	g.Expect(buf.String()).To(gomega.HavePrefix("flowchart TD\n"))
+}
+
+func TestWriteTo_WithNilMermaidConfig_WritesTDFlowchart(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	gr := buildSampleGraph(t)
+
+	cfg := config.New()
+	cfg.Mermaid = nil
+
+	err := WriteTo(&buf, gr, cfg)
+
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+	g.Expect(buf.String()).To(gomega.HavePrefix("flowchart TD\n"))
+}
+
+func TestWriteTo_WithStyleRuleNoVisualProperties_SkipsClassDef(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	gr := buildSampleGraph(t)
+
+	cfg := config.New()
+	cfg.NodeStyleRules = []config.NodeStyleRule{
+		{Match: "alpha"}, // no Fill, Color, or FontColor set
+	}
+
+	err := WriteTo(&buf, gr, cfg)
+
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+	g.Expect(buf.String()).NotTo(gomega.ContainSubstring("classDef"))
+}
+
+func TestWriteTo_WithInvalidStylePattern_ReturnsError(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	gr := buildSampleGraph(t)
+
+	cfg := config.New()
+	cfg.NodeStyleRules = []config.NodeStyleRule{
+		{Match: "[unclosed", FillColor: "red"},
+	}
+
+	err := WriteTo(&buf, gr, cfg)
+
+	g.Expect(err).To(gomega.HaveOccurred())
+	g.Expect(err.Error()).To(gomega.ContainSubstring("[unclosed"))
+}
+
+func TestWriteTo_WithVariableNodeNoDescription_UsesLabelOnly(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	gr := graph.New()
+
+	build := gr.AddNode("build")
+
+	noDesc := gr.AddNode("var:TAG")
+	noDesc.Kind = graph.NodeKindVariable
+	noDesc.Label = "TAG"
+	// Description intentionally left empty
+
+	noDesc.AddEdge(build).SetClass("var")
+
+	cfg := config.New()
+	err := WriteTo(&buf, gr, cfg)
+
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+	g.Expect(buf.String()).To(gomega.ContainSubstring(`var_TAG("TAG")`))
+}
+
+func TestWriteTo_WithCustomVariableNodeStyle_UsesConfiguredStyle(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	gr := buildGraphWithVariables(t)
+
+	cfg := config.New()
+	cfg.Mermaid.VariableNodes = &config.MermaidStyle{
+		Fill:   "#ffd700",
+		Stroke: "#333",
+		Color:  "#000",
+	}
+
+	err := WriteTo(&buf, gr, cfg)
+
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+
+	output := buf.String()
+	g.Expect(output).To(gomega.ContainSubstring("fill:#ffd700"))
+	g.Expect(output).To(gomega.ContainSubstring("stroke:#333"))
+	g.Expect(output).To(gomega.ContainSubstring("color:#000"))
+}
+
+func TestWriteTo_WithPartialVariableNodeStyle_UsesDefaultsForMissingFields(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	gr := buildGraphWithVariables(t)
+
+	cfg := config.New()
+	// Only Fill is set; Stroke and Color are empty → falls back to defaults
+	cfg.Mermaid.VariableNodes = &config.MermaidStyle{
+		Fill: "#ffd700",
+	}
+
+	err := WriteTo(&buf, gr, cfg)
+
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+
+	output := buf.String()
+	g.Expect(output).To(gomega.ContainSubstring("fill:#ffd700"))
+	g.Expect(output).NotTo(gomega.ContainSubstring("stroke:"))
+	g.Expect(output).NotTo(gomega.ContainSubstring("color:"))
+}
+
+func TestWriteTo_WithAllEmptyVariableNodeStyle_UsesDefaults(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	gr := buildGraphWithVariables(t)
+
+	cfg := config.New()
+	// All fields empty → variableClassDefParts returns hardcoded defaults
+	cfg.Mermaid.VariableNodes = &config.MermaidStyle{}
+
+	err := WriteTo(&buf, gr, cfg)
+
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+
+	output := buf.String()
+	g.Expect(output).To(gomega.ContainSubstring("fill:#e8e8e8"))
+	g.Expect(output).To(gomega.ContainSubstring("stroke:#666"))
+}
+
 func buildNamespacedGraph(t *testing.T) *graph.Graph {
 	t.Helper()
 
