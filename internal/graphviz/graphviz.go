@@ -141,9 +141,7 @@ func writeGroupedNodesTo(
 }
 
 // findAllNamespaces takes a map of namespaces to their directly contained nodes
-// and returns a set of all namespaces.
-// findAllNamespaces takes a map of namespaces to their directly contained nodes
-// and returns a set of all namespaces.
+// and returns a set of all namespaces, including any intermediate parent namespaces.
 func findAllNamespaces(nsToNodes map[string][]*graph.Node) map[string]bool {
 	allNS := make(map[string]bool)
 
