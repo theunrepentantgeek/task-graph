@@ -1,21 +1,25 @@
 {
-  "last_run": "2026-05-02T04:02:54Z",
-  "last_run_id": "25243272484",
+  "last_run": "2026-05-02T13:56:15Z",
+  "last_run_id": "25253465224",
   "monthly_activity_issue": 87,
   "comments_made": {
     "88": "2026-05-02T04:02:54Z",
     "63": "2026-05-02T04:02:54Z"
   },
   "fix_attempts": {
-    "88": {"pr": 89, "status": "open_draft", "date": "2026-05-01"}
+    "88": {"pr": 89, "status": "merged", "date": "2026-05-01"}
   },
   "pr_maintenance": {
-    "71": {"rebased": "2026-05-02", "note": "dropped stale nolint-removal commit"}
+    "71": {"rebased": "2026-05-02-run2", "note": "dropped bad nolint commit, clean rebase onto main"},
+    "73": {"rebased": "2026-05-02-run2", "note": "dropped bad nolint commit, resolved conflicts with colorblind tests"}
   },
-  "open_repo_assist_prs": [89, 90, 86, 73, 71, 67, 61],
-  "notes": "PR #67 should be closed (superseded by merged PR #85 colorblind mode). PR #90 and #86 and #73 all have passing CI. PR #89 is a draft fix for issue #88. PR #71 was just rebased. Issue #79 needs maintainer design review before implementation. Issue #88 has a comment linking to PR #89.",
+  "open_repo_assist_prs": [61, 67, 71, 73, 86, "gomega-v1.40.0-pending"],
+  "notes": "PR #67 should be closed (superseded by merged PR #85). PR #89 and #90 were merged. PRs #71 and #73 have been cleanly rebased this run (dropped bad nolint-removal commit) and CI should pass now. New gomema PR (eng-gomega-v1.40.0-2026-05-02) created this run - PR# unknown yet (pending creation). Issue #91 is protected-files warning from previous bad rebase of PR #71 - can be closed.",
   "backlog_cursor": {
     "issues": 88,
-    "prs": 90
-  }
+    "prs": 91
+  },
+  "eng_topics_done": ["testreport", "bundle-dependabot", "remove-unused-nolint", "task-tool-v3.50.0", "gomega-v1.40.0"],
+  "coding_improvements_done": ["graphviz-duplicate-comment"],
+  "test_coverage_done": ["dot", "loader", "taskgraph-builder", "indentwriter-addf", "mermaid", "taskgraph-vars", "cmd", "graphviz", "graphviz-2", "indentwriter-errors"]
 }
