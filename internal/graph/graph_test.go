@@ -336,3 +336,20 @@ func TestGraph_FilterNodes_NodeMetadata_IsPreserved(t *testing.T) {
 	g.Expect(resA.Label).To(gomega.Equal("Build"))
 	g.Expect(resA.Description).To(gomega.Equal("Builds the project"))
 }
+
+func TestGraph_FilterNodes_VariableNodeKind_IsPreserved(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Arrange
+	graph := New()
+	varNode := graph.AddNode("MY_VAR")
+	varNode.Kind = NodeKindVariable
+
+	// Act
+	result := graph.FilterNodes(map[string]bool{"MY_VAR": true})
+
+	// Assert
+	resVar, _ := result.Node("MY_VAR")
+	g.Expect(resVar.Kind).To(gomega.Equal(NodeKindVariable))
+}

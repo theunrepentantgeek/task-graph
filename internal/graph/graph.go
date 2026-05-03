@@ -35,7 +35,7 @@ func (g *Graph) Node(id string) (*Node, bool) {
 	return node, exists
 }
 
-// Nodes implements an interator to allow iterating over all nodes in the graph.
+// Nodes implements an iterator to allow iterating over all nodes in the graph.
 func (g *Graph) Nodes() iter.Seq[*Node] {
 	return maps.Values(g.nodes)
 }
@@ -84,7 +84,7 @@ func (g *Graph) ReachableFrom(
 }
 
 // FilterNodes returns a new graph containing only the nodes present in the keep
-// set, along with the edges between them. Node metadata (Label and Description)
+// set, along with the edges between them. Node metadata (Kind, Label and Description)
 // is preserved.
 func (g *Graph) FilterNodes(keep map[string]bool) *Graph {
 	result := New()
@@ -95,6 +95,7 @@ func (g *Graph) FilterNodes(keep map[string]bool) *Graph {
 		}
 
 		newNode := result.AddNode(id)
+		newNode.Kind = node.Kind
 		newNode.Label = node.Label
 		newNode.Description = node.Description
 	}

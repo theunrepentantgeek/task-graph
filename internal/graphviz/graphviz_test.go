@@ -276,6 +276,158 @@ func TestWriteTo_WithVariableNodes_WritesVariableNodesWithRankSink(t *testing.T)
 	gg.Assert(t, "sample_graph_with_variables", buf.Bytes())
 }
 
+func TestWriteTo_WithVariableNodesAndMatchingStyleRule_AppliesStyleToVariableNode(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Arrange
+	buf := bytes.Buffer{}
+	gr := buildGraphWithVariables(t)
+
+	cfg := config.New()
+	cfg.NodeStyleRules = []config.NodeStyleRule{
+		{Match: "var:*", Color: "purple", FillColor: "lavender"},
+	}
+
+	// Act
+	err := WriteTo(&buf, gr, cfg)
+
+	// Assert
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+
+	gg := goldie.New(t)
+	g.Expect(gg.WithFixtureDir("testdata")).To(gomega.Succeed())
+
+	gg.Assert(t, "sample_graph_variables_with_style_rules", buf.Bytes())
+}
+
+func TestWriteTo_WithNilGraphvizConfig_WritesNodesWithoutGraphvizStyling(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Arrange
+	buf := bytes.Buffer{}
+	gr := buildSampleGraph(t)
+
+	cfg := &config.Config{} // Graphviz is nil
+
+	// Act
+	err := WriteTo(&buf, gr, cfg)
+
+	// Assert
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+	g.Expect(buf.String()).To(gomega.ContainSubstring("digraph {"))
+	g.Expect(buf.String()).NotTo(gomega.ContainSubstring(`color="black"`))
+}
+
+func TestWriteTo_WithTaskNodesAndInvalidStyleRulePattern_ReturnsError(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Arrange
+	buf := bytes.Buffer{}
+	gr := buildSampleGraph(t)
+
+	cfg := config.New()
+	cfg.NodeStyleRules = []config.NodeStyleRule{
+		{Match: "[invalid", Color: "red"},
+	}
+
+	// Act
+	err := WriteTo(&buf, gr, cfg)
+
+	// Assert
+	g.Expect(err).To(gomega.HaveOccurred())
+}
+
+func TestWriteTo_WithVariableNodesAndInvalidStyleRulePattern_ReturnsError(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Arrange
+	buf := bytes.Buffer{}
+	gr := buildGraphWithVariables(t)
+
+	cfg := config.New()
+	cfg.NodeStyleRules = []config.NodeStyleRule{
+		{Match: "[invalid", Color: "red"},
+	}
+
+	// Act
+	err := WriteTo(&buf, gr, cfg)
+
+	// Assert
+	g.Expect(err).To(gomega.HaveOccurred())
+}
+
+// TestWriteTo_WithVariableNodes_NilConfig_WritesVariableNodes verifies that
+// WriteTo handles nil config when variable nodes are present (exercises the
+// cfg == nil early-return path in applyVariableNodeConfig).
+func TestWriteTo_WithVariableNodes_NilConfig_WritesVariableNodes(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Arrange
+	buf := bytes.Buffer{}
+	gr := buildGraphWithVariables(t)
+
+	// Act – nil config must not panic and should produce valid output
+	err := WriteTo(&buf, gr, nil)
+
+	// Assert
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+	g.Expect(buf.String()).To(gomega.ContainSubstring("digraph {"))
+	g.Expect(buf.String()).To(gomega.ContainSubstring("rank=sink"))
+}
+
+// TestWriteTo_WithCallEdge_AppliesCallEdgeStyle verifies that edges with
+// class "call" receive the call-edge styling from the graphviz config.
+func TestWriteTo_WithCallEdge_AppliesCallEdgeStyle(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Arrange
+	buf := bytes.Buffer{}
+	gr := graph.New()
+
+	build := gr.AddNode("build")
+	deploy := gr.AddNode("deploy")
+	edge := build.AddEdge(deploy)
+	edge.SetClass("call")
+
+	cfg := config.New()
+	cfg.Graphviz.CallEdges = &config.GraphvizEdge{
+		Color: "green",
+		Style: "dotted",
+	}
+
+	// Act
+	err := WriteTo(&buf, gr, cfg)
+
+	// Assert
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+	g.Expect(buf.String()).To(gomega.ContainSubstring(`color="green"`))
+	g.Expect(buf.String()).To(gomega.ContainSubstring(`style="dotted"`))
+}
+
+// TestSaveTo_InvalidPath_ReturnsError verifies that SaveTo returns a wrapped
+// error when the output file cannot be created (e.g. non-existent directory).
+func TestSaveTo_InvalidPath_ReturnsError(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Arrange – path into a directory that does not exist
+	gr := buildSampleGraph(t)
+	path := filepath.Join(t.TempDir(), "nonexistent", "output.dot")
+
+	// Act
+	err := SaveTo(path, gr, config.New())
+
+	// Assert
+	g.Expect(err).To(gomega.HaveOccurred())
+	g.Expect(err.Error()).To(gomega.ContainSubstring("failed to create file"))
+}
+
 func buildGraphWithVariables(t *testing.T) *graph.Graph {
 	t.Helper()
 
