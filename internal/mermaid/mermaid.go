@@ -327,6 +327,7 @@ func buildClassDef(rule config.NodeStyleRule) string {
 
 	return strings.Join(parts, ",")
 }
+
 func writeVariableNodesTo(
 	root *indentwriter.Line,
 	nodes []*graph.Node,
