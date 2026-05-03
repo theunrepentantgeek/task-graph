@@ -23,6 +23,12 @@ import (
 	"github.com/theunrepentantgeek/task-graph/internal/taskgraph"
 )
 
+// graphTypeDot and graphTypeMermaid are the supported graph output formats.
+const (
+	graphTypeDot     = "dot"
+	graphTypeMermaid = "mermaid"
+)
+
 //nolint:tagalign // Not useful here because different members have different tags.
 type CLI struct {
 	Taskfile string `arg:"" help:"Path to the taskfile to process."`
@@ -181,9 +187,9 @@ func (c *CLI) saveGraph(
 	var err error
 
 	switch graphType {
-	case "dot":
+	case graphTypeDot:
 		err = graphviz.SaveTo(c.Output, gr, flags.Config)
-	case "mermaid":
+	case graphTypeMermaid:
 		err = mermaid.SaveTo(c.Output, gr, flags.Config)
 	default:
 		return eris.Errorf("unsupported graph type: %q, must be dot or mermaid", graphType)
@@ -208,7 +214,7 @@ func (c *CLI) resolveGraphType(flags *Flags) string {
 	}
 
 	if graphType == "" {
-		graphType = "dot"
+		graphType = graphTypeDot
 	}
 
 	return graphType
