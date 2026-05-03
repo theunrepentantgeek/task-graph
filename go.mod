@@ -5,7 +5,7 @@ go 1.25.8
 require (
 	github.com/alecthomas/kong v1.15.0
 	github.com/go-task/task/v3 v3.50.0
-	github.com/onsi/gomega v1.39.1
+	github.com/onsi/gomega v1.40.0
 	github.com/phsym/console-slog v0.3.1
 	github.com/rotisserie/eris v0.5.4
 	github.com/sebdah/goldie/v2 v2.8.0
