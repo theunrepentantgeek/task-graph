@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-05-02T13:56:15Z",
-  "last_run_id": "25253465224",
+  "last_run": "2026-05-03T04:31:47Z",
+  "last_run_id": "25269876623",
   "monthly_activity_issue": 87,
   "comments_made": {
     "88": "2026-05-02T04:02:54Z",
@@ -9,17 +9,13 @@
   "fix_attempts": {
     "88": {"pr": 89, "status": "merged", "date": "2026-05-01"}
   },
-  "pr_maintenance": {
-    "71": {"rebased": "2026-05-02-run2", "note": "dropped bad nolint commit, clean rebase onto main"},
-    "73": {"rebased": "2026-05-02-run2", "note": "dropped bad nolint commit, resolved conflicts with colorblind tests"}
-  },
-  "open_repo_assist_prs": [61, 67, 71, 73, 86, "gomega-v1.40.0-pending"],
-  "notes": "PR #67 should be closed (superseded by merged PR #85). PR #89 and #90 were merged. PRs #71 and #73 have been cleanly rebased this run (dropped bad nolint-removal commit) and CI should pass now. New gomema PR (eng-gomega-v1.40.0-2026-05-02) created this run - PR# unknown yet (pending creation). Issue #91 is protected-files warning from previous bad rebase of PR #71 - can be closed.",
+  "open_repo_assist_prs": ["splitPatterns-refactor-2026-05-03"],
+  "notes": "PRs #61, #71, #73, #86 all merged by maintainer (no open PRs as of this run). Issues #81 and #93 are protected-files warnings that should be closed. New PR created this run: refactor splitPatterns + edge label test (PR# pending). graph package now at 100% coverage.",
   "backlog_cursor": {
-    "issues": 88,
-    "prs": 91
+    "issues": 93,
+    "prs": 94
   },
   "eng_topics_done": ["testreport", "bundle-dependabot", "remove-unused-nolint", "task-tool-v3.50.0", "gomega-v1.40.0"],
-  "coding_improvements_done": ["graphviz-duplicate-comment"],
-  "test_coverage_done": ["dot", "loader", "taskgraph-builder", "indentwriter-addf", "mermaid", "taskgraph-vars", "cmd", "graphviz", "graphviz-2", "indentwriter-errors"]
+  "coding_improvements_done": ["graphviz-duplicate-comment", "split-patterns-refactor"],
+  "test_coverage_done": ["dot", "loader", "taskgraph-builder", "indentwriter-addf", "mermaid", "taskgraph-vars", "cmd", "graphviz", "graphviz-2", "indentwriter-errors", "graph-edge-labels"]
 }
