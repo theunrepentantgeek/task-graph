@@ -705,3 +705,82 @@ func TestApplyAutoColor_ColorblindModeDisabled_UsesDefaultPalette(t *testing.T) 
 	g.Expect(cfg.NodeStyleRules).NotTo(BeEmpty())
 	g.Expect(cfg.NodeStyleRules[0].FillColor).NotTo(HavePrefix("#"))
 }
+
+// TestSplitPatterns
+
+func TestSplitPatterns_EmptyString_ReturnsEmpty(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Act
+	result := splitPatterns("")
+
+	// Assert
+	g.Expect(result).To(BeEmpty())
+}
+
+func TestSplitPatterns_SinglePattern_ReturnsSingleItem(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Act
+	result := splitPatterns("build")
+
+	// Assert
+	g.Expect(result).To(ConsistOf("build"))
+}
+
+func TestSplitPatterns_CommaSeparated_ReturnsMultipleItems(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Act
+	result := splitPatterns("build,test,deploy")
+
+	// Assert
+	g.Expect(result).To(ConsistOf("build", "test", "deploy"))
+}
+
+func TestSplitPatterns_SemicolonSeparated_ReturnsMultipleItems(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Act
+	result := splitPatterns("build;test")
+
+	// Assert
+	g.Expect(result).To(ConsistOf("build", "test"))
+}
+
+func TestSplitPatterns_PatternsWithSpaces_TrimsSpaces(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Act
+	result := splitPatterns("  build , test  ,  deploy  ")
+
+	// Assert
+	g.Expect(result).To(ConsistOf("build", "test", "deploy"))
+}
+
+func TestSplitPatterns_EmptyPatternsBetweenSeparators_DropsEmptyEntries(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Act
+	result := splitPatterns("build,,test")
+
+	// Assert
+	g.Expect(result).To(ConsistOf("build", "test"))
+}
+
+func TestSplitPatterns_GlobPattern_PreservesWildcards(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Act
+	result := splitPatterns("cmd:*,api:?")
+
+	// Assert
+	g.Expect(result).To(ConsistOf("cmd:*", "api:?"))
+}

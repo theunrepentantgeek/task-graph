@@ -288,18 +288,7 @@ func (c *CLI) applyHighlightOverrides(cfg *config.Config) {
 		color = cfg.HighlightColor
 	}
 
-	patterns := strings.FieldsFunc(
-		c.Highlight,
-		func(r rune) bool {
-			return r == ',' || r == ';'
-		})
-
-	for _, pattern := range patterns {
-		pattern = strings.TrimSpace(pattern)
-		if pattern == "" {
-			continue
-		}
-
+	for _, pattern := range splitPatterns(c.Highlight) {
 		rule := config.NodeStyleRule{
 			Match:     pattern,
 			FillColor: color,
@@ -307,6 +296,27 @@ func (c *CLI) applyHighlightOverrides(cfg *config.Config) {
 		}
 		cfg.NodeStyleRules = append(cfg.NodeStyleRules, rule)
 	}
+}
+
+// splitPatterns splits a comma-or-semicolon-separated string of patterns into
+// individual trimmed, non-empty strings.
+func splitPatterns(s string) []string {
+	raw := strings.FieldsFunc(
+		s,
+		func(r rune) bool {
+			return r == ',' || r == ';'
+		})
+
+	result := make([]string, 0, len(raw))
+
+	for _, p := range raw {
+		p = strings.TrimSpace(p)
+		if p != "" {
+			result = append(result, p)
+		}
+	}
+
+	return result
 }
 
 // applyAutoColor generates auto-color rules from the graph's namespaces and
@@ -365,20 +375,9 @@ func applyFocus(
 	gr *graph.Graph,
 	focusPatterns string,
 ) (*graph.Graph, error) {
-	patterns := strings.FieldsFunc(
-		focusPatterns,
-		func(r rune) bool {
-			return r == ',' || r == ';'
-		})
-
 	seeds := make(map[string]bool)
 
-	for _, raw := range patterns {
-		pattern := strings.TrimSpace(raw)
-		if pattern == "" {
-			continue
-		}
-
+	for _, pattern := range splitPatterns(focusPatterns) {
 		re, err := namespace.CompileMatchPattern(pattern)
 		if err != nil {
 			return nil, eris.Wrapf(err, "invalid focus pattern %q", pattern)
