@@ -311,7 +311,7 @@ func TestWriteTo_WithPartialVariableNodeStyle_UsesDefaultsForMissingFields(t *te
 	gr := buildGraphWithVariables(t)
 
 	cfg := config.New()
-	// Only Fill is set; Stroke and Color are empty → falls back to defaults
+	// Only Fill is set; empty Stroke and Color fields are omitted from the class definition
 	cfg.Mermaid.VariableNodes = &config.MermaidStyle{
 		Fill: "#ffd700",
 	}

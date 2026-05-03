@@ -1,6 +1,7 @@
 package graphviz
 
 import (
+	"bufio"
 	"cmp"
 	"errors"
 	"fmt"
@@ -29,7 +30,14 @@ func SaveTo(
 
 	defer f.Close()
 
-	return WriteTo(f, gr, cfg)
+	bw := bufio.NewWriter(f)
+
+	err = WriteTo(bw, gr, cfg)
+	if err != nil {
+		return err
+	}
+
+	return eris.Wrap(bw.Flush(), "failed to flush graphviz output")
 }
 
 func WriteTo(
@@ -133,9 +141,7 @@ func writeGroupedNodesTo(
 }
 
 // findAllNamespaces takes a map of namespaces to their directly contained nodes
-// and returns a set of all namespaces.
-// findAllNamespaces takes a map of namespaces to their directly contained nodes
-// and returns a set of all namespaces.
+// and returns a set of all namespaces, including any intermediate parent namespaces.
 func findAllNamespaces(nsToNodes map[string][]*graph.Node) map[string]bool {
 	allNS := make(map[string]bool)
 

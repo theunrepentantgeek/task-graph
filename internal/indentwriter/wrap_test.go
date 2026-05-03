@@ -44,6 +44,11 @@ func TestWordWrap(t *testing.T) {
 			0,
 			[]string{"this ", "is ", "a ", "sample ", "text"},
 		},
+		{
+			"short",
+			100,
+			[]string{"short"},
+		},
 	}
 
 	for _, c := range cases {

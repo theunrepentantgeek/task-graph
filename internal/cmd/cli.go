@@ -23,6 +23,12 @@ import (
 	"github.com/theunrepentantgeek/task-graph/internal/taskgraph"
 )
 
+// graphTypeDot and graphTypeMermaid are the supported graph output formats.
+const (
+	graphTypeDot     = "dot"
+	graphTypeMermaid = "mermaid"
+)
+
 //nolint:tagalign // Not useful here because different members have different tags.
 type CLI struct {
 	Taskfile string `arg:"" help:"Path to the taskfile to process."`
@@ -33,21 +39,31 @@ type CLI struct {
 
 	AutoColor bool `help:"Automatically color nodes by namespace using a built-in palette." long:"auto-color"`
 
+	//nolint:revive // Intentionally long name for clarity in the CLI help.
+	ColorblindMode bool `help:"Use an accessibility-optimised colour palette (Okabe-Ito) for --auto-color instead of the default palette." long:"colorblind-mode"`
+
+	//nolint:revive // Intentionally long name for clarity in the CLI help.
 	IncludeGlobalVars bool `help:"Include global variables as nodes in the graph, with edges to consuming tasks." long:"include-global-vars"`
 
 	GraphType string `help:"Type of graph to generate (dot or mermaid). Defaults to dot." long:"graph-type"`
 
+	//nolint:revive // Intentionally long line for clarity in the CLI help.
 	Highlight string `help:"Highlight specific tasks in the graph. Accepts task names or glob patterns, separated by commas or semicolons." long:"highlight"`
 
+	//nolint:revive // Intentionally long name for clarity in the CLI help.
 	RenderImage string `help:"Render the graph as an image using graphviz dot. Specify the file type (e.g. png, svg)." long:"render-image"`
 
+	//nolint:revive // Intentionally long name for clarity in the CLI help.
 	ExportConfig string `help:"Export the effective configuration to a file (YAML or JSON based on file extension)." long:"export-config"`
 
+	//nolint:revive // Intentionally long name for clarity in the CLI help.
 	Focus   string `help:"Show only tasks matching the given patterns together with all their transitive dependencies and dependents. Accepts task names or glob patterns, separated by commas or semicolons." long:"focus"`
 	Verbose bool   `help:"Enable verbose logging."`
 }
 
 // Run executes the CLI command with the given flags.
+//
+//nolint:revive // Difficult to simplify
 func (c *CLI) Run(
 	flags *Flags,
 ) error {
@@ -171,9 +187,9 @@ func (c *CLI) saveGraph(
 	var err error
 
 	switch graphType {
-	case "dot":
+	case graphTypeDot:
 		err = graphviz.SaveTo(c.Output, gr, flags.Config)
-	case "mermaid":
+	case graphTypeMermaid:
 		err = mermaid.SaveTo(c.Output, gr, flags.Config)
 	default:
 		return eris.Errorf("unsupported graph type: %q, must be dot or mermaid", graphType)
@@ -198,7 +214,7 @@ func (c *CLI) resolveGraphType(flags *Flags) string {
 	}
 
 	if graphType == "" {
-		graphType = "dot"
+		graphType = graphTypeDot
 	}
 
 	return graphType
@@ -239,6 +255,10 @@ func (c *CLI) applyConfigOverrides(cfg *config.Config) {
 
 	if c.AutoColor {
 		cfg.AutoColor = true
+	}
+
+	if c.ColorblindMode {
+		cfg.ColorblindMode = true
 	}
 
 	if c.GraphType != "" {
@@ -289,7 +309,13 @@ func applyAutoColor(cfg *config.Config, gr *graph.Graph) {
 		return
 	}
 
-	autoRules := autocolor.GenerateRules(gr)
+	var autoRules []config.NodeStyleRule
+	if cfg.ColorblindMode {
+		autoRules = autocolor.GenerateRulesWithPalette(gr, autocolor.ColorblindPalette)
+	} else {
+		autoRules = autocolor.GenerateRules(gr)
+	}
+
 	cfg.NodeStyleRules = append(autoRules, cfg.NodeStyleRules...)
 }
 
@@ -326,6 +352,8 @@ func (c *CLI) loadConfigFile(cfg *config.Config) error {
 // applyFocus returns a new graph containing only the nodes that match any of the
 // given comma-or-semicolon-separated patterns (glob-style), together with all
 // nodes transitively reachable from them in either direction.
+//
+//nolint:revive // Difficult to simplify
 func applyFocus(
 	gr *graph.Graph,
 	focusPatterns string,
