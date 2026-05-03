@@ -237,10 +237,34 @@ func TestCreateConfig_HighlightColorFlagAloneDoesNotAddStyleRules(t *testing.T) 
 	// Act
 	cfg, err := cli.CreateConfig()
 
-	// Assert: color is stored but no style rules are added
+	// Assert: colour is stored but no style rules are added
 	g.Expect(err).NotTo(HaveOccurred())
 	g.Expect(cfg.HighlightColor).To(Equal("orange"))
 	g.Expect(cfg.NodeStyleRules).To(BeEmpty())
+}
+
+func TestCreateConfig_IncludeGlobalVarsFlagSetsConfig(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{IncludeGlobalVars: true}
+
+	cfg, err := cli.CreateConfig()
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.IncludeGlobalVars).To(BeTrue())
+}
+
+func TestCreateConfig_DefaultIncludeGlobalVarsIsFalse(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{}
+
+	cfg, err := cli.CreateConfig()
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.IncludeGlobalVars).To(BeFalse())
 }
 
 // TestApplyAutoColor
@@ -430,4 +454,254 @@ func TestExportConfigToFile_UnknownExtensionReturnsError(t *testing.T) {
 	err := cli.ExportConfigToFile(cfg)
 
 	g.Expect(err).To(MatchError(ContainSubstring("unsupported file extension")))
+}
+
+// TestCreateConfig_GraphTypeFlagSetsConfig
+
+func TestCreateConfig_GraphTypeFlagSetsConfig(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{GraphType: graphTypeMermaid}
+
+	cfg, err := cli.CreateConfig()
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.GraphType).To(Equal(graphTypeMermaid))
+}
+
+// TestCreateConfig_ColorblindMode
+
+func TestCreateConfig_ColorblindModeFlagSetsConfig(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{ColorblindMode: true}
+
+	cfg, err := cli.CreateConfig()
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.ColorblindMode).To(BeTrue())
+}
+
+// TestLoadConfigFile
+
+func TestLoadConfigFile_UnknownExtensionFallsBackToYAML(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{
+		Config: filepath.Join("testdata", "config.conf"),
+	}
+
+	cfg, err := cli.CreateConfig()
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(cfg.Graphviz.Font).To(Equal("Courier New"))
+	g.Expect(cfg.Graphviz.FontSize).To(Equal(11))
+}
+
+// TestResolveGraphType
+
+func TestResolveGraphType_DefaultsToDot(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{}
+	flags := &Flags{Config: config.New()}
+
+	result := cli.resolveGraphType(flags)
+
+	g.Expect(result).To(Equal(graphTypeDot))
+}
+
+func TestResolveGraphType_CLIFlagTakesPrecedence(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{GraphType: graphTypeMermaid}
+	cfg := config.New()
+	cfg.GraphType = graphTypeDot
+	flags := &Flags{Config: cfg}
+
+	result := cli.resolveGraphType(flags)
+
+	g.Expect(result).To(Equal(graphTypeMermaid))
+}
+
+func TestResolveGraphType_FallsBackToConfigWhenFlagEmpty(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	cli := CLI{}
+	cfg := config.New()
+	cfg.GraphType = graphTypeMermaid
+	flags := &Flags{Config: cfg}
+
+	result := cli.resolveGraphType(flags)
+
+	g.Expect(result).To(Equal(graphTypeMermaid))
+}
+
+// TestApplyFocus
+
+func TestApplyFocus_NoMatchingPatterns_ReturnsSameGraph(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	gr := graph.New()
+	gr.AddNode("build")
+	gr.AddNode("test")
+
+	// Act
+	result, err := applyFocus(gr, "deploy")
+
+	// Assert
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(result).To(Equal(gr))
+}
+
+func TestApplyFocus_ExactMatch_ReturnsMatchedNode(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	gr := graph.New()
+	gr.AddNode("build")
+	gr.AddNode("test")
+	gr.AddNode("deploy")
+
+	// Act
+	result, err := applyFocus(gr, "build")
+
+	// Assert
+	g.Expect(err).NotTo(HaveOccurred())
+
+	ids := collectNodeIDs(result)
+	g.Expect(ids).To(ConsistOf("build"))
+}
+
+func TestApplyFocus_GlobPattern_MatchesMultipleNodes(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	gr := graph.New()
+	gr.AddNode("cmd:build")
+	gr.AddNode("cmd:test")
+	gr.AddNode("api:serve")
+
+	// Act
+	result, err := applyFocus(gr, "cmd:*")
+
+	// Assert
+	g.Expect(err).NotTo(HaveOccurred())
+
+	ids := collectNodeIDs(result)
+	g.Expect(ids).To(ConsistOf("cmd:build", "cmd:test"))
+}
+
+func TestApplyFocus_IncludesTransitiveDependencies(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	gr := graph.New()
+	compile := gr.AddNode("compile")
+	testNode := gr.AddNode("test")
+	deploy := gr.AddNode("deploy")
+
+	compile.AddEdge(testNode)
+	testNode.AddEdge(deploy)
+
+	// Act — focus on "test"; should include "compile" (dependent) and "deploy" (dependency)
+	result, err := applyFocus(gr, "test")
+
+	// Assert
+	g.Expect(err).NotTo(HaveOccurred())
+
+	ids := collectNodeIDs(result)
+	g.Expect(ids).To(ConsistOf("compile", "test", "deploy"))
+}
+
+func TestApplyFocus_MultiplePatternsSeparatedByComma(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	gr := graph.New()
+	gr.AddNode("build")
+	gr.AddNode("test")
+	gr.AddNode("deploy")
+
+	// Act
+	result, err := applyFocus(gr, "build,test")
+
+	// Assert
+	g.Expect(err).NotTo(HaveOccurred())
+
+	ids := collectNodeIDs(result)
+	g.Expect(ids).To(ConsistOf("build", "test"))
+}
+
+// collectNodeIDs returns all node IDs from a graph as a slice.
+func collectNodeIDs(gr *graph.Graph) []string {
+	var ids []string
+
+	for n := range gr.Nodes() {
+		ids = append(ids, n.ID())
+	}
+
+	return ids
+}
+
+// TestApplyAutoColor_ColorblindMode
+
+func TestApplyAutoColor_ColorblindMode_UsesOkabeItoPalette(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	cfg := config.New()
+	cfg.AutoColor = true
+	cfg.ColorblindMode = true
+
+	gr := graph.New()
+	gr.AddNode("cmd:build")
+	gr.AddNode("cmd:test")
+
+	// Act
+	applyAutoColor(cfg, gr)
+
+	// Assert: rules are generated and use Okabe-Ito hex colors, not the default named colors
+	g.Expect(cfg.NodeStyleRules).NotTo(BeEmpty())
+
+	fillColors := make([]string, len(cfg.NodeStyleRules))
+	for i, r := range cfg.NodeStyleRules {
+		fillColors[i] = r.FillColor
+	}
+
+	// Okabe-Ito palette uses hex strings; default palette uses named CSS colors
+	g.Expect(fillColors[0]).To(HavePrefix("#"), "expected Okabe-Ito hex color, got named color")
+}
+
+func TestApplyAutoColor_ColorblindModeDisabled_UsesDefaultPalette(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	cfg := config.New()
+	cfg.AutoColor = true
+	cfg.ColorblindMode = false
+
+	gr := graph.New()
+	gr.AddNode("cmd:build")
+
+	// Act
+	applyAutoColor(cfg, gr)
+
+	// Assert: default palette uses named CSS colors, not hex strings
+	g.Expect(cfg.NodeStyleRules).NotTo(BeEmpty())
+	g.Expect(cfg.NodeStyleRules[0].FillColor).NotTo(HavePrefix("#"))
 }

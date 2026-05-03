@@ -63,8 +63,9 @@ tasks:
     cmds:
       # If GITHUB_STEP_SUMMARY is not set, remove the output file so it only contains our results
       - "rm -f {{.REPORT}} || true"
-      # - "go test ./... -json | go-testreport -output {{.REPORT}}"
-      - go test ./...
+      # Run tests with JSON output piped to go-testreport for rich GitHub Actions step summaries.
+      # bash -o pipefail ensures the task exits with go test's exit code when tests fail.
+      - "bash -c 'set -o pipefail && go test ./... -json | go-testreport -output {{.REPORT}}'"
     vars:
       REPORT: '{{.GITHUB_STEP_SUMMARY | default "test-report.md" }}'
 
@@ -136,5 +137,5 @@ tasks:
       - "{{.BUILD_DIR}}/task-graph"
       - "Taskfile.yml"
     cmds:
-      - "{{.BUILD_DIR}}/task-graph {{.ROOT_DIR}}/Taskfile.yml --output {{.DOCS_DIR}}/taskfile.dot --auto-color"
+      - "{{.BUILD_DIR}}/task-graph {{.ROOT_DIR}}/Taskfile.yml --output {{.DOCS_DIR}}/taskfile.dot --auto-color --include-global-vars"
       - "dot -Tpng {{.DOCS_DIR}}/taskfile.dot -o {{.DOCS_DIR}}/taskfile.png"

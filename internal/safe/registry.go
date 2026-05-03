@@ -3,6 +3,7 @@ package safe
 import (
 	"fmt"
 	"strings"
+	"unicode/utf8"
 )
 
 // Registry maintains a cache of safe identifiers, ensuring that each unique input
@@ -94,12 +95,12 @@ func (*Registry) isValid(name string) bool {
 		return false
 	}
 
-	runes := []rune(name)
-	if !isValidStart(runes[0]) {
+	first, firstSize := utf8.DecodeRuneInString(name)
+	if !isValidStart(first) {
 		return false
 	}
 
-	for _, ch := range runes[1:] {
+	for _, ch := range name[firstSize:] {
 		if !isValidMiddle(ch) {
 			return false
 		}
@@ -115,11 +116,11 @@ func (*Registry) sanitize(name string) string {
 		return "_"
 	}
 
-	runes := []rune(name)
-
 	var b strings.Builder
 
-	first := runes[0]
+	b.Grow(len(name) + 1) // +1 for possible leading underscore prefix
+
+	first, firstSize := utf8.DecodeRuneInString(name)
 
 	switch {
 	case isValidStart(first):
@@ -132,7 +133,7 @@ func (*Registry) sanitize(name string) string {
 		b.WriteRune('_')
 	}
 
-	for _, ch := range runes[1:] {
+	for _, ch := range name[firstSize:] {
 		if isValidMiddle(ch) {
 			b.WriteRune(ch)
 		} else {

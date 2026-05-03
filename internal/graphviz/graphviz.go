@@ -1,6 +1,7 @@
 package graphviz
 
 import (
+	"bufio"
 	"cmp"
 	"errors"
 	"fmt"
@@ -29,7 +30,14 @@ func SaveTo(
 
 	defer f.Close()
 
-	return WriteTo(f, gr, cfg)
+	bw := bufio.NewWriter(f)
+
+	err = WriteTo(bw, gr, cfg)
+	if err != nil {
+		return err
+	}
+
+	return eris.Wrap(bw.Flush(), "failed to flush graphviz output")
 }
 
 func WriteTo(
@@ -58,12 +66,21 @@ func WriteTo(
 	reg := safe.NewRegistry()
 	reg.Prepare(nodeIDs)
 
+	taskNodes, varNodes := splitNodesByKind(nodes)
+
 	iw := indentwriter.New()
 	root := iw.Add("digraph {")
 
-	err := writeAllNodesTo(root, nodes, cfg, reg)
+	err := writeAllNodesTo(root, taskNodes, cfg, reg)
 	if err != nil {
 		return err
+	}
+
+	if len(varNodes) > 0 {
+		err = writeVariableNodesTo(root, varNodes, cfg, reg)
+		if err != nil {
+			return err
+		}
 	}
 
 	iw.Add("}")
@@ -102,15 +119,11 @@ func writeGroupedNodesTo(
 	// Collect all unique namespaces, including intermediate ones
 	allNS := findAllNamespaces(nsToNodes)
 
-	// Find and sort top-level namespaces (those with no parent)
-	topLevel := make([]string, 0, len(allNS))
-	for ns := range allNS {
-		if namespace.Parent(ns) == "" {
-			topLevel = append(topLevel, ns)
-		}
-	}
+	// Pre-build parent→children map so each lookup is O(1) rather than O(N).
+	childrenOf := buildChildrenMap(allNS)
 
-	slices.Sort(topLevel)
+	// Find and sort top-level namespaces (those with no parent)
+	topLevel := childrenOf[""]
 
 	err := writeNodesTo(root, nsToNodes[""], cfg, reg)
 	if err != nil {
@@ -118,7 +131,7 @@ func writeGroupedNodesTo(
 	}
 
 	for _, ns := range topLevel {
-		err := writeNamespaceSubgraphTo(root, ns, nsToNodes, allNS, cfg, reg)
+		err := writeNamespaceSubgraphTo(root, ns, nsToNodes, childrenOf, cfg, reg)
 		if err != nil {
 			return err
 		}
@@ -128,7 +141,7 @@ func writeGroupedNodesTo(
 }
 
 // findAllNamespaces takes a map of namespaces to their directly contained nodes
-// and returns a set of all namespaces.
+// and returns a set of all namespaces, including any intermediate parent namespaces.
 func findAllNamespaces(nsToNodes map[string][]*graph.Node) map[string]bool {
 	allNS := make(map[string]bool)
 
@@ -139,6 +152,25 @@ func findAllNamespaces(nsToNodes map[string][]*graph.Node) map[string]bool {
 	}
 
 	return allNS
+}
+
+// buildChildrenMap builds a parent→sorted-children map from a set of all namespaces.
+// The empty-string key ("") holds the sorted list of top-level namespaces.
+// Building this map once avoids an O(N) scan of allNS for every namespace during
+// the recursive subgraph walk.
+func buildChildrenMap(allNS map[string]bool) map[string][]string {
+	childrenOf := make(map[string][]string, len(allNS)+1)
+
+	for ns := range allNS {
+		parent := namespace.Parent(ns)
+		childrenOf[parent] = append(childrenOf[parent], ns)
+	}
+
+	for key := range childrenOf {
+		slices.Sort(childrenOf[key])
+	}
+
+	return childrenOf
 }
 
 func indexNodesByNamespace(nodes []*graph.Node) map[string][]*graph.Node {
@@ -158,14 +190,12 @@ func writeNamespaceSubgraphTo(
 	parent *indentwriter.Line,
 	ns string,
 	nsToNodes map[string][]*graph.Node,
-	allNS map[string]bool,
+	childrenOf map[string][]string,
 	cfg *config.Config,
 	reg *safe.Registry,
 ) error {
 	subgraph := parent.Addf("subgraph %s {", reg.IDWithPrefix("cluster_", ns))
 	subgraph.Addf("label=%q", ns)
-
-	children := childNamespaces(allNS, ns)
 
 	// Write nodes directly in this namespace, then child subgraphs, with blank lines between items
 	err := writeNodesTo(subgraph, nsToNodes[ns], cfg, reg)
@@ -173,8 +203,8 @@ func writeNamespaceSubgraphTo(
 		return err
 	}
 
-	for _, child := range children {
-		err := writeNamespaceSubgraphTo(subgraph, child, nsToNodes, allNS, cfg, reg)
+	for _, child := range childrenOf[ns] {
+		err := writeNamespaceSubgraphTo(subgraph, child, nsToNodes, childrenOf, cfg, reg)
 		if err != nil {
 			return err
 		}
@@ -183,21 +213,6 @@ func writeNamespaceSubgraphTo(
 	parent.Add("}")
 
 	return nil
-}
-
-// childNamespaces returns sorted child namespaces of the given namespace.
-func childNamespaces(allNS map[string]bool, ns string) []string {
-	children := make([]string, 0, len(allNS))
-
-	for candidate := range allNS {
-		if namespace.Parent(candidate) == ns {
-			children = append(children, candidate)
-		}
-	}
-
-	slices.Sort(children)
-
-	return children
 }
 
 // writeNodesTo writes all nodes and their edges to the graphviz output.
@@ -245,29 +260,7 @@ func writeNodeDefinitionTo(
 	cfg *config.Config,
 	reg *safe.Registry,
 ) error {
-	margin := min((len(node.Description)+20)/2, 40)
-
-	rec := newRecord()
-	rec.add(nodeLabel(node))
-	rec.addWrapped(margin, node.Description)
-
-	props := newNodeProperties()
-	props.Addf("shape", "Mrecord")
-	props.Add("label", rec.String())
-
-	err := applyNodeConfig(&props, node, cfg)
-	if err != nil {
-		return err
-	}
-
-	if props.ContainsKey("fillcolor") && !props.ContainsKey("style") {
-		props.Add("style", "filled")
-	}
-
-	id := fmt.Sprintf("\"%s\"", reg.ID(node.ID()))
-	props.WriteTo(id, root)
-
-	return nil
+	return writeNodeDefinitionWithShapeTo(root, node, cfg, reg, "Mrecord", applyNodeConfig)
 }
 
 func applyNodeConfig(props *nodeProperties, node *graph.Node, cfg *config.Config) error {
@@ -305,6 +298,8 @@ func writeEdgeTo(
 			props.AddAttributes(cfg.Graphviz.DependencyEdges)
 		case "call":
 			props.AddAttributes(cfg.Graphviz.CallEdges)
+		case "var":
+			props.AddAttributes(cfg.Graphviz.VariableEdges)
 		default:
 			// Nothing
 		}
@@ -318,10 +313,112 @@ func writeEdgeTo(
 		root)
 }
 
-func nodeLabel(node *graph.Node) string {
-	if node.Label != "" {
-		return node.Label
+func writeVariableNodesTo(
+	root *indentwriter.Line,
+	nodes []*graph.Node,
+	cfg *config.Config,
+	reg *safe.Registry,
+) error {
+	for _, node := range nodes {
+		err := writeVariableNodeDefinitionTo(root, node, cfg, reg)
+		if err != nil {
+			return err
+		}
+
+		for _, edge := range node.Edges() {
+			writeEdgeTo(root, edge, cfg, reg)
+		}
+
+		root.Add("")
 	}
 
-	return node.ID()
+	// Add rank=sink to force variables to bottom
+	sink := root.Add("{ rank=sink")
+
+	for _, node := range nodes {
+		sink.Addf("\"%s\"", reg.ID(node.ID()))
+	}
+
+	root.Add("}")
+
+	return nil
+}
+
+func writeVariableNodeDefinitionTo(
+	root *indentwriter.Line,
+	node *graph.Node,
+	cfg *config.Config,
+	reg *safe.Registry,
+) error {
+	return writeNodeDefinitionWithShapeTo(root, node, cfg, reg, "record", applyVariableNodeConfig)
+}
+
+func writeNodeDefinitionWithShapeTo(
+	root *indentwriter.Line,
+	node *graph.Node,
+	cfg *config.Config,
+	reg *safe.Registry,
+	shape string,
+	configFunc func(*nodeProperties, *graph.Node, *config.Config) error,
+) error {
+	margin := min((len(node.Description)+20)/2, 40)
+
+	rec := newRecord()
+	rec.add(node.DisplayLabel())
+	rec.addWrapped(margin, node.Description)
+
+	props := newNodeProperties()
+	props.Add("shape", shape)
+	props.Add("label", rec.String())
+
+	err := configFunc(&props, node, cfg)
+	if err != nil {
+		return err
+	}
+
+	if props.ContainsKey("fillcolor") && !props.ContainsKey("style") {
+		props.Add("style", "filled")
+	}
+
+	id := fmt.Sprintf("\"%s\"", reg.ID(node.ID()))
+	props.WriteTo(id, root)
+
+	return nil
+}
+
+//nolint:revive // Choosing to return two unnamed slices
+func splitNodesByKind(nodes []*graph.Node) ([]*graph.Node, []*graph.Node) {
+	var (
+		taskNodes []*graph.Node
+		varNodes  []*graph.Node
+	)
+
+	for _, n := range nodes {
+		if n.Kind == graph.NodeKindVariable {
+			varNodes = append(varNodes, n)
+		} else {
+			taskNodes = append(taskNodes, n)
+		}
+	}
+
+	return taskNodes, varNodes
+}
+
+func applyVariableNodeConfig(props *nodeProperties, node *graph.Node, cfg *config.Config) error {
+	if cfg == nil {
+		return nil
+	}
+
+	if cfg.Graphviz != nil {
+		props.AddAttributes(cfg.Graphviz.VariableNodes)
+	}
+
+	for _, rule := range cfg.NodeStyleRules {
+		err := props.AddStyleRuleAttributes(node.ID(), rule)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

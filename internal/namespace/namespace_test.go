@@ -208,3 +208,12 @@ func TestMatchPattern_AmbiguousNamespace_ReturnsAllDelimiterPattern(t *testing.T
 	// Assert
 	g.Expect(p).To(Equal("build[-.:]*"))
 }
+
+// BenchmarkCompileMatchPattern measures allocations for a typical style-rule pattern.
+func BenchmarkCompileMatchPattern(b *testing.B) {
+	b.ReportAllocs()
+
+	for b.Loop() {
+		_, _ = CompileMatchPattern("build:*")
+	}
+}
