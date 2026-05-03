@@ -355,24 +355,24 @@ func TestGraph_FilterNodes_VariableNodeKind_IsPreserved(t *testing.T) {
 }
 
 func TestGraph_FilterNodes_EdgeLabel_IsPreserved(t *testing.T) {
-t.Parallel()
-g := gomega.NewWithT(t)
+	t.Parallel()
+	g := gomega.NewWithT(t)
 
-// Arrange: A -[next]-> B -> C; keep only A and B
-gr := New()
-a := gr.AddNode("A")
-b := gr.AddNode("B")
-c := gr.AddNode("C")
+	// Arrange: A -[next]-> B -> C; keep only A and B
+	gr := New()
+	a := gr.AddNode("A")
+	b := gr.AddNode("B")
+	c := gr.AddNode("C")
 
-labeled := a.AddEdge(b)
-labeled.SetLabel("next")
-b.AddEdge(c)
+	labeled := a.AddEdge(b)
+	labeled.SetLabel("next")
+	b.AddEdge(c)
 
-// Act
-result := gr.FilterNodes(map[string]bool{"A": true, "B": true})
+	// Act
+	result := gr.FilterNodes(map[string]bool{"A": true, "B": true})
 
-// Assert: the labeled edge A->B is present and its label is preserved
-resA, _ := result.Node("A")
-g.Expect(resA.Edges()).To(gomega.HaveLen(1))
-g.Expect(resA.Edges()[0].Label()).To(gomega.Equal("next"))
+	// Assert: the labeled edge A->B is present and its label is preserved
+	resA, _ := result.Node("A")
+	g.Expect(resA.Edges()).To(gomega.HaveLen(1))
+	g.Expect(resA.Edges()[0].Label()).To(gomega.Equal("next"))
 }
