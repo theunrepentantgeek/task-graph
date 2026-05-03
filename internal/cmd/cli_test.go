@@ -545,7 +545,7 @@ func TestApplyFocus_IncludesTransitiveDependencies(t *testing.T) {
 	compile.AddEdge(testNode)
 	testNode.AddEdge(deploy)
 
-	// Act — focus on "test"; should include "compile" (dependency) and "deploy" (dependent)
+	// Act — focus on "test"; should include "compile" (dependent) and "deploy" (dependency)
 	result, err := applyFocus(gr, "test")
 
 	// Assert
