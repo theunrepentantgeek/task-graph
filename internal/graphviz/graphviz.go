@@ -13,8 +13,8 @@ import (
 
 	"github.com/theunrepentantgeek/task-graph/internal/config"
 	"github.com/theunrepentantgeek/task-graph/internal/graph"
+	"github.com/theunrepentantgeek/task-graph/internal/graphns"
 	"github.com/theunrepentantgeek/task-graph/internal/indentwriter"
-	"github.com/theunrepentantgeek/task-graph/internal/namespace"
 	"github.com/theunrepentantgeek/task-graph/internal/safe"
 )
 
@@ -66,7 +66,7 @@ func WriteTo(
 	reg := safe.NewRegistry()
 	reg.Prepare(nodeIDs)
 
-	taskNodes, varNodes := splitNodesByKind(nodes)
+	taskNodes, varNodes := graphns.SplitByKind(nodes)
 
 	iw := indentwriter.New()
 	root := iw.Add("digraph {")
@@ -114,13 +114,13 @@ func writeGroupedNodesTo(
 	reg *safe.Registry,
 ) error {
 	// Build map: namespace -> nodes directly in that namespace
-	nsToNodes := indexNodesByNamespace(nodes)
+	nsToNodes := graphns.IndexByNamespace(nodes)
 
 	// Collect all unique namespaces, including intermediate ones
-	allNS := findAllNamespaces(nsToNodes)
+	allNS := graphns.FindAllNamespaces(nsToNodes)
 
 	// Pre-build parent→children map so each lookup is O(1) rather than O(N).
-	childrenOf := buildChildrenMap(allNS)
+	childrenOf := graphns.BuildChildrenMap(allNS)
 
 	// Find and sort top-level namespaces (those with no parent)
 	topLevel := childrenOf[""]
@@ -138,50 +138,6 @@ func writeGroupedNodesTo(
 	}
 
 	return nil
-}
-
-// findAllNamespaces takes a map of namespaces to their directly contained nodes
-// and returns a set of all namespaces, including any intermediate parent namespaces.
-func findAllNamespaces(nsToNodes map[string][]*graph.Node) map[string]bool {
-	allNS := make(map[string]bool)
-
-	for ns := range nsToNodes {
-		for current := ns; current != ""; current = namespace.Parent(current) {
-			allNS[current] = true
-		}
-	}
-
-	return allNS
-}
-
-// buildChildrenMap builds a parent→sorted-children map from a set of all namespaces.
-// The empty-string key ("") holds the sorted list of top-level namespaces.
-// Building this map once avoids an O(N) scan of allNS for every namespace during
-// the recursive subgraph walk.
-func buildChildrenMap(allNS map[string]bool) map[string][]string {
-	childrenOf := make(map[string][]string, len(allNS)+1)
-
-	for ns := range allNS {
-		parent := namespace.Parent(ns)
-		childrenOf[parent] = append(childrenOf[parent], ns)
-	}
-
-	for key := range childrenOf {
-		slices.Sort(childrenOf[key])
-	}
-
-	return childrenOf
-}
-
-func indexNodesByNamespace(nodes []*graph.Node) map[string][]*graph.Node {
-	nsToNodes := make(map[string][]*graph.Node)
-
-	for _, node := range nodes {
-		ns := namespace.Namespace(node.ID())
-		nsToNodes[ns] = append(nsToNodes[ns], node)
-	}
-
-	return nsToNodes
 }
 
 // writeNamespaceSubgraphTo writes a subgraph cluster for the given namespace, recursively
@@ -384,24 +340,6 @@ func writeNodeDefinitionWithShapeTo(
 	props.WriteTo(id, root)
 
 	return nil
-}
-
-//nolint:revive // Choosing to return two unnamed slices
-func splitNodesByKind(nodes []*graph.Node) ([]*graph.Node, []*graph.Node) {
-	var (
-		taskNodes []*graph.Node
-		varNodes  []*graph.Node
-	)
-
-	for _, n := range nodes {
-		if n.Kind == graph.NodeKindVariable {
-			varNodes = append(varNodes, n)
-		} else {
-			taskNodes = append(taskNodes, n)
-		}
-	}
-
-	return taskNodes, varNodes
 }
 
 func applyVariableNodeConfig(props *nodeProperties, node *graph.Node, cfg *config.Config) error {
