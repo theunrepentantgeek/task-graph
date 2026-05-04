@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-05-04T04:31:46Z",
-  "last_run_id": "25301077809",
+  "last_run": "2026-05-04T14:41:36Z",
+  "last_run_id": "25325345337",
   "monthly_activity_issue": 87,
   "comments_made": {
     "88": "2026-05-02T04:02:54Z",
@@ -8,15 +8,18 @@
   },
   "fix_attempts": {
     "88": {"pr": 89, "status": "merged", "date": "2026-05-01"},
-    "readme-flags": {"branch": "repo-assist/fix-readme-flags-2026-05-04", "status": "patch-created", "date": "2026-05-04"}
+    "readme-flags": {"branch": "repo-assist/fix-readme-flags-2026-05-04", "pr": 98, "status": "open", "date": "2026-05-04"}
   },
-  "open_repo_assist_prs": ["improve-edge-class-constants-2026-05-03"],
-  "notes": "PR #96 (edge class constants) open. Issue #97 = gomega update blocked by protected files. Issue #63 off-topic easter eggs, awaiting maintainer green-light. This run: fixed README flags (wrong --highlight-colour should be --highlight-color, missing --include-global-vars). PR creation returned patch file, branch repo-assist/fix-readme-flags-2026-05-04 may not be on GitHub. Issue #63 last human comment was 2026-05-02, no new activity.",
+  "open_repo_assist_prs": [
+    "improve-edge-class-constants-2026-05-03",
+    "improve-extract-graphns-2026-05-04"
+  ],
+  "notes": "PR #96 (edge class constants) open. PR #98 (README flags fix) open. New graphns refactoring PR created this run (branch repo-assist/improve-extract-graphns-2026-05-04). Issue #97 = gomega update blocked by protected files. Issue #63 off-topic easter eggs, awaiting maintainer green-light.",
   "backlog_cursor": {
     "issues": 97,
-    "prs": 96
+    "prs": 98
   },
   "eng_topics_done": ["testreport", "bundle-dependabot", "remove-unused-nolint", "task-tool-v3.50.0", "gomega-v1.40.0"],
-  "coding_improvements_done": ["graphviz-duplicate-comment", "split-patterns-refactor", "edge-class-constants", "readme-flags-fix"],
+  "coding_improvements_done": ["graphviz-duplicate-comment", "split-patterns-refactor", "edge-class-constants", "readme-flags-fix", "extract-graphns-helpers"],
   "test_coverage_done": ["dot", "loader", "taskgraph-builder", "indentwriter-addf", "mermaid", "taskgraph-vars", "cmd", "graphviz", "graphviz-2", "indentwriter-errors", "graph-edge-labels"]
 }
