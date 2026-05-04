@@ -45,23 +45,25 @@ Arguments:
   <taskfile>    Path to the taskfile to process.
 
 Flags:
-  -h, --help                    Show context-sensitive help.
-  -o, --output=STRING           Path to the output file.
-  -c, --config=STRING           Path to a config file (YAML or JSON).
-      --group-by-namespace      Group tasks in the same namespace together in the output.
-      --auto-color              Automatically color nodes by namespace using a built-in palette.
-      --colorblind-mode         Use an accessibility-optimised colour palette (Okabe-Ito) for --auto-color instead of the
-                                default palette.
-      --graph-type=STRING       Type of graph to generate (dot or mermaid). Defaults to dot.
-      --highlight=STRING        Highlight specific tasks in the graph. Accepts task names or glob patterns, separated by
-                                commas or semicolons.
-      --highlight-colour=STRING Fill colour to use when highlighting tasks (e.g. orange, #ff9900). Defaults to yellow.
-      --render-image=STRING     Render the graph as an image using graphviz dot. Specify the file type (e.g. png, svg).
-      --export-config=STRING    Export the effective configuration to a file (YAML or JSON based on file extension).
-      --focus=STRING            Show only tasks matching the given patterns together with all their transitive
-                                dependencies and dependents. Accepts task names or glob patterns, separated by commas
-                                or semicolons.
-      --verbose                 Enable verbose logging.
+  -h, --help                      Show context-sensitive help.
+  -o, --output=STRING             Path to the output file.
+  -c, --config=STRING             Path to a config file (YAML or JSON).
+      --group-by-namespace        Group tasks in the same namespace together in the output.
+      --auto-color                Automatically color nodes by namespace using a built-in palette.
+      --colorblind-mode           Use an accessibility-optimised colour palette (Okabe-Ito) for --auto-color instead of
+                                  the default palette.
+      --include-global-vars       Include global variables as nodes in the graph, with edges to consuming tasks.
+      --graph-type=STRING         Type of graph to generate (dot or mermaid). Defaults to dot.
+      --highlight=STRING          Highlight specific tasks in the graph. Accepts task names or glob patterns, separated
+                                  by commas or semicolons.
+      --highlight-color=STRING    Fill colour to use when highlighting tasks (e.g. orange, #ff9900). Defaults to yellow.
+      --render-image=STRING       Render the graph as an image using graphviz dot. Specify the file type (e.g. png,
+                                  svg).
+      --export-config=STRING      Export the effective configuration to a file (YAML or JSON based on file extension).
+      --focus=STRING              Show only tasks matching the given patterns together with all their transitive
+                                  dependencies and dependents. Accepts task names or glob patterns, separated by commas
+                                  or semicolons.
+      --verbose                   Enable verbose logging.
 ```
 
 ## Samples
