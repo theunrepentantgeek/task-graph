@@ -1,5 +1,17 @@
 package graph
 
+// Edge class constants for the three kinds of edges produced from Taskfiles.
+const (
+	// EdgeClassDep marks an edge that represents a task dependency (deps: list).
+	EdgeClassDep = "dep"
+
+	// EdgeClassCall marks an edge that represents a direct task call (cmd: task:).
+	EdgeClassCall = "call"
+
+	// EdgeClassVar marks an edge that represents a global variable reference.
+	EdgeClassVar = "var"
+)
+
 // Edge represents a directed connection between two nodes in the graph,
 // with an optional label.
 type Edge struct {

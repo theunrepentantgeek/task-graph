@@ -232,7 +232,7 @@ func writeEdgeTo(
 	to := reg.ID(edge.To().ID())
 
 	connector := "-->"
-	if edge.Class() == "call" {
+	if edge.Class() == graph.EdgeClassCall {
 		connector = "-.->"
 	}
 

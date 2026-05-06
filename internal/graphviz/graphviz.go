@@ -294,11 +294,11 @@ func writeEdgeTo(
 
 	if cfg != nil && cfg.Graphviz != nil {
 		switch edge.Class() {
-		case "dep":
+		case graph.EdgeClassDep:
 			props.AddAttributes(cfg.Graphviz.DependencyEdges)
-		case "call":
+		case graph.EdgeClassCall:
 			props.AddAttributes(cfg.Graphviz.CallEdges)
-		case "var":
+		case graph.EdgeClassVar:
 			props.AddAttributes(cfg.Graphviz.VariableEdges)
 		default:
 			// Nothing

@@ -73,7 +73,7 @@ func (*Builder) addEdgesForDependencies(
 		}
 
 		edge := taskNode.AddEdge(toNode)
-		edge.SetClass("dep")
+		edge.SetClass(graph.EdgeClassDep)
 	}
 }
 
@@ -95,7 +95,7 @@ func (*Builder) addEdgesForCalls(
 			}
 
 			edge := taskNode.AddEdge(toNode)
-			edge.SetClass("call")
+			edge.SetClass(graph.EdgeClassCall)
 		}
 	}
 }
@@ -149,7 +149,7 @@ func (*Builder) addEdgesForVarRefs(g *graph.Graph, taskName string, refs map[str
 		}
 
 		edge := varNode.AddEdge(taskNode)
-		edge.SetClass("var")
+		edge.SetClass(graph.EdgeClassVar)
 	}
 }
 
