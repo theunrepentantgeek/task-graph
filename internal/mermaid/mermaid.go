@@ -376,4 +376,3 @@ func variableClassDefParts(cfg *config.Config) []string {
 
 	return []string{"fill:#e8e8e8", "stroke:#666"}
 }
-
