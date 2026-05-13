@@ -2,6 +2,7 @@ package taskgraph
 
 import (
 	"regexp"
+	"strings"
 )
 
 // templateBlockRe matches Go template blocks: {{ ... }}.
@@ -15,6 +16,13 @@ var varRefRe = regexp.MustCompile(`\.([A-Za-z_][A-Za-z0-9_]*)`)
 // within the given string. It finds all {{ ... }} blocks and extracts .IDENTIFIER
 // patterns from each block.
 func extractVarRefs(s string) []string {
+	// Fast path: skip the regex entirely when no template block is present.
+	// Most task strings (commands, paths, labels) contain no Go template syntax,
+	// so this check eliminates the regex overhead for the common case.
+	if !strings.Contains(s, "{{") {
+		return nil
+	}
+
 	seen := make(map[string]bool)
 
 	for _, blockMatch := range templateBlockRe.FindAllStringSubmatch(s, -1) {
