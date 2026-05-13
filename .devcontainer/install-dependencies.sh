@@ -214,5 +214,7 @@ if [ "$DEVCONTAINER" == true ]; then
     git config --global --add safe.directory /workspace
 fi
 
-# Configure oh-my-posh
-echo "eval \"\$($TOOL_DEST/oh-my-posh init bash --config $TOOL_DEST/oh-my-posh.json )\"" >> /etc/bash.bashrc
+if [ "$DEVCONTAINER" == true ]; then
+    # Configure oh-my-posh in devcontainer
+    echo "eval \"\$($TOOL_DEST/oh-my-posh init bash --config $TOOL_DEST/oh-my-posh.json )\"" >> /etc/bash.bashrc
+fi
