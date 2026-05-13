@@ -83,8 +83,9 @@ tasks:
   tidy:
     desc: "Tidy up source"
     cmds:
-      - task: tidy:gofumpt
+      - task: tidy:gofix
       - task: tidy:mod
+      - task: tidy:gofumpt
       - task: tidy:lint
 
   tidy:gofumpt:
@@ -101,6 +102,11 @@ tasks:
     desc: "Run golangci-lint in fix mode"
     cmds:
       - golangci-lint-custom run --fix --verbose
+
+  tidy:gofix:
+    desc: "Run go fix to reformat source code"
+    cmds:
+      - go fix ./...
 
   gremlins:
     desc: "Use gremlins to check the quality of our tests"
