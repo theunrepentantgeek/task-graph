@@ -58,8 +58,12 @@ func (g *Graph) ReachableFrom(
 	visited := make(map[string]bool, len(seeds))
 	queue := g.createScanningQueue(seeds)
 
+	// Keep queue limited to the pending frontier by dequeuing from the front.
+	// Clear the popped slot before re-slicing so processed entries are not
+	// needlessly retained in the active queue window.
 	for len(queue) > 0 {
 		cur := queue[0]
+		queue[0] = ""
 		queue = queue[1:]
 
 		if visited[cur] {
