@@ -207,7 +207,7 @@ func collectTaskStrings(task *ast.Task) []string {
 		result = appendNonEmpty(result, gen.Glob)
 	}
 
-	result = append(result, task.Status...)
+	result = appendNonEmpty(result, task.Status...)
 
 	for _, pre := range task.Preconditions {
 		result = appendNonEmpty(result, pre.Sh, pre.Msg)

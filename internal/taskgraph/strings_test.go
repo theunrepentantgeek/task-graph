@@ -238,3 +238,31 @@ func TestAppendNonEmpty_AppendsToExistingSlice(t *testing.T) {
 
 	g.Expect(result).To(Equal([]string{"existing", "new"}))
 }
+
+// collectTaskStrings tests
+
+func TestCollectTaskStrings_WithStatus_AppendsStatusStrings(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	task := &ast.Task{
+		Status: []string{"test -f output.txt", "test -d build"},
+	}
+
+	result := collectTaskStrings(task)
+
+	g.Expect(result).To(ConsistOf("test -f output.txt", "test -d build"))
+}
+
+func TestCollectTaskStrings_WithEmptyStatusEntry_SkipsEmpty(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	task := &ast.Task{
+		Status: []string{"test -f output.txt", "", "test -d build"},
+	}
+
+	result := collectTaskStrings(task)
+
+	g.Expect(result).To(ConsistOf("test -f output.txt", "test -d build"))
+}
