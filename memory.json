@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-05-13T15:32:08Z",
-  "last_run_id": "25809123069",
+  "last_run": "2026-05-14T04:32:22Z",
+  "last_run_id": "25841752596",
   "monthly_activity_issue": 87,
   "comments_made": {
     "88": "2026-05-02T04:02:54Z",
@@ -10,15 +10,17 @@
     "88": {"pr": 89, "status": "merged", "date": "2026-05-01"}
   },
   "open_repo_assist_prs": [
-    {"branch": "repo-assist/perf-bfs-and-varref-2026-05-13", "pr": null, "status": "pending-creation", "date": "2026-05-13"}
+    {"branch": "repo-assist/perf-bfs-and-varref-2026-05-13-f999498041ceee87", "pr": 110, "status": "open", "date": "2026-05-13"},
+    {"branch": "repo-assist/improve-collect-sorted-nodes-2026-05-14", "pr": null, "status": "pending-creation", "date": "2026-05-14"},
+    {"branch": "repo-assist/improve-collect-task-strings-2026-05-14", "pr": null, "status": "pending-creation", "date": "2026-05-14"}
   ],
-  "notes": "PRs #96, #98, #99, #100 all merged. New perf PR created this run: BFS index-pointer in ReachableFrom, strings.Contains fast-path in extractVarRefs. Issue #97 = gomega update blocked by protected files. Issue #63 off-topic easter eggs, awaiting maintainer green-light.",
+  "notes": "All suggested actions from previous run were checked off by maintainer. Two new refactor PRs created this run. Issue #63 off-topic easter eggs awaiting maintainer green-light. No direct dependency updates available.",
   "backlog_cursor": {
     "issues": 97,
-    "prs": 109
+    "prs": 110
   },
   "eng_topics_done": ["testreport", "bundle-dependabot", "remove-unused-nolint", "task-tool-v3.50.0", "gomega-v1.40.0"],
-  "coding_improvements_done": ["graphviz-duplicate-comment", "split-patterns-refactor", "edge-class-constants", "readme-flags-fix", "extract-graphns-helpers"],
+  "coding_improvements_done": ["graphviz-duplicate-comment", "split-patterns-refactor", "edge-class-constants", "readme-flags-fix", "extract-graphns-helpers", "collect-sorted-nodes", "collect-task-strings-nonempty"],
   "perf_topics_done": ["buffered-output", "avoid-rune-alloc", "compile-match-pattern", "bfs-index-pointer", "extractVarRefs-fast-path"],
   "test_coverage_done": ["dot", "loader", "taskgraph-builder", "indentwriter-addf", "mermaid", "taskgraph-vars", "cmd", "graphviz", "graphviz-2", "indentwriter-errors", "graph-edge-labels", "taskgraph-strings-and-varDescription", "mermaid-variableClassDefParts"]
 }
