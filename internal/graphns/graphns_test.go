@@ -24,6 +24,58 @@ func makeVarNode(id string) *graph.Node {
 	return n
 }
 
+// CollectSortedNodes tests
+
+func TestCollectSortedNodes_EmptyGraph_ReturnsEmptySlice(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	gr := graph.New()
+
+	// Act
+	result := graphns.CollectSortedNodes(gr)
+
+	// Assert
+	g.Expect(result).To(BeEmpty())
+}
+
+func TestCollectSortedNodes_MultipleNodes_ReturnsSortedByID(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	gr := graph.New()
+	gr.AddNode("zebra")
+	gr.AddNode("alpha")
+	gr.AddNode("mango")
+
+	// Act
+	result := graphns.CollectSortedNodes(gr)
+
+	// Assert
+	g.Expect(result).To(HaveLen(3))
+	g.Expect(result[0].ID()).To(Equal("alpha"))
+	g.Expect(result[1].ID()).To(Equal("mango"))
+	g.Expect(result[2].ID()).To(Equal("zebra"))
+}
+
+func TestCollectSortedNodes_SingleNode_ReturnsSingleElementSlice(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	gr := graph.New()
+	gr.AddNode("build")
+
+	// Act
+	result := graphns.CollectSortedNodes(gr)
+
+	// Assert
+	g.Expect(result).To(HaveLen(1))
+	g.Expect(result[0].ID()).To(Equal("build"))
+}
+
 // SplitByKind tests
 
 func TestSplitByKind_EmptySlice_ReturnsTwoEmptySlices(t *testing.T) {

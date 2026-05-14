@@ -4,11 +4,23 @@
 package graphns
 
 import (
+	"cmp"
 	"slices"
 
 	"github.com/theunrepentantgeek/task-graph/internal/graph"
 	"github.com/theunrepentantgeek/task-graph/internal/namespace"
 )
+
+// CollectSortedNodes returns all nodes from the graph, sorted alphabetically by ID.
+// Both graphviz and mermaid rendering need nodes in a stable, deterministic order.
+func CollectSortedNodes(g *graph.Graph) []*graph.Node {
+	nodes := slices.Collect(g.Nodes())
+	slices.SortFunc(nodes, func(left, right *graph.Node) int {
+		return cmp.Compare(left.ID(), right.ID())
+	})
+
+	return nodes
+}
 
 // SplitByKind partitions nodes into task nodes and variable nodes.
 //
