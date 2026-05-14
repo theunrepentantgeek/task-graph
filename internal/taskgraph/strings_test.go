@@ -200,3 +200,41 @@ func TestVarDescription_EmptyVar_ReturnsEmptyString(t *testing.T) {
 
 	g.Expect(varDescription(v)).To(BeEmpty())
 }
+
+// appendNonEmpty tests
+
+func TestAppendNonEmpty_AllNonEmpty_AppendsAll(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	result := appendNonEmpty(nil, "a", "b", "c")
+
+	g.Expect(result).To(Equal([]string{"a", "b", "c"}))
+}
+
+func TestAppendNonEmpty_SomeEmpty_SkipsEmpties(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	result := appendNonEmpty(nil, "a", "", "c")
+
+	g.Expect(result).To(Equal([]string{"a", "c"}))
+}
+
+func TestAppendNonEmpty_AllEmpty_ReturnsNil(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	result := appendNonEmpty(nil, "", "")
+
+	g.Expect(result).To(BeNil())
+}
+
+func TestAppendNonEmpty_AppendsToExistingSlice(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	result := appendNonEmpty([]string{"existing"}, "", "new")
+
+	g.Expect(result).To(Equal([]string{"existing", "new"}))
+}

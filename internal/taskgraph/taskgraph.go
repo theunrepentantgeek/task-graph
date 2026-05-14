@@ -188,29 +188,40 @@ func collectTaskStrings(task *ast.Task) []string {
 	var result []string
 
 	for _, cmd := range task.Cmds {
-		result = append(result, cmd.Cmd, cmd.Task)
+		result = appendNonEmpty(result, cmd.Cmd, cmd.Task)
 	}
 
 	for _, dep := range task.Deps {
-		result = append(result, dep.Task)
+		result = appendNonEmpty(result, dep.Task)
 	}
 
-	result = append(result, task.Dir, task.Label)
+	result = appendNonEmpty(result, task.Dir, task.Label)
 	result = collectEnvStrings(result, task.Env)
 	result = collectVarStrings(result, task.Vars)
 
 	for _, src := range task.Sources {
-		result = append(result, src.Glob)
+		result = appendNonEmpty(result, src.Glob)
 	}
 
 	for _, gen := range task.Generates {
-		result = append(result, gen.Glob)
+		result = appendNonEmpty(result, gen.Glob)
 	}
 
 	result = append(result, task.Status...)
 
 	for _, pre := range task.Preconditions {
-		result = append(result, pre.Sh, pre.Msg)
+		result = appendNonEmpty(result, pre.Sh, pre.Msg)
+	}
+
+	return result
+}
+
+// appendNonEmpty appends only non-empty strings from ss to result.
+func appendNonEmpty(result []string, ss ...string) []string {
+	for _, s := range ss {
+		if s != "" {
+			result = append(result, s)
+		}
 	}
 
 	return result
