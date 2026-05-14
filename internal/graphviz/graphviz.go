@@ -2,12 +2,10 @@ package graphviz
 
 import (
 	"bufio"
-	"cmp"
 	"errors"
 	"fmt"
 	"io"
 	"os"
-	"slices"
 
 	"github.com/rotisserie/eris"
 
@@ -51,12 +49,7 @@ func WriteTo(
 		return errors.New("graphviz: graph is nil")
 	}
 
-	nodes := slices.Collect(g.Nodes())
-	slices.SortFunc(
-		nodes,
-		func(left *graph.Node, right *graph.Node) int {
-			return cmp.Compare(left.ID(), right.ID())
-		})
+	nodes := graphns.CollectSortedNodes(g)
 
 	nodeIDs := make([]string, len(nodes))
 	for i, n := range nodes {
