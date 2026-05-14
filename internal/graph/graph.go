@@ -58,11 +58,13 @@ func (g *Graph) ReachableFrom(
 	visited := make(map[string]bool, len(seeds))
 	queue := g.createScanningQueue(seeds)
 
-	// Use an index pointer rather than re-slicing queue[1:] on every iteration.
-	// Re-slicing would retain the backing array for the lifetime of the BFS,
-	// preventing the GC from reclaiming visited elements.
-	for head := 0; head < len(queue); head++ {
-		cur := queue[head]
+	// Keep queue limited to the pending frontier by dequeuing from the front.
+	// Clear the popped slot before re-slicing so processed entries are not
+	// needlessly retained in the active queue window.
+	for len(queue) > 0 {
+		cur := queue[0]
+		queue[0] = ""
+		queue = queue[1:]
 
 		if visited[cur] {
 			continue
