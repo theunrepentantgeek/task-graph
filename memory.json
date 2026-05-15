@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-05-14T15:09:34Z",
-  "last_run_id": "25867788969",
+  "last_run": "2026-05-15T04:38:15Z",
+  "last_run_id": "25900493923",
   "monthly_activity_issue": 87,
   "comments_made": {
     "88": "2026-05-02T04:02:54Z",
@@ -10,15 +10,16 @@
     "88": {"pr": 89, "status": "merged", "date": "2026-05-01"}
   },
   "open_repo_assist_prs": [
-    {"branch": "repo-assist/improve-collect-task-status-and-race-2026-05-14", "pr": 113, "status": "open", "date": "2026-05-14"}
+    {"branch": "repo-assist/improve-collect-task-status-and-race-2026-05-14", "pr": 113, "status": "open", "date": "2026-05-14"},
+    {"branch": "repo-assist/test-coverage-safe-dot-2026-05-15", "pr": null, "status": "pending", "date": "2026-05-15"}
   ],
-  "notes": "All previous PRs merged. PR #113 created: appendNonEmpty for task.Status + -race flag in Taskfile. Issue #63 off-topic easter eggs awaiting maintainer green-light.",
+  "notes": "All previous PRs merged. PR #113 open: appendNonEmpty for task.Status + -race flag. New PR created (pending number): safe 100% coverage + dot.exe branch coverage + CI concurrency group. Issue #63 off-topic easter eggs awaiting maintainer green-light.",
   "backlog_cursor": {
-    "issues": 97,
+    "issues": 87,
     "prs": 113
   },
-  "eng_topics_done": ["testreport", "bundle-dependabot", "remove-unused-nolint", "task-tool-v3.50.0", "gomega-v1.40.0", "race-flag-unit-tests"],
+  "eng_topics_done": ["testreport", "bundle-dependabot", "remove-unused-nolint", "task-tool-v3.50.0", "gomega-v1.40.0", "race-flag-unit-tests", "ci-concurrency-group"],
   "coding_improvements_done": ["graphviz-duplicate-comment", "split-patterns-refactor", "edge-class-constants", "readme-flags-fix", "extract-graphns-helpers", "collect-sorted-nodes", "collect-task-strings-nonempty", "collect-task-strings-status-filter"],
   "perf_topics_done": ["buffered-output", "avoid-rune-alloc", "compile-match-pattern", "bfs-index-pointer", "extractVarRefs-fast-path"],
-  "test_coverage_done": ["dot", "loader", "taskgraph-builder", "indentwriter-addf", "mermaid", "taskgraph-vars", "cmd", "graphviz", "graphviz-2", "indentwriter-errors", "graph-edge-labels", "taskgraph-strings-and-varDescription", "mermaid-variableClassDefParts", "taskgraph-status-strings"]
+  "test_coverage_done": ["dot", "loader", "taskgraph-builder", "indentwriter-addf", "mermaid", "taskgraph-vars", "cmd", "graphviz", "graphviz-2", "indentwriter-errors", "graph-edge-labels", "taskgraph-strings-and-varDescription", "mermaid-variableClassDefParts", "taskgraph-status-strings", "safe-numeric-fallback", "dot-exe-branch"]
 }
