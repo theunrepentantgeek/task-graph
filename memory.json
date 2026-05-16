@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-05-16T08:04:25Z",
-  "last_run_id": "25956839081",
+  "last_run": "2026-05-16T14:08:40Z",
+  "last_run_id": "25963954164",
   "monthly_activity_issue": 87,
   "comments_made": {
     "88": "2026-05-02T04:02:54Z",
@@ -11,15 +11,17 @@
     "88": {"pr": 89, "status": "merged", "date": "2026-05-01"}
   },
   "open_repo_assist_prs": [
-    {"branch": "repo-assist/improve-graphns-collect-node-ids-2026-05-16-3b83d8b139b9e43e", "pr": 116, "status": "open", "date": "2026-05-16"}
+    {"branch": "repo-assist/improve-graphns-collect-node-ids-2026-05-16-3b83d8b139b9e43e", "pr": 116, "status": "open", "date": "2026-05-16"},
+    {"branch": "repo-assist/improve-collectnodeids-and-registry-perf-2026-05-16-cc10abad5add0812", "pr": 117, "status": "open", "date": "2026-05-16"},
+    {"branch": "repo-assist/test-coverage-mermaid-taskgraph-safe-2026-05-16", "pr": null, "status": "bundle", "date": "2026-05-16"}
   ],
-  "notes": "PR #116 open (extract CollectNodeIDs + graphviz doc comments). Lint fix pushed. Issues #114/#115 are failed-push artifacts awaiting manual bundle application. Issue #63 off-topic easter eggs awaiting maintainer green-light.",
+  "notes": "PR #116 open (CollectNodeIDs + graphviz doc comments). PR #117 open/draft (CollectNodeIDs + pre-size Registry perf). New bundle PR: test coverage (safe 100%, taskgraph 94.3%, mermaid 94.0%). Issues #114/#115 are failed-push artifacts awaiting manual bundle application. Issue #63 off-topic easter eggs awaiting maintainer green-light.",
   "backlog_cursor": {
     "issues": 87,
-    "prs": 116
+    "prs": 117
   },
   "eng_topics_done": ["testreport", "bundle-dependabot", "remove-unused-nolint", "task-tool-v3.50.0", "gomega-v1.40.0", "race-flag-unit-tests", "ci-concurrency-group"],
   "coding_improvements_done": ["graphviz-duplicate-comment", "split-patterns-refactor", "edge-class-constants", "readme-flags-fix", "extract-graphns-helpers", "collect-sorted-nodes", "collect-task-strings-nonempty", "collect-task-strings-status-filter", "collect-node-ids-graphns", "graphviz-doc-comments", "collectnodeids-helper", "registry-map-presize"],
   "perf_topics_done": ["buffered-output", "avoid-rune-alloc", "compile-match-pattern", "bfs-index-pointer", "extractVarRefs-fast-path", "registry-map-presize"],
-  "test_coverage_done": ["dot", "loader", "taskgraph-builder", "indentwriter-addf", "mermaid", "taskgraph-vars", "cmd", "graphviz", "graphviz-2", "indentwriter-errors", "graph-edge-labels", "taskgraph-strings-and-varDescription", "mermaid-variableClassDefParts", "taskgraph-status-strings", "safe-numeric-fallback", "dot-exe-branch", "graphns-collectnodeids"]
+  "test_coverage_done": ["dot", "loader", "taskgraph-builder", "indentwriter-addf", "mermaid", "taskgraph-vars", "cmd", "graphviz", "graphviz-2", "indentwriter-errors", "graph-edge-labels", "taskgraph-strings-and-varDescription", "mermaid-variableClassDefParts", "taskgraph-status-strings", "safe-numeric-fallback", "dot-exe-branch", "graphns-collectnodeids", "mermaid-flowchartDirection-nil", "taskgraph-addGlobalVars-nilVars", "safe-numeric-fallback-claim"]
 }
