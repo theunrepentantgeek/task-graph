@@ -24,7 +24,24 @@ func NewRegistry() *Registry {
 // Prepare pre-registers all names that are already valid safe identifiers so they
 // take precedence over names that require sanitization. Must be called with all
 // names before calling ID() to guarantee deterministic results.
+//
+// Prepare also pre-sizes the internal maps to len(names) to avoid incremental
+// rehashing when the caller knows the full name set up front.
 func (r *Registry) Prepare(names []string) {
+	if n := len(names); n > len(r.results) {
+		// Grow maps proactively to avoid repeated rehashing.
+		claimed := make(map[string]string, n)
+		results := make(map[string]string, n)
+		for k, v := range r.claimed {
+			claimed[k] = v
+		}
+		for k, v := range r.results {
+			results[k] = v
+		}
+		r.claimed = claimed
+		r.results = results
+	}
+
 	for _, name := range names {
 		if r.isValid(name) {
 			if _, ok := r.results[name]; !ok {

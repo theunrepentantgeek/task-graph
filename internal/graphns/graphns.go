@@ -11,6 +11,18 @@ import (
 	"github.com/theunrepentantgeek/task-graph/internal/namespace"
 )
 
+// CollectNodeIDs returns the IDs of all nodes in the given slice, in the same order.
+// Both graphviz and mermaid call this immediately after CollectSortedNodes to
+// build the slice passed to safe.Registry.Prepare.
+func CollectNodeIDs(nodes []*graph.Node) []string {
+	ids := make([]string, len(nodes))
+	for i, n := range nodes {
+		ids[i] = n.ID()
+	}
+
+	return ids
+}
+
 // CollectSortedNodes returns all nodes from the graph, sorted alphabetically by ID.
 // Both graphviz and mermaid rendering need nodes in a stable, deterministic order.
 func CollectSortedNodes(g *graph.Graph) []*graph.Node {
