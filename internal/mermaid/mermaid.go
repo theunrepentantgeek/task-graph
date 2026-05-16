@@ -55,13 +55,8 @@ func WriteTo(
 
 	nodes := graphns.CollectSortedNodes(g)
 
-	nodeIDs := make([]string, len(nodes))
-	for i, n := range nodes {
-		nodeIDs[i] = n.ID()
-	}
-
 	reg := safe.NewRegistry()
-	reg.Prepare(nodeIDs)
+	reg.Prepare(graphns.CollectNodeIDs(nodes))
 
 	taskNodes, varNodes := graphns.SplitByKind(nodes)
 

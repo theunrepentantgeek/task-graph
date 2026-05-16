@@ -23,8 +23,6 @@ func CollectSortedNodes(g *graph.Graph) []*graph.Node {
 }
 
 // SplitByKind partitions nodes into task nodes and variable nodes.
-//
-//nolint:revive // Choosing to return two unnamed slices
 func SplitByKind(nodes []*graph.Node) ([]*graph.Node, []*graph.Node) {
 	var (
 		taskNodes []*graph.Node
@@ -68,6 +66,19 @@ func FindAllNamespaces(nsToNodes map[string][]*graph.Node) map[string]bool {
 	}
 
 	return allNS
+}
+
+// CollectNodeIDs returns a slice of the IDs of all nodes in the given slice.
+// Both graphviz and mermaid rendering need to pre-register all node IDs with
+// a safe.Registry before writing any node definitions.
+func CollectNodeIDs(nodes []*graph.Node) []string {
+	ids := make([]string, len(nodes))
+
+	for i, n := range nodes {
+		ids[i] = n.ID()
+	}
+
+	return ids
 }
 
 // BuildChildrenMap builds a parent→sorted-children map from a set of all
