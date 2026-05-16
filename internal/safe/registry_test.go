@@ -262,6 +262,36 @@ func TestRegistry_ID_DisambiguationSuffix_UsesLetterSuffix(t *testing.T) {
 	g.Expect(slash).To(gomega.Equal("doc_taskfile_B"))
 }
 
+// TestRegistry_ID_NumericFallback_UsesNumericSuffix verifies that when all 702 letter-based
+// disambiguation suffixes (_A..._ZZ) are exhausted, claim falls back to numeric suffixes (_1, _2…).
+// The test pre-claims "a_b" and all its letter variants via Prepare, then forces a collision
+// through a name that sanitizes to "a_b".
+func TestRegistry_ID_NumericFallback_UsesNumericSuffix(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Pre-claim "a_b" and all letter-suffixed variants so they belong to themselves.
+	preNames := make([]string, 0, 1+26+26*26)
+	preNames = append(preNames, "a_b")
+	for c := 'A'; c <= 'Z'; c++ {
+		preNames = append(preNames, "a_b_"+string(c))
+	}
+	for c1 := 'A'; c1 <= 'Z'; c1++ {
+		for c2 := 'A'; c2 <= 'Z'; c2++ {
+			preNames = append(preNames, "a_b_"+string(c1)+string(c2))
+		}
+	}
+
+	reg := NewRegistry()
+	reg.Prepare(preNames)
+
+	// "a:b" sanitizes to "a_b"; all letter variants are claimed by different originals,
+	// so claim must fall back to the numeric suffix.
+	result := reg.ID("a:b")
+
+	g.Expect(result).To(gomega.Equal("a_b_1"))
+}
+
 // TestRegistry_IDWithPrefix_AddsPrefixBeforeTransformation verifies IDWithPrefix behavior.
 func TestRegistry_IDWithPrefix_AddsPrefixBeforeTransformation(t *testing.T) {
 	t.Parallel()

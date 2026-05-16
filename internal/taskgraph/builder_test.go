@@ -146,3 +146,27 @@ func TestBuilder_Build_NonTaskCmd_NoEdge(t *testing.T) {
 	g.Expect(ok).To(BeTrue())
 	g.Expect(node.Edges()).To(BeEmpty(), "shell commands should not produce edges")
 }
+
+// TestBuilder_Build_IncludeGlobalVars_NilVars_ProducesNoVariableNodes verifies that
+// enabling IncludeGlobalVars with a taskfile that has no global variables (Vars == nil)
+// produces a graph with no variable nodes and no errors.
+func TestBuilder_Build_IncludeGlobalVars_NilVars_ProducesNoVariableNodes(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	tf := makeTaskfile(
+		&ast.TaskElement{
+			Key:   "task-a",
+			Value: &ast.Task{},
+		},
+	)
+	// makeTaskfile does not set Vars, so tf.Vars is nil.
+
+	builder := New(tf)
+	builder.IncludeGlobalVars = true
+	gr := builder.Build()
+
+	node, ok := gr.Node("task-a")
+	g.Expect(ok).To(BeTrue(), "task-a node should still be created")
+	g.Expect(node.Edges()).To(BeEmpty(), "no edges expected when there are no global vars")
+}
