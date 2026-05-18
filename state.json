@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-05-17T14:08:25Z",
-  "last_run_id": "25993073084",
+  "last_run": "2026-05-18T04:53:13Z",
+  "last_run_id": "26014214434",
   "monthly_activity_issue": 87,
   "comments_made": {
     "88": "2026-05-02T04:02:54Z",
@@ -14,16 +14,17 @@
     {"branch": "repo-assist/improve-graphns-collect-node-ids-2026-05-16-3b83d8b139b9e43e", "pr": 116, "status": "open", "date": "2026-05-16"},
     {"branch": "repo-assist/improve-collectnodeids-and-registry-perf-2026-05-16-cc10abad5add0812", "pr": 117, "status": "open", "date": "2026-05-16"},
     {"branch": "repo-assist/test-coverage-mermaid-taskgraph-safe-2026-05-16", "pr": 118, "status": "open", "date": "2026-05-16"},
-    {"branch": "repo-assist/eng-ci-concurrency-and-dot-coverage-2026-05-17", "pr": null, "status": "bundle", "date": "2026-05-17"},
-    {"branch": "repo-assist/test-coverage-mermaid-error-paths-2026-05-17", "pr": null, "status": "bundle", "date": "2026-05-17"}
+    {"branch": "repo-assist/test-coverage-mermaid-error-paths-2026-05-17", "pr": 120, "status": "open", "date": "2026-05-17"},
+    {"branch": "repo-assist/eng-ci-concurrency-group-2026-05-18", "pr": null, "status": "bundle", "date": "2026-05-18"},
+    {"branch": "repo-assist/improve-doc-comments-2026-05-18", "pr": null, "status": "bundle", "date": "2026-05-18"}
   ],
-  "notes": "PRs #116, #117, #118 open. Two bundles: (1) ci concurrency group + dot.exe test; (2) mermaid error path tests (93.3%->98.5%). Issues #114/#115/#119 are bundle artifacts awaiting manual application.",
+  "notes": "PRs #116, #117, #118, #120 open. Two new bundles from this run: (1) ci concurrency group (CI-only); (2) doc comments for loader.Load/cmd.Flags/cmd.CreateConfig. Issues #114/#115/#119 are older bundle artifacts awaiting manual application. Task 3 had no bugs to fix (fallback: no actionable issues/comments). Push continues to fail from sandbox.",
   "backlog_cursor": {
     "issues": 87,
-    "prs": 118
+    "prs": 120
   },
   "eng_topics_done": ["testreport", "bundle-dependabot", "remove-unused-nolint", "task-tool-v3.50.0", "gomega-v1.40.0", "race-flag-unit-tests", "ci-concurrency-group"],
-  "coding_improvements_done": ["graphviz-duplicate-comment", "split-patterns-refactor", "edge-class-constants", "readme-flags-fix", "extract-graphns-helpers", "collect-sorted-nodes", "collect-task-strings-nonempty", "collect-task-strings-status-filter", "collect-node-ids-graphns", "graphviz-doc-comments", "collectnodeids-helper", "registry-map-presize"],
+  "coding_improvements_done": ["graphviz-duplicate-comment", "split-patterns-refactor", "edge-class-constants", "readme-flags-fix", "extract-graphns-helpers", "collect-sorted-nodes", "collect-task-strings-nonempty", "collect-task-strings-status-filter", "collect-node-ids-graphns", "graphviz-doc-comments", "collectnodeids-helper", "registry-map-presize", "loader-load-doc-comment", "cmd-flags-doc-comment", "cmd-createconfig-doc-comment"],
   "perf_topics_done": ["buffered-output", "avoid-rune-alloc", "compile-match-pattern", "bfs-index-pointer", "extractVarRefs-fast-path", "registry-map-presize"],
   "test_coverage_done": ["dot", "loader", "taskgraph-builder", "indentwriter-addf", "mermaid", "taskgraph-vars", "cmd", "graphviz", "graphviz-2", "indentwriter-errors", "graph-edge-labels", "taskgraph-strings-and-varDescription", "mermaid-variableClassDefParts", "taskgraph-status-strings", "safe-numeric-fallback", "dot-exe-branch", "graphns-collectnodeids", "mermaid-flowchartDirection-nil", "taskgraph-addGlobalVars-nilVars", "safe-numeric-fallback-claim", "dot-exe-fallback", "mermaid-saveto-errors", "mermaid-style-rule-errors"]
 }
