@@ -127,6 +127,7 @@ func (c *CLI) CreateLogger() *slog.Logger {
 	return slog.New(handler)
 }
 
+// CreateConfig builds a Config from the optional config file and CLI flag overrides.
 func (c *CLI) CreateConfig() (*config.Config, error) {
 	cfg := config.New()
 
