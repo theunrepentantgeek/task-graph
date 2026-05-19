@@ -272,10 +272,13 @@ func TestRegistry_ID_NumericFallback_UsesNumericSuffix(t *testing.T) {
 
 	// Pre-claim "a_b" and all letter-suffixed variants so they belong to themselves.
 	preNames := make([]string, 0, 1+26+26*26)
+
 	preNames = append(preNames, "a_b")
+
 	for c := 'A'; c <= 'Z'; c++ {
 		preNames = append(preNames, "a_b_"+string(c))
 	}
+
 	for c1 := 'A'; c1 <= 'Z'; c1++ {
 		for c2 := 'A'; c2 <= 'Z'; c2++ {
 			preNames = append(preNames, "a_b_"+string(c1)+string(c2))
