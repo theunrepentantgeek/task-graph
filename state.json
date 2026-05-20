@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-05-19T16:01:41Z",
-  "last_run_id": "26109133361",
+  "last_run": "2026-05-20T04:50:37Z",
+  "last_run_id": "26141992970",
   "monthly_activity_issue": 87,
   "comments_made": {
     "88": "2026-05-02T04:02:54Z",
@@ -13,21 +13,21 @@
   "open_repo_assist_prs": [
     {"branch": "repo-assist/improve-graphns-collect-node-ids-2026-05-16-3b83d8b139b9e43e", "pr": 116, "status": "open", "date": "2026-05-16"},
     {"branch": "repo-assist/improve-collectnodeids-and-registry-perf-2026-05-16-cc10abad5add0812", "pr": 117, "status": "open", "date": "2026-05-16"},
-    {"branch": "repo-assist/test-coverage-mermaid-taskgraph-safe-2026-05-16-5718b0af86aa6561", "pr": 118, "status": "open", "date": "2026-05-16", "note": "lint fix pushed this run"},
-    {"branch": "repo-assist/test-coverage-mermaid-error-paths-2026-05-17-99f88938091ea449", "pr": 120, "status": "open", "date": "2026-05-17"},
+    {"branch": "repo-assist/test-coverage-mermaid-taskgraph-safe-2026-05-16-5718b0af86aa6561", "pr": 118, "status": "open", "date": "2026-05-16"},
     {"branch": "repo-assist/improve-doc-comments-2026-05-18-b657a2db95f198f8", "pr": 122, "status": "open", "date": "2026-05-18"},
     {"branch": "repo-assist/test-coverage-dot-exe-fallback-2026-05-18-dc8e648853305c07", "pr": 123, "status": "open", "date": "2026-05-18"},
     {"branch": "repo-assist/test-graphviz-error-paths-2026-05-19-8c0d72c5c24e164b", "pr": 124, "status": "open", "date": "2026-05-19"},
-    {"branch": "repo-assist/bundle-deps-2026-05-19", "pr": null, "status": "pending", "date": "2026-05-19", "note": "bundle: task v3.51.1, gomega v1.41.0, gh-aw-actions v0.74.4"},
-    {"branch": "repo-assist/improve-safe-label-replacer", "pr": null, "status": "pending", "date": "2026-05-19", "note": "refactor: strings.NewReplacer in safe.Label"}
+    {"branch": "repo-assist/improve-safe-label-replacer", "pr": 129, "status": "open", "date": "2026-05-19"},
+    {"branch": "repo-assist/bundle-deps-2026-05-20", "pr": null, "status": "pending", "date": "2026-05-20", "note": "bundle: task v3.51.1, gomega v1.41.0 (closes #125, #126)"},
+    {"branch": "repo-assist/improve-namespace-deduplicate-delimiter-logic-2026-05-20", "pr": null, "status": "pending", "date": "2026-05-20", "note": "refactor: extract prefixBeforeLastDelim in namespace package"}
   ],
-  "notes": "9 open/pending PRs. Issues #114/#115/#119/#121 are failed-push artifacts awaiting closure. No human issues open. PR #118 had lint failures (nolintlint + wsl_v5) - fixed and pushed this run.",
+  "notes": "9 open/pending PRs. Issues #114/#115/#119/#121/#128 are failed-push artifacts awaiting closure. No human issues open. PR #120 appears merged (not in open PR list).",
   "backlog_cursor": {
     "issues": 87,
-    "prs": 127
+    "prs": 129
   },
-  "eng_topics_done": ["testreport", "bundle-dependabot", "remove-unused-nolint", "task-tool-v3.50.0", "gomega-v1.40.0", "race-flag-unit-tests", "ci-concurrency-group", "bundle-deps-task-v3.51.1-gomega-v1.41.0-ghawactions-v0.74.4"],
-  "coding_improvements_done": ["graphviz-duplicate-comment", "split-patterns-refactor", "edge-class-constants", "readme-flags-fix", "extract-graphns-helpers", "collect-sorted-nodes", "collect-task-strings-nonempty", "collect-task-strings-status-filter", "collect-node-ids-graphns", "graphviz-doc-comments", "collectnodeids-helper", "registry-map-presize", "loader-godoc-comments", "dot-exe-fallback-test", "safe-label-replacer"],
+  "eng_topics_done": ["testreport", "bundle-dependabot", "remove-unused-nolint", "task-tool-v3.50.0", "gomega-v1.40.0", "race-flag-unit-tests", "ci-concurrency-group", "bundle-deps-task-v3.51.1-gomega-v1.41.0-ghawactions-v0.74.4", "bundle-deps-task-v3.51.1-gomega-v1.41.0-2026-05-20"],
+  "coding_improvements_done": ["graphviz-duplicate-comment", "split-patterns-refactor", "edge-class-constants", "readme-flags-fix", "extract-graphns-helpers", "collect-sorted-nodes", "collect-task-strings-nonempty", "collect-task-strings-status-filter", "collect-node-ids-graphns", "graphviz-doc-comments", "collectnodeids-helper", "registry-map-presize", "loader-godoc-comments", "dot-exe-fallback-test", "safe-label-replacer", "namespace-deduplicate-delimiter-logic"],
   "perf_topics_done": ["buffered-output", "avoid-rune-alloc", "compile-match-pattern", "bfs-index-pointer", "extractVarRefs-fast-path", "registry-map-presize"],
   "test_coverage_done": ["dot", "loader", "taskgraph-builder", "indentwriter-addf", "mermaid", "taskgraph-vars", "cmd", "graphviz", "graphviz-2", "indentwriter-errors", "graph-edge-labels", "taskgraph-strings-and-varDescription", "mermaid-variableClassDefParts", "taskgraph-status-strings", "safe-numeric-fallback", "dot-exe-branch", "graphns-collectnodeids", "mermaid-flowchartDirection-nil", "taskgraph-addGlobalVars-nilVars", "safe-numeric-fallback-claim", "mermaid-saveto-errors", "mermaid-styleRule-invalid", "dot-exe-fallback-success", "graphviz-error-paths-nil-graphviz"]
 }
