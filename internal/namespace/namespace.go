@@ -19,36 +19,30 @@ var informalDelimiters = "-."
 // Tier 2: otherwise, returns everything before the last "-" or ".".
 // Returns "" if no delimiter is found.
 func Namespace(id string) string {
-	if strings.Contains(id, formalDelimiter) {
-		idx := strings.LastIndex(id, formalDelimiter)
-
-		return id[:idx]
-	}
-
-	idx := strings.LastIndexAny(id, informalDelimiters)
-	if idx < 0 {
-		return ""
-	}
-
-	return id[:idx]
+	return prefixBeforeLastDelim(id)
 }
 
 // Parent returns the parent of a namespace string.
 // Uses the same two-tier logic as Namespace.
 // Returns "" if the namespace has no parent.
 func Parent(ns string) string {
-	if strings.Contains(ns, formalDelimiter) {
-		idx := strings.LastIndex(ns, formalDelimiter)
+	return prefixBeforeLastDelim(ns)
+}
 
-		return ns[:idx]
+// prefixBeforeLastDelim returns the portion of s before the last namespace
+// delimiter, applying the two-tier rule: formal (":") takes precedence over
+// informal ("-" or "."). Returns "" when no delimiter is found.
+func prefixBeforeLastDelim(s string) string {
+	if strings.Contains(s, formalDelimiter) {
+		return s[:strings.LastIndex(s, formalDelimiter)]
 	}
 
-	idx := strings.LastIndexAny(ns, informalDelimiters)
+	idx := strings.LastIndexAny(s, informalDelimiters)
 	if idx < 0 {
 		return ""
 	}
 
-	return ns[:idx]
+	return s[:idx]
 }
 
 // Depth returns the nesting depth of a namespace.
