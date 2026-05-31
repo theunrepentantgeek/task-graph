@@ -200,6 +200,51 @@ func TestFindAllNamespaces_TopLevelOnly_ReturnsSingleEntry(t *testing.T) {
 	g.Expect(result).To(HaveKey("cmd"))
 }
 
+// CollectNodeIDs tests
+
+func TestCollectNodeIDs_EmptySlice_ReturnsEmptySlice(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Act
+	result := graphns.CollectNodeIDs(nil)
+
+	// Assert
+	g.Expect(result).To(BeEmpty())
+}
+
+func TestCollectNodeIDs_MultipleNodes_ReturnsIDsInOrder(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	nodes := []*graph.Node{
+		makeTaskNode("build"),
+		makeTaskNode("test"),
+		makeTaskNode("deploy"),
+	}
+
+	// Act
+	result := graphns.CollectNodeIDs(nodes)
+
+	// Assert
+	g.Expect(result).To(Equal([]string{"build", "test", "deploy"}))
+}
+
+func TestCollectNodeIDs_SingleNode_ReturnsSingleID(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	nodes := []*graph.Node{makeTaskNode("ci:lint")}
+
+	// Act
+	result := graphns.CollectNodeIDs(nodes)
+
+	// Assert
+	g.Expect(result).To(Equal([]string{"ci:lint"}))
+}
+
 // BuildChildrenMap tests
 
 func TestBuildChildrenMap_SimpleHierarchy_MapsParentToChildren(t *testing.T) {

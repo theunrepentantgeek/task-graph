@@ -16,6 +16,7 @@ import (
 	"github.com/theunrepentantgeek/task-graph/internal/safe"
 )
 
+// SaveTo writes the Graphviz dot representation of the graph to the given file path.
 func SaveTo(
 	path string,
 	gr *graph.Graph,
@@ -38,6 +39,7 @@ func SaveTo(
 	return eris.Wrap(bw.Flush(), "failed to flush graphviz output")
 }
 
+// WriteTo writes the Graphviz dot representation of the graph to the given writer.
 func WriteTo(
 	w io.Writer,
 	g *graph.Graph,
