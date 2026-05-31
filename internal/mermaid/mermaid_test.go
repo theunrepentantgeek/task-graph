@@ -188,6 +188,68 @@ func TestWriteTo_WithVariableNodes_WritesVariableNodesAfterTasks(t *testing.T) {
 	gg.Assert(t, "sample_graph_with_variables", buf.Bytes())
 }
 
+func TestSaveTo_InvalidPath_ReturnsError(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Use a path inside a non-existent directory to force os.Create to fail.
+	filePath := filepath.Join(t.TempDir(), "nonexistent-dir", "graph.mmd")
+	cfg := config.New()
+
+	err := SaveTo(filePath, buildSampleGraph(t), cfg)
+
+	g.Expect(err).To(gomega.MatchError(gomega.ContainSubstring("failed to create file")))
+}
+
+func TestSaveTo_NilGraph_ReturnsError(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	filePath := filepath.Join(t.TempDir(), "graph.mmd")
+	cfg := config.New()
+
+	err := SaveTo(filePath, nil, cfg)
+
+	g.Expect(err).To(gomega.MatchError(gomega.ContainSubstring("mermaid: graph is nil")))
+}
+
+func TestWriteTo_WithInvalidStyleRulePattern_ReturnsError(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	gr := buildSampleGraph(t)
+
+	cfg := config.New()
+	cfg.NodeStyleRules = []config.NodeStyleRule{
+		// "[unclosed" is an invalid glob/regex pattern that triggers a compile error.
+		{Match: "[unclosed", Color: "red"},
+	}
+
+	err := WriteTo(&buf, gr, cfg)
+
+	g.Expect(err).To(gomega.MatchError(gomega.ContainSubstring("failed to compile match pattern")))
+}
+
+func TestWriteTo_WithStyleRuleWithNoProperties_SkipsClassDef(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	gr := buildSampleGraph(t)
+
+	cfg := config.New()
+	// A rule with no Color, FillColor, or FontColor produces an empty classDef and is skipped.
+	cfg.NodeStyleRules = []config.NodeStyleRule{
+		{Match: "alpha"},
+	}
+
+	err := WriteTo(&buf, gr, cfg)
+
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+	g.Expect(buf.String()).NotTo(gomega.ContainSubstring("classDef"))
+}
+
 func buildSampleGraph(t *testing.T) *graph.Graph {
 	t.Helper()
 
