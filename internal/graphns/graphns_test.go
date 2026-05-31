@@ -242,25 +242,25 @@ func TestBuildChildrenMap_ChildrenAreSorted(t *testing.T) {
 // CollectNodeIDs tests
 
 func TestCollectNodeIDs_EmptySlice_ReturnsEmptySlice(t *testing.T) {
-t.Parallel()
-g := NewWithT(t)
+	t.Parallel()
+	g := NewWithT(t)
 
-result := graphns.CollectNodeIDs(nil)
+	result := graphns.CollectNodeIDs(nil)
 
-g.Expect(result).To(BeEmpty())
+	g.Expect(result).To(BeEmpty())
 }
 
 func TestCollectNodeIDs_MultipleNodes_ReturnsIDsInOrder(t *testing.T) {
-t.Parallel()
-g := NewWithT(t)
+	t.Parallel()
+	g := NewWithT(t)
 
-nodes := []*graph.Node{
-makeTaskNode("build"),
-makeTaskNode("test"),
-makeTaskNode("lint"),
-}
+	nodes := []*graph.Node{
+		makeTaskNode("build"),
+		makeTaskNode("test"),
+		makeTaskNode("lint"),
+	}
 
-result := graphns.CollectNodeIDs(nodes)
+	result := graphns.CollectNodeIDs(nodes)
 
-g.Expect(result).To(Equal([]string{"build", "test", "lint"}))
+	g.Expect(result).To(Equal([]string{"build", "test", "lint"}))
 }

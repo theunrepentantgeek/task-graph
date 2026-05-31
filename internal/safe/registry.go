@@ -2,6 +2,7 @@ package safe
 
 import (
 	"fmt"
+	"maps"
 	"strings"
 	"unicode/utf8"
 )
@@ -32,12 +33,9 @@ func (r *Registry) Prepare(names []string) {
 		// Grow maps proactively to avoid repeated rehashing.
 		claimed := make(map[string]string, n)
 		results := make(map[string]string, n)
-		for k, v := range r.claimed {
-			claimed[k] = v
-		}
-		for k, v := range r.results {
-			results[k] = v
-		}
+
+		maps.Copy(claimed, r.claimed)
+		maps.Copy(results, r.results)
 		r.claimed = claimed
 		r.results = results
 	}
