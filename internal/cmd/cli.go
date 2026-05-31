@@ -39,34 +39,34 @@ type CLI struct {
 
 	AutoColor bool `help:"Automatically color nodes by namespace using a built-in palette." long:"auto-color"`
 
-	//nolint:revive // Intentionally long name for clarity in the CLI help.
+	//nolint:revive,nolintlint // Intentionally long name for clarity in the CLI help.
 	ColorblindMode bool `help:"Use an accessibility-optimised colour palette (Okabe-Ito) for --auto-color instead of the default palette." long:"colorblind-mode"`
 
-	//nolint:revive // Intentionally long name for clarity in the CLI help.
+	//nolint:revive,nolintlint // Intentionally long name for clarity in the CLI help.
 	IncludeGlobalVars bool `help:"Include global variables as nodes in the graph, with edges to consuming tasks." long:"include-global-vars"`
 
 	GraphType string `help:"Type of graph to generate (dot or mermaid). Defaults to dot." long:"graph-type"`
 
-	//nolint:revive // Intentionally long line for clarity in the CLI help.
+	//nolint:revive,nolintlint // Intentionally long line for clarity in the CLI help.
 	Highlight string `help:"Highlight specific tasks in the graph. Accepts task names or glob patterns, separated by commas or semicolons." long:"highlight"`
 
-	//nolint:revive // Intentionally long name for clarity in the CLI help.
+	//nolint:revive,nolintlint // Intentionally long name for clarity in the CLI help.
 	HighlightColor string `help:"Fill colour to use when highlighting tasks (e.g. orange, #ff9900). Defaults to yellow." long:"highlight-color"`
 
-	//nolint:revive // Intentionally long name for clarity in the CLI help.
+	//nolint:revive,nolintlint // Intentionally long name for clarity in the CLI help.
 	RenderImage string `help:"Render the graph as an image using graphviz dot. Specify the file type (e.g. png, svg)." long:"render-image"`
 
-	//nolint:revive // Intentionally long name for clarity in the CLI help.
+	//nolint:revive,nolintlint // Intentionally long name for clarity in the CLI help.
 	ExportConfig string `help:"Export the effective configuration to a file (YAML or JSON based on file extension)." long:"export-config"`
 
-	//nolint:revive // Intentionally long name for clarity in the CLI help.
+	//nolint:revive,nolintlint // Intentionally long name for clarity in the CLI help.
 	Focus   string `help:"Show only tasks matching the given patterns together with all their transitive dependencies and dependents. Accepts task names or glob patterns, separated by commas or semicolons." long:"focus"`
 	Verbose bool   `help:"Enable verbose logging."`
 }
 
 // Run executes the CLI command with the given flags.
 //
-//nolint:revive // Difficult to simplify
+//nolint:revive,nolintlint // Difficult to simplify
 func (c *CLI) Run(
 	flags *Flags,
 ) error {
@@ -127,6 +127,7 @@ func (c *CLI) CreateLogger() *slog.Logger {
 	return slog.New(handler)
 }
 
+// CreateConfig builds a Config from the optional config file and CLI flag overrides.
 func (c *CLI) CreateConfig() (*config.Config, error) {
 	cfg := config.New()
 
@@ -370,7 +371,7 @@ func (c *CLI) loadConfigFile(cfg *config.Config) error {
 // given comma-or-semicolon-separated patterns (glob-style), together with all
 // nodes transitively reachable from them in either direction.
 //
-//nolint:revive // Difficult to simplify
+//nolint:revive,nolintlint // Difficult to simplify
 func applyFocus(
 	gr *graph.Graph,
 	focusPatterns string,
