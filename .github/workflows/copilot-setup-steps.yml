@@ -26,6 +26,11 @@ jobs:
           fetch-depth: 0 # required to access tags
           submodules: "true"
 
+      - name: Install gh-aw extension
+        uses: github/gh-aw-actions/setup-cli@46d564922b082d0db93244972e8005ea6904ee5f # v0.76.1
+        with:
+          version: v0.76.1
+
       - name: Install Dependencies
         run: sudo .devcontainer/install-dependencies.sh --skip-installed
 
