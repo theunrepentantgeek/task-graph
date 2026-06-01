@@ -39,19 +39,15 @@ type CLI struct {
 
 	AutoColor bool `help:"Automatically color nodes by namespace using a built-in palette." long:"auto-color"`
 
-	//nolint:revive // Intentionally long name for clarity in the CLI help.
-	ColorblindMode bool `help:"Use an accessibility-optimised colour palette (Okabe-Ito) for --auto-color instead of the default palette." long:"colorblind-mode"`
+	ColorblindMode bool `help:"Use an accessibility-optimised colour palette (Okabe-Ito) for --auto-color instead of the default palette." long:"colorblind-mode"` //nolint:revive // Intentionally long line for clarity in the CLI help.
 
-	//nolint:revive // Intentionally long name for clarity in the CLI help.
-	IncludeGlobalVars bool `help:"Include global variables as nodes in the graph, with edges to consuming tasks." long:"include-global-vars"`
+	IncludeGlobalVars bool `help:"Include global variables as nodes in the graph, with edges to consuming tasks." long:"include-global-vars"` //nolint:revive // Intentionally long line for clarity in the CLI help.
 
 	GraphType string `help:"Type of graph to generate (dot or mermaid). Defaults to dot." long:"graph-type"`
 
-	//nolint:revive // Intentionally long line for clarity in the CLI help.
-	Highlight string `help:"Highlight specific tasks in the graph. Accepts task names or glob patterns, separated by commas or semicolons." long:"highlight"`
+	Highlight string `help:"Highlight specific tasks in the graph. Accepts task names or glob patterns, separated by commas or semicolons." long:"highlight"` //nolint:revive // Intentionally long line for clarity in the CLI help.
 
-	//nolint:revive // Intentionally long name for clarity in the CLI help.
-	HighlightColor string `help:"Fill colour to use when highlighting tasks (e.g. orange, #ff9900). Defaults to yellow." long:"highlight-color"`
+	HighlightColor string `help:"Fill colour to use when highlighting tasks (e.g. orange, #ff9900). Defaults to yellow." long:"highlight-color"` //nolint:revive // Intentionally long line for clarity in the CLI help.
 
 	//nolint:revive // Intentionally long name for clarity in the CLI help.
 	RenderImage string `help:"Render the graph as an image using graphviz dot. Specify the file type (e.g. png, svg)." long:"render-image"`
@@ -65,9 +61,7 @@ type CLI struct {
 }
 
 // Run executes the CLI command with the given flags.
-//
-//nolint:revive // Difficult to simplify
-func (c *CLI) Run(
+func (c *CLI) Run( //nolint:revive // Cognitive complexity is acceptable for a top-level command entry point.
 	flags *Flags,
 ) error {
 	ctx := context.Background()
@@ -369,9 +363,7 @@ func (c *CLI) loadConfigFile(cfg *config.Config) error {
 // applyFocus returns a new graph containing only the nodes that match any of the
 // given comma-or-semicolon-separated patterns (glob-style), together with all
 // nodes transitively reachable from them in either direction.
-//
-//nolint:revive // Difficult to simplify
-func applyFocus(
+func applyFocus( //nolint:revive // Cognitive complexity is acceptable for this self-contained helper.
 	gr *graph.Graph,
 	focusPatterns string,
 ) (*graph.Graph, error) {
