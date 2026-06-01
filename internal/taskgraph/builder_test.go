@@ -6,6 +6,8 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/go-task/task/v3/taskfile/ast"
+
+	"github.com/theunrepentantgeek/task-graph/internal/graph"
 )
 
 // makeTaskfile creates a minimal ast.Taskfile with the given task elements for use in tests.
@@ -169,4 +171,40 @@ func TestBuilder_Build_IncludeGlobalVars_NilVars_ProducesNoVariableNodes(t *test
 	node, ok := gr.Node("task-a")
 	g.Expect(ok).To(BeTrue(), "task-a node should still be created")
 	g.Expect(node.Edges()).To(BeEmpty(), "no edges expected when there are no global vars")
+}
+
+// TestAddEdgesForVarRefs_VarNodeMissing_SkipsEdge verifies that addEdgesForVarRefs
+// silently skips var references when the corresponding variable node is not in the graph.
+func TestAddEdgesForVarRefs_VarNodeMissing_SkipsEdge(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	gr := graph.New()
+	taskNode := gr.AddNode("my-task")
+
+	b := &Builder{}
+	refs := map[string]bool{"MISSING_VAR": true}
+
+	b.addEdgesForVarRefs(gr, "my-task", refs)
+
+	// No edge should be created because "var:MISSING_VAR" node does not exist.
+	g.Expect(taskNode.Edges()).To(BeEmpty())
+}
+
+// TestAddEdgesForVarRefs_TaskNodeMissing_SkipsEdge verifies that addEdgesForVarRefs
+// silently skips var references when the consuming task node is not in the graph.
+func TestAddEdgesForVarRefs_TaskNodeMissing_SkipsEdge(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	gr := graph.New()
+	varNode := gr.AddNode("var:MY_VAR")
+
+	b := &Builder{}
+	refs := map[string]bool{"MY_VAR": true}
+
+	b.addEdgesForVarRefs(gr, "nonexistent-task", refs)
+
+	// No edge should be created because "nonexistent-task" node does not exist.
+	g.Expect(varNode.Edges()).To(BeEmpty())
 }
