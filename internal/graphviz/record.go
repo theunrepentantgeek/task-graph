@@ -17,11 +17,13 @@ func newRecord() *record {
 	return &record{}
 }
 
-var escapings = map[string]string{
-	`{`: `\{`,
-	`}`: `\}`,
-	`"`: `\"`,
-}
+// recordEscaper replaces Graphviz record metacharacters with their escaped equivalents
+// in a single pass, applied to multi-part record content.
+var recordEscaper = strings.NewReplacer(
+	`{`, `\{`,
+	`}`, `\}`,
+	`"`, `\"`,
+)
 
 // String returns the string representation of the record, which is the parts joined by " | ".
 func (r *record) String() string {
@@ -30,11 +32,8 @@ func (r *record) String() string {
 	}
 
 	content := strings.Join(r.parts, " | ")
-	for s, replacement := range escapings {
-		content = strings.ReplaceAll(content, s, replacement)
-	}
 
-	return fmt.Sprintf("{%s}", content)
+	return fmt.Sprintf("{%s}", recordEscaper.Replace(content))
 }
 
 // add adds a part to the record.

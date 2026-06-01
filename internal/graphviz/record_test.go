@@ -149,3 +149,35 @@ func TestString_PartWithPipe_EscapesPipeInOutput(t *testing.T) {
 	// Assert
 	g.Expect(result).To(Equal(`{name | echo foo \| bar}`))
 }
+
+func TestString_MultiPartWithBraces_EscapesBraces(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	r := newRecord()
+	r.add("name")
+	r.add("value {x}")
+
+	// Act
+	result := r.String()
+
+	// Assert
+	g.Expect(result).To(Equal(`{name | value \{x\}}`))
+}
+
+func TestString_MultiPartWithDoubleQuote_EscapesQuote(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	r := newRecord()
+	r.add("name")
+	r.add(`say "hello"`)
+
+	// Act
+	result := r.String()
+
+	// Assert
+	g.Expect(result).To(Equal(`{name | say \"hello\"}`))
+}
