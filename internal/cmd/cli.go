@@ -49,14 +49,11 @@ type CLI struct {
 
 	HighlightColor string `help:"Fill colour to use when highlighting tasks (e.g. orange, #ff9900). Defaults to yellow." long:"highlight-color"` //nolint:revive // Intentionally long line for clarity in the CLI help.
 
-	//nolint:revive // Intentionally long name for clarity in the CLI help.
-	RenderImage string `help:"Render the graph as an image using graphviz dot. Specify the file type (e.g. png, svg)." long:"render-image"`
+	RenderImage string `help:"Render the graph as an image using graphviz dot. Specify the file type (e.g. png, svg)." long:"render-image"` //nolint:revive // Intentionally long line for clarity in the CLI help.
 
-	//nolint:revive // Intentionally long name for clarity in the CLI help.
-	ExportConfig string `help:"Export the effective configuration to a file (YAML or JSON based on file extension)." long:"export-config"`
+	ExportConfig string `help:"Export the effective configuration to a file (YAML or JSON based on file extension)." long:"export-config"` //nolint:revive // Intentionally long line for clarity in the CLI help.
 
-	//nolint:revive // Intentionally long name for clarity in the CLI help.
-	Focus   string `help:"Show only tasks matching the given patterns together with all their transitive dependencies and dependents. Accepts task names or glob patterns, separated by commas or semicolons." long:"focus"`
+	Focus   string `help:"Show only tasks matching the given patterns together with all their transitive dependencies and dependents. Accepts task names or glob patterns, separated by commas or semicolons." long:"focus"` //nolint:revive // Intentionally long line for clarity in the CLI help.
 	Verbose bool   `help:"Enable verbose logging."`
 }
 
@@ -121,6 +118,7 @@ func (c *CLI) CreateLogger() *slog.Logger {
 	return slog.New(handler)
 }
 
+// CreateConfig builds a Config from the optional config file and CLI flag overrides.
 func (c *CLI) CreateConfig() (*config.Config, error) {
 	cfg := config.New()
 
