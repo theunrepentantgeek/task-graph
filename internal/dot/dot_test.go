@@ -95,6 +95,25 @@ func TestFindExecutable_SpecificFilePath_ReturnsPath(t *testing.T) {
 	g.Expect(result).To(Equal(fakeDot))
 }
 
+func TestFindExecutable_DirectoryWithDotExe_ReturnsDotExePath(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange: create a directory containing only "dot.exe" (no plain "dot").
+	// This exercises the .exe extension fallback in findInDirectory.
+	dir := t.TempDir()
+	dotExePath := filepath.Join(dir, "dot.exe")
+	err := os.WriteFile(dotExePath, []byte("fake dot"), 0o600)
+	g.Expect(err).NotTo(HaveOccurred())
+
+	// Act
+	result, err := FindExecutable(dir)
+
+	// Assert
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(result).To(Equal(dotExePath))
+}
+
 func TestFindExecutable_EmptyDotPathNoDot_ReturnsError(t *testing.T) {
 	t.Parallel()
 	g := NewWithT(t)
