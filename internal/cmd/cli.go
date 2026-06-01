@@ -54,6 +54,7 @@ type CLI struct {
 	ExportConfig string `help:"Export the effective configuration to a file (YAML or JSON based on file extension)." long:"export-config"` //nolint:revive // Intentionally long line for clarity in the CLI help.
 
 	Focus   string `help:"Show only tasks matching the given patterns together with all their transitive dependencies and dependents. Accepts task names or glob patterns, separated by commas or semicolons." long:"focus"` //nolint:revive // Intentionally long line for clarity in the CLI help.
+	Footer  bool   `help:"Add a 'Created by task-graph' footer to the generated graph." long:"footer"`
 	Verbose bool   `help:"Enable verbose logging."`
 }
 
@@ -266,6 +267,10 @@ func (c *CLI) applyConfigOverrides(cfg *config.Config) {
 
 	if c.IncludeGlobalVars {
 		cfg.IncludeGlobalVars = true
+	}
+
+	if c.Footer {
+		cfg.Footer = true
 	}
 
 	if c.Highlight != "" {

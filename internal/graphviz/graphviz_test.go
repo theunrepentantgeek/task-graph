@@ -560,3 +560,40 @@ func buildGraphWithVariables(t *testing.T) *graph.Graph {
 
 	return gr
 }
+
+func TestWriteTo_WithFooter_WritesFooterAttributes(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	gr := buildSampleGraph(t)
+
+	cfg := config.New()
+	cfg.Footer = true
+	err := WriteTo(&buf, gr, cfg)
+
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+
+	output := buf.String()
+	g.Expect(output).To(gomega.ContainSubstring("label="))
+	g.Expect(output).To(gomega.ContainSubstring("task-graph"))
+	g.Expect(output).To(gomega.ContainSubstring("labelloc=b"))
+	g.Expect(output).To(gomega.ContainSubstring("labeljust=r"))
+}
+
+func TestWriteTo_WithoutFooter_DoesNotWriteFooterAttributes(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	gr := buildSampleGraph(t)
+
+	cfg := config.New()
+	err := WriteTo(&buf, gr, cfg)
+
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+
+	output := buf.String()
+	g.Expect(output).NotTo(gomega.ContainSubstring("labelloc=b"))
+	g.Expect(output).NotTo(gomega.ContainSubstring("labeljust=r"))
+}
