@@ -106,6 +106,21 @@ func TestSaveTo_WritesFileToDisk(t *testing.T) {
 	gg.Assert(t, "sample_graph", content)
 }
 
+// TestWriteTo_WithNilConfig_UsesDefaultDirection verifies that passing a nil config
+// falls back to the "TD" (top-down) direction default in flowchartDirection.
+func TestWriteTo_WithNilConfig_UsesDefaultDirection(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	gr := buildSampleGraph(t)
+
+	err := WriteTo(&buf, gr, nil)
+
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+	g.Expect(buf.String()).To(gomega.HavePrefix("flowchart TD\n"))
+}
+
 func TestWriteTo_WithCustomDirection_UsesConfiguredDirection(t *testing.T) {
 	t.Parallel()
 	g := gomega.NewWithT(t)
