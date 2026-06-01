@@ -428,6 +428,106 @@ func TestSaveTo_InvalidPath_ReturnsError(t *testing.T) {
 	g.Expect(err.Error()).To(gomega.ContainSubstring("failed to create file"))
 }
 
+// TestWriteTo_WithGroupByNamespace_RootNodeInvalidStyleRule_ReturnsError verifies
+// that writeGroupedNodesTo propagates an error from writeNodesTo when processing
+// root-level (un-namespaced) nodes with an invalid style rule pattern.
+func TestWriteTo_WithGroupByNamespace_RootNodeInvalidStyleRule_ReturnsError(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Arrange – graph has a root node ("build") and namespaced nodes
+	buf := bytes.Buffer{}
+	gr := buildNamespacedGraph(t)
+
+	cfg := config.New()
+	cfg.GroupByNamespace = true
+	cfg.NodeStyleRules = []config.NodeStyleRule{
+		{Match: "[invalid", Color: "red"},
+	}
+
+	// Act
+	err := WriteTo(&buf, gr, cfg)
+
+	// Assert
+	g.Expect(err).To(gomega.HaveOccurred())
+}
+
+// TestWriteTo_WithGroupByNamespace_DeepNamespaceInvalidStyleRule_ReturnsError
+// verifies that errors propagate correctly through the recursive
+// writeNamespaceSubgraphTo chain. With only a deeply-nested node ("cmd:test:unit"),
+// the "cmd" subgraph's writeNodesTo is a no-op but the recursive child call for
+// "cmd:test" fails, exercising lines 128–130 and 151–153 and 156–159.
+func TestWriteTo_WithGroupByNamespace_DeepNamespaceInvalidStyleRule_ReturnsError(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Arrange – only a deeply-nested node; no root or direct-cmd nodes
+	gr := graph.New()
+	gr.AddNode("cmd:test:unit")
+
+	buf := bytes.Buffer{}
+	cfg := config.New()
+	cfg.GroupByNamespace = true
+	cfg.NodeStyleRules = []config.NodeStyleRule{
+		{Match: "[invalid", Color: "red"},
+	}
+
+	// Act
+	err := WriteTo(&buf, gr, cfg)
+
+	// Assert
+	g.Expect(err).To(gomega.HaveOccurred())
+}
+
+// TestWriteTo_WithVariableNodesOnly_InvalidStyleRule_ReturnsError verifies that
+// writeVariableNodesTo propagates an error when a variable node's style rule
+// pattern is invalid. With no task nodes, writeAllNodesTo is a no-op and the
+// error originates inside writeVariableNodesTo (line 273).
+func TestWriteTo_WithVariableNodesOnly_InvalidStyleRule_ReturnsError(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Arrange – a graph with only a variable node and an invalid style rule
+	gr := graph.New()
+	v := gr.AddNode("var:FOO")
+	v.Kind = graph.NodeKindVariable
+	v.Label = "FOO"
+	v.Description = "some value"
+
+	buf := bytes.Buffer{}
+	cfg := config.New()
+	cfg.NodeStyleRules = []config.NodeStyleRule{
+		{Match: "[invalid", Color: "red"},
+	}
+
+	// Act
+	err := WriteTo(&buf, gr, cfg)
+
+	// Assert
+	g.Expect(err).To(gomega.HaveOccurred())
+}
+
+// TestWriteTo_WithVariableNodesAndNilGraphvizBlock_WritesOutput verifies that
+// WriteTo succeeds when cfg is non-nil but cfg.Graphviz is nil and the graph
+// contains variable nodes. This exercises the `cfg.Graphviz != nil` false-branch
+// inside applyVariableNodeConfig.
+func TestWriteTo_WithVariableNodesAndNilGraphvizBlock_WritesOutput(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Arrange – cfg present but Graphviz sub-config absent
+	buf := bytes.Buffer{}
+	gr := buildGraphWithVariables(t)
+	cfg := &config.Config{} // Graphviz field is nil
+
+	// Act
+	err := WriteTo(&buf, gr, cfg)
+
+	// Assert
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+	g.Expect(buf.String()).To(gomega.ContainSubstring("rank=sink"))
+}
+
 func buildGraphWithVariables(t *testing.T) *graph.Graph {
 	t.Helper()
 

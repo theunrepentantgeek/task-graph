@@ -9,6 +9,9 @@ import (
 	"github.com/rotisserie/eris"
 )
 
+// Load reads and parses the Taskfile at the given filename, resolving relative
+// paths before delegating to the go-task reader. Returns the merged AST or an
+// error if the file cannot be read, parsed, or merged.
 func Load(
 	ctx context.Context,
 	filename string,
