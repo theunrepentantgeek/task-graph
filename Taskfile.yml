@@ -77,6 +77,21 @@ tasks:
   ci:
     desc: Run continuous integration tasks
     deps:
+      - ci:clean-cache
+    cmds:
+      - task: ci:run
+
+  ci:clean-cache:
+    desc: Clear Go build and lint caches to ensure reproducible CI results
+    internal: true
+    cmds:
+      - go clean -cache
+      - golangci-lint-custom cache clean
+
+  ci:run:
+    desc: Run CI tasks after cache is cleared
+    internal: true
+    deps:
       - test
       - build:sbom
 
