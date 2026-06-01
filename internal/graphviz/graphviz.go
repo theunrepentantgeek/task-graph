@@ -61,6 +61,8 @@ func WriteTo(
 	iw := indentwriter.New()
 	root := iw.Add("digraph {")
 
+	writeFontAttributesTo(root, cfg)
+
 	err := writeAllNodesTo(root, taskNodes, cfg, reg)
 	if err != nil {
 		return err
@@ -94,6 +96,33 @@ func writeAllNodesTo(
 	}
 
 	return writeNodesTo(root, nodes, cfg, reg)
+}
+
+// writeFontAttributesTo writes global node font defaults to the graph root
+// when Font or FontSize settings are present in the config.
+func writeFontAttributesTo(
+	root *indentwriter.Line,
+	cfg *config.Config,
+) {
+	if cfg == nil || cfg.Graphviz == nil {
+		return
+	}
+
+	if cfg.Graphviz.Font == "" && cfg.Graphviz.FontSize == 0 {
+		return
+	}
+
+	defaults := newProperties()
+
+	if cfg.Graphviz.Font != "" {
+		defaults.Add("fontname", cfg.Graphviz.Font)
+	}
+
+	if cfg.Graphviz.FontSize > 0 {
+		defaults.Addf("fontsize", "%d", cfg.Graphviz.FontSize)
+	}
+
+	defaults.WriteTo("node", root)
 }
 
 // writeGroupedNodesTo writes nodes organized into namespace subgraph clusters.
