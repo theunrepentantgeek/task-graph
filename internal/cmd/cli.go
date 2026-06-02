@@ -244,6 +244,8 @@ func (c *CLI) renderImage(ctx context.Context, flags *Flags) error {
 }
 
 // applyConfigOverrides applies CLI flag overrides to the configuration.
+//
+//nolint:revive // Cognitive complexity is acceptable
 func (c *CLI) applyConfigOverrides(cfg *config.Config) {
 	if c.GroupByNamespace {
 		cfg.GroupByNamespace = true

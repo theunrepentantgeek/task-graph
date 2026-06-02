@@ -40,6 +40,8 @@ func SaveTo(
 }
 
 // WriteTo writes the Graphviz dot representation of the graph to the given writer.
+//
+//nolint:revive // Complexity is acceptable
 func WriteTo(
 	w io.Writer,
 	g *graph.Graph,
