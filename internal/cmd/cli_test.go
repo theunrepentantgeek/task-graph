@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"testing"
@@ -501,6 +502,75 @@ func TestLoadConfigFile_UnknownExtensionFallsBackToYAML(t *testing.T) {
 	g.Expect(cfg.Graphviz.FontSize).To(Equal(11))
 }
 
+func TestLoadConfigFile_UnknownExtensionInvalidContentReturnsError(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// "invalid.conf" contains content that is neither valid YAML nor valid JSON
+	cli := CLI{
+		Config: filepath.Join("testdata", "invalid.conf"),
+	}
+
+	_, err := cli.CreateConfig()
+
+	g.Expect(err).To(HaveOccurred())
+	g.Expect(err).To(MatchError(ContainSubstring("failed to parse config file")))
+}
+
+// TestSaveGraph
+
+func TestSaveGraph_UnsupportedGraphType_ReturnsError(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	dir := t.TempDir()
+	cli := CLI{
+		Output:    filepath.Join(dir, "out.dot"),
+		GraphType: "unsupported",
+	}
+	gr := graph.New()
+	flags := &Flags{Config: config.New(), Log: slog.Default()}
+
+	err := cli.saveGraph(gr, flags)
+
+	g.Expect(err).To(HaveOccurred())
+	g.Expect(err).To(MatchError(ContainSubstring("unsupported graph type")))
+}
+
+func TestSaveGraph_DotType_WritesFile(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	dir := t.TempDir()
+	outPath := filepath.Join(dir, "out.dot")
+	cli := CLI{Output: outPath, GraphType: graphTypeDot}
+	gr := graph.New()
+	gr.AddNode("build")
+	flags := &Flags{Config: config.New(), Log: slog.Default()}
+
+	err := cli.saveGraph(gr, flags)
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(outPath).To(BeAnExistingFile())
+}
+
+func TestSaveGraph_MermaidType_WritesFile(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	dir := t.TempDir()
+	outPath := filepath.Join(dir, "out.mmd")
+	cli := CLI{Output: outPath, GraphType: graphTypeMermaid}
+	gr := graph.New()
+	gr.AddNode("build")
+	flags := &Flags{Config: config.New(), Log: slog.Default()}
+
+	err := cli.saveGraph(gr, flags)
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(outPath).To(BeAnExistingFile())
+}
+
 // TestResolveGraphType
 
 func TestResolveGraphType_DefaultsToDot(t *testing.T) {
@@ -643,6 +713,22 @@ func TestApplyFocus_MultiplePatternsSeparatedByComma(t *testing.T) {
 
 	ids := collectNodeIDs(result)
 	g.Expect(ids).To(ConsistOf("build", "test"))
+}
+
+func TestApplyFocus_InvalidPattern_ReturnsError(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	gr := graph.New()
+	gr.AddNode("build")
+
+	// Act — "[" is an unclosed bracket class, invalid as a regex
+	_, err := applyFocus(gr, "[invalid")
+
+	// Assert
+	g.Expect(err).To(HaveOccurred())
+	g.Expect(err).To(MatchError(ContainSubstring("invalid focus pattern")))
 }
 
 // collectNodeIDs returns all node IDs from a graph as a slice.
