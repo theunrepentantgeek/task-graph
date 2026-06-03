@@ -73,6 +73,42 @@ func TestWriteTo_WithStyleRules_AppliesClassDefs(t *testing.T) {
 	gg.Assert(t, "sample_graph_with_style_rules", buf.Bytes())
 }
 
+func TestWriteTo_WithDashedStyleRule_WritesStrokeDasharray(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	gr := buildSampleGraph(t)
+
+	cfg := config.New()
+	cfg.NodeStyleRules = []config.NodeStyleRule{
+		{Match: "alpha", Style: "dashed"},
+	}
+
+	err := WriteTo(&buf, gr, cfg)
+
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+	g.Expect(buf.String()).To(gomega.ContainSubstring("stroke-dasharray:5,5"))
+}
+
+func TestWriteTo_WithBoldStyleRule_WritesStrokeWidth(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	buf := bytes.Buffer{}
+	gr := buildSampleGraph(t)
+
+	cfg := config.New()
+	cfg.NodeStyleRules = []config.NodeStyleRule{
+		{Match: "b*", Style: "bold"},
+	}
+
+	err := WriteTo(&buf, gr, cfg)
+
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+	g.Expect(buf.String()).To(gomega.ContainSubstring("stroke-width:3px"))
+}
+
 func TestWriteTo_NilGraph_ReturnsError(t *testing.T) {
 	t.Parallel()
 	g := gomega.NewWithT(t)

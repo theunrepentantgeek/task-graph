@@ -272,6 +272,17 @@ func buildClassDef(rule config.NodeStyleRule) string {
 		parts = append(parts, "color:"+rule.FontColor)
 	}
 
+	// Translate Graphviz-style Style values to equivalent Mermaid CSS properties.
+	// "filled" requires no translation: fill is always applied when FillColor is set.
+	switch rule.Style {
+	case "dashed":
+		parts = append(parts, "stroke-dasharray:5,5")
+	case "dotted":
+		parts = append(parts, "stroke-dasharray:2,2")
+	case "bold":
+		parts = append(parts, "stroke-width:3px")
+	}
+
 	return strings.Join(parts, ",")
 }
 
