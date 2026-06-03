@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-06-03T05:33:09Z",
-  "last_run_id": "26865653621",
+  "last_run": "2026-06-03T17:32:34Z",
+  "last_run_id": "26901764056",
   "monthly_activity_issue": 139,
   "comments_made": {
     "134": "2026-05-31T14:27:45Z"
@@ -9,14 +9,13 @@
     "88": {"pr": 89, "status": "merged", "date": "2026-05-01"}
   },
   "open_repo_assist_prs": [
-    {"branch": "repo-assist/improve-mermaid-style-2026-06-03-9366fc1", "pr": null, "status": "open", "date": "2026-06-03", "desc": "feat(mermaid): translate NodeStyleRule.Style to Mermaid CSS + test(cmd): Run integration tests 60.3%->79.4%"},
-    {"branch": "repo-assist/eng-ci-concurrency-2026-06-02-9366fc1", "pr": null, "status": "open", "date": "2026-06-02", "desc": "ci: concurrency group + perf: namespace string scan optimizations (blocked: protected file)"},
-    {"branch": "repo-assist/test-coverage-cmd-2026-06-02", "pr": 141, "status": "open", "date": "2026-06-02"},
+    {"branch": "repo-assist/improve-mermaid-style-2026-06-03-9366fc1-b81f1d93ae867c7d", "pr": 143, "status": "open", "date": "2026-06-03", "desc": "feat(mermaid): translate NodeStyleRule.Style to Mermaid CSS in classDef"},
+    {"branch": "repo-assist/test-coverage-cmd-2026-06-02-8c8014541c741611", "pr": 141, "status": "open", "date": "2026-06-02"},
     {"branch": "repo-assist/feat-footer-issue-134-abcb5927d32990fe", "pr": 140, "status": "open", "date": "2026-06-01"},
     {"branch": "repo-assist/test-coverage-taskgraph-2026-06-01-cf9c61b022daea6b", "pr": 138, "status": "open", "date": "2026-06-01"},
     {"branch": "repo-assist/improve-graphviz-font-config-2026-06-01-2f9f32de86a9799a", "pr": 137, "status": "open", "date": "2026-06-01"}
   ],
-  "notes": "PRs #141, #140, #138, #137 awaiting review. New PR for mermaid Style->CSS + cmd Run tests from run 26865653621. Failed-push issues #114/#115/#119/#121/#128/#130/#142 still open.",
+  "notes": "PRs #143, #141, #140, #138, #137 awaiting review. Failed-push issues #114/#115/#119/#121/#128/#130/#142 still open (stale artifacts, maintainer should close).",
   "backlog_cursor": {
     "issues": 134,
     "prs": 0
