@@ -1,7 +1,7 @@
 {
-  "last_run": "2026-05-31T14:21:12Z",
-  "last_run_id": "26715093107",
-  "monthly_activity_issue": 87,
+  "last_run": "2026-06-04T05:26:25Z",
+  "last_run_id": "26932646749",
+  "monthly_activity_issue": 139,
   "comments_made": {
     "88": "2026-05-02T04:02:54Z",
     "63": "2026-05-02T04:02:54Z",
@@ -12,21 +12,20 @@
     "88": {"pr": 89, "status": "merged", "date": "2026-05-01"}
   },
   "open_repo_assist_prs": [
-    {"branch": "repo-assist/test-coverage-mermaid-taskgraph-safe-2026-05-16-5718b0af86aa6561", "pr": 118, "status": "open", "date": "2026-05-16"},
-    {"branch": "repo-assist/improve-doc-comments-2026-05-18-b657a2db95f198f8", "pr": 122, "status": "open", "date": "2026-05-18"},
-    {"branch": "repo-assist/test-coverage-dot-exe-fallback-2026-05-18-dc8e648853305c07", "pr": 123, "status": "open", "date": "2026-05-18"},
-    {"branch": "repo-assist/test-graphviz-error-paths-2026-05-19-8c0d72c5c24e164b", "pr": 124, "status": "open", "date": "2026-05-19"},
-    {"branch": "repo-assist/improve-safe-label-replacer", "pr": 129, "status": "open", "date": "2026-05-19"},
-    {"branch": "repo-assist/improve-namespace-deduplicate-delimiter-logic-2026-05-20", "pr": 131, "status": "open", "date": "2026-05-20"},
-    {"branch": "repo-assist/improve-record-escaper-replacer", "pr": null, "status": "pending", "date": "2026-05-31", "note": "refactor(graphviz): replace escapings map with strings.NewReplacer in record"}
+    {"branch": "repo-assist/improve-focus-warning-2026-06-04", "pr": 145, "status": "open", "date": "2026-06-04"},
+    {"branch": "repo-assist/improve-mermaid-style-2026-06-03-9366fc1-b81f1d93ae867c7d", "pr": 143, "status": "open", "date": "2026-06-03"},
+    {"branch": "repo-assist/test-coverage-cmd-2026-06-02-8c8014541c741611", "pr": 141, "status": "open", "date": "2026-06-02"},
+    {"branch": "repo-assist/feat-footer-issue-134-abcb5927d32990fe", "pr": 140, "status": "open", "date": "2026-06-01"},
+    {"branch": "repo-assist/test-coverage-taskgraph-2026-06-01-cf9c61b022daea6b", "pr": 138, "status": "open", "date": "2026-06-01"},
+    {"branch": "repo-assist/improve-graphviz-font-config-2026-06-01-2f9f32de86a9799a", "pr": 137, "status": "open", "date": "2026-06-01"}
   ],
-  "notes": "7 open/pending PRs. Issues #114/#115/#119/#121/#128/#130 are failed-push artifacts awaiting closure. #116/#117 appear merged. #134 new feature issue: labeled+commented. Dependabot #125 (go-task) and #132 (gh-aw-actions) open.",
+  "notes": "6 open PRs. Dependabot #144 (gh-aw-actions 0.78.1) open. Issues #114/#115/#119/#121/#128/#130/#142 are failed-push artifacts awaiting closure.",
   "backlog_cursor": {
-    "issues": 134,
-    "prs": 133
+    "issues": 139,
+    "prs": 145
   },
   "eng_topics_done": ["testreport", "bundle-dependabot", "remove-unused-nolint", "task-tool-v3.50.0", "gomega-v1.40.0", "race-flag-unit-tests", "ci-concurrency-group", "bundle-deps-task-v3.51.1-gomega-v1.41.0-ghawactions-v0.74.4", "bundle-deps-task-v3.51.1-gomega-v1.41.0-2026-05-20"],
-  "coding_improvements_done": ["graphviz-duplicate-comment", "split-patterns-refactor", "edge-class-constants", "readme-flags-fix", "extract-graphns-helpers", "collect-sorted-nodes", "collect-task-strings-nonempty", "collect-task-strings-status-filter", "collect-node-ids-graphns", "graphviz-doc-comments", "collectnodeids-helper", "registry-map-presize", "loader-godoc-comments", "dot-exe-fallback-test", "safe-label-replacer", "namespace-deduplicate-delimiter-logic", "record-escaper-replacer"],
+  "coding_improvements_done": ["graphviz-duplicate-comment", "split-patterns-refactor", "edge-class-constants", "readme-flags-fix", "extract-graphns-helpers", "collect-sorted-nodes", "collect-task-strings-nonempty", "collect-task-strings-status-filter", "collect-node-ids-graphns", "graphviz-doc-comments", "collectnodeids-helper", "registry-map-presize", "loader-godoc-comments", "dot-exe-fallback-test", "safe-label-replacer", "namespace-deduplicate-delimiter-logic", "record-escaper-replacer", "graphviz-font-config", "mermaid-style-rule-translation", "focus-warning-no-match"],
   "perf_topics_done": ["buffered-output", "avoid-rune-alloc", "compile-match-pattern", "bfs-index-pointer", "extractVarRefs-fast-path", "registry-map-presize"],
-  "test_coverage_done": ["dot", "loader", "taskgraph-builder", "indentwriter-addf", "mermaid", "taskgraph-vars", "cmd", "graphviz", "graphviz-2", "indentwriter-errors", "graph-edge-labels", "taskgraph-strings-and-varDescription", "mermaid-variableClassDefParts", "taskgraph-status-strings", "safe-numeric-fallback", "dot-exe-branch", "graphns-collectnodeids", "mermaid-flowchartDirection-nil", "taskgraph-addGlobalVars-nilVars", "safe-numeric-fallback-claim", "mermaid-saveto-errors", "mermaid-styleRule-invalid", "dot-exe-fallback-success", "graphviz-error-paths-nil-graphviz", "record-brace-quote-escaping"]
+  "test_coverage_done": ["dot", "loader", "taskgraph-builder", "indentwriter-addf", "mermaid", "taskgraph-vars", "cmd", "graphviz", "graphviz-2", "indentwriter-errors", "graph-edge-labels", "taskgraph-strings-and-varDescription", "mermaid-variableClassDefParts", "taskgraph-status-strings", "safe-numeric-fallback", "dot-exe-branch", "graphns-collectnodeids", "mermaid-flowchartDirection-nil", "taskgraph-addGlobalVars-nilVars", "safe-numeric-fallback-claim", "mermaid-saveto-errors", "mermaid-styleRule-invalid", "dot-exe-fallback-success", "graphviz-error-paths-nil-graphviz", "record-brace-quote-escaping", "taskgraph-collectTaskStrings-addEdgesForVarRefs", "cmd-coverage-2"]
 }
