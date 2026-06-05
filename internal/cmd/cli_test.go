@@ -546,6 +546,7 @@ func TestSaveGraph_DotType_WritesFile(t *testing.T) {
 	cli := CLI{Output: outPath, GraphType: graphTypeDot}
 	gr := graph.New()
 	gr.AddNode("build")
+
 	flags := &Flags{Config: config.New(), Log: slog.Default()}
 
 	err := cli.saveGraph(gr, flags)
@@ -563,6 +564,7 @@ func TestSaveGraph_MermaidType_WritesFile(t *testing.T) {
 	cli := CLI{Output: outPath, GraphType: graphTypeMermaid}
 	gr := graph.New()
 	gr.AddNode("build")
+
 	flags := &Flags{Config: config.New(), Log: slog.Default()}
 
 	err := cli.saveGraph(gr, flags)
