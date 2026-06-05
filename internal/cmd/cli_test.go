@@ -657,8 +657,7 @@ func TestApplyFocus_InvalidPattern_ReturnsError(t *testing.T) {
 	_, err := applyFocus(gr, "[z-a]")
 
 	// Assert
-	g.Expect(err).To(HaveOccurred())
-	g.Expect(err.Error()).To(ContainSubstring("invalid focus pattern"))
+	g.Expect(err).To(MatchError(ContainSubstring("invalid focus pattern")))
 }
 
 // collectNodeIDs returns all node IDs from a graph as a slice.
