@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bytes"
 	"encoding/json"
 	"log/slog"
 	"os"
@@ -615,6 +616,63 @@ func TestResolveGraphType_FallsBackToConfigWhenFlagEmpty(t *testing.T) {
 	g.Expect(result).To(Equal(graphTypeMermaid))
 }
 
+func TestRun_FocusMatchesNoTasks_LogsWarning(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	taskfile := filepath.Join("..", "..", "samples", "go-vcr-tidy-taskfile.yml")
+	dir := t.TempDir()
+
+	focusedOutput := filepath.Join(dir, "focused.dot")
+	fullOutput := filepath.Join(dir, "full.dot")
+
+	var buf bytes.Buffer
+
+	flags := &Flags{
+		Config: config.New(),
+		Log: slog.New(slog.NewTextHandler(
+			&buf,
+			&slog.HandlerOptions{Level: slog.LevelWarn},
+		)),
+	}
+
+	cli := CLI{
+		Taskfile: taskfile,
+		Focus:    "nonexistent-pattern-xyz",
+		Output:   focusedOutput,
+	}
+
+	err := cli.Run(flags)
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(buf.String()).To(
+		ContainSubstring("focus pattern matched no tasks; showing full graph"),
+	)
+
+	expectedCLI := CLI{
+		Taskfile: taskfile,
+		Output:   fullOutput,
+	}
+
+	err = expectedCLI.Run(&Flags{
+		Config: config.New(),
+		Log: slog.New(slog.NewTextHandler(
+			&bytes.Buffer{},
+			&slog.HandlerOptions{Level: slog.LevelWarn},
+		)),
+	})
+
+	g.Expect(err).NotTo(HaveOccurred())
+
+	focusedGraph, err := os.ReadFile(focusedOutput)
+	g.Expect(err).NotTo(HaveOccurred())
+
+	fullGraph, err := os.ReadFile(fullOutput)
+	g.Expect(err).NotTo(HaveOccurred())
+
+	g.Expect(focusedGraph).To(Equal(fullGraph))
+}
+
 // TestApplyFocus
 
 func TestApplyFocus_NoMatchingPatterns_ReturnsSameGraph(t *testing.T) {
@@ -627,10 +685,11 @@ func TestApplyFocus_NoMatchingPatterns_ReturnsSameGraph(t *testing.T) {
 	gr.AddNode("test")
 
 	// Act
-	result, err := applyFocus(gr, "deploy")
+	result, matched, err := applyFocus(gr, "deploy")
 
 	// Assert
 	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(matched).To(BeFalse())
 	g.Expect(result).To(Equal(gr))
 }
 
@@ -645,10 +704,11 @@ func TestApplyFocus_ExactMatch_ReturnsMatchedNode(t *testing.T) {
 	gr.AddNode("deploy")
 
 	// Act
-	result, err := applyFocus(gr, "build")
+	result, matched, err := applyFocus(gr, "build")
 
 	// Assert
 	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(matched).To(BeTrue())
 
 	ids := collectNodeIDs(result)
 	g.Expect(ids).To(ConsistOf("build"))
@@ -665,10 +725,11 @@ func TestApplyFocus_GlobPattern_MatchesMultipleNodes(t *testing.T) {
 	gr.AddNode("api:serve")
 
 	// Act
-	result, err := applyFocus(gr, "cmd:*")
+	result, matched, err := applyFocus(gr, "cmd:*")
 
 	// Assert
 	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(matched).To(BeTrue())
 
 	ids := collectNodeIDs(result)
 	g.Expect(ids).To(ConsistOf("cmd:build", "cmd:test"))
@@ -688,10 +749,11 @@ func TestApplyFocus_IncludesTransitiveDependencies(t *testing.T) {
 	testNode.AddEdge(deploy)
 
 	// Act — focus on "test"; should include "compile" (dependent) and "deploy" (dependency)
-	result, err := applyFocus(gr, "test")
+	result, matched, err := applyFocus(gr, "test")
 
 	// Assert
 	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(matched).To(BeTrue())
 
 	ids := collectNodeIDs(result)
 	g.Expect(ids).To(ConsistOf("compile", "test", "deploy"))
@@ -708,10 +770,11 @@ func TestApplyFocus_MultiplePatternsSeparatedByComma(t *testing.T) {
 	gr.AddNode("deploy")
 
 	// Act
-	result, err := applyFocus(gr, "build,test")
+	result, matched, err := applyFocus(gr, "build,test")
 
 	// Assert
 	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(matched).To(BeTrue())
 
 	ids := collectNodeIDs(result)
 	g.Expect(ids).To(ConsistOf("build", "test"))
@@ -725,11 +788,10 @@ func TestApplyFocus_InvalidPattern_ReturnsError(t *testing.T) {
 	gr := graph.New()
 	gr.AddNode("build")
 
-	// Act — "[" is an unclosed bracket class, invalid as a regex
-	_, err := applyFocus(gr, "[invalid")
+	// Act — "[z-a]" is an invalid character class range; CompileMatchPattern returns an error
+	_, _, err := applyFocus(gr, "[z-a]")
 
 	// Assert
-	g.Expect(err).To(HaveOccurred())
 	g.Expect(err).To(MatchError(ContainSubstring("invalid focus pattern")))
 }
 
