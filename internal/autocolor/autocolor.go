@@ -102,15 +102,29 @@ func collectAllNamespaces(gr *graph.Graph) []string {
 
 // sortNamespaces sorts namespaces so that shallower ones come first,
 // and within the same depth, sorts alphabetically for deterministic color assignment.
+//
+// Depths are pre-computed once to avoid calling namespace.Depth O(N log N) times
+// during the sort comparisons.
 func sortNamespaces(namespaces []string) {
-	slices.SortFunc(namespaces, func(a, b string) int {
-		depthA := namespace.Depth(a)
-		depthB := namespace.Depth(b)
+	type nsWithDepth struct {
+		name  string
+		depth int
+	}
 
-		if depthA != depthB {
-			return cmp.Compare(depthA, depthB)
+	items := make([]nsWithDepth, len(namespaces))
+	for i, ns := range namespaces {
+		items[i] = nsWithDepth{name: ns, depth: namespace.Depth(ns)}
+	}
+
+	slices.SortFunc(items, func(a, b nsWithDepth) int {
+		if a.depth != b.depth {
+			return cmp.Compare(a.depth, b.depth)
 		}
 
-		return cmp.Compare(a, b)
+		return cmp.Compare(a.name, b.name)
 	})
+
+	for i, item := range items {
+		namespaces[i] = item.name
+	}
 }
