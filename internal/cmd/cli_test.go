@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"bytes"
 	"encoding/json"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"testing"
@@ -541,6 +543,63 @@ func TestResolveGraphType_FallsBackToConfigWhenFlagEmpty(t *testing.T) {
 	result := cli.resolveGraphType(flags)
 
 	g.Expect(result).To(Equal(graphTypeMermaid))
+}
+
+func TestRun_FocusMatchesNoTasks_LogsWarning(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	taskfile := filepath.Join("..", "..", "samples", "go-vcr-tidy-taskfile.yml")
+	dir := t.TempDir()
+
+	focusedOutput := filepath.Join(dir, "focused.dot")
+	fullOutput := filepath.Join(dir, "full.dot")
+
+	var buf bytes.Buffer
+
+	flags := &Flags{
+		Config: config.New(),
+		Log: slog.New(slog.NewTextHandler(
+			&buf,
+			&slog.HandlerOptions{Level: slog.LevelWarn},
+		)),
+	}
+
+	cli := CLI{
+		Taskfile: taskfile,
+		Focus:    "nonexistent-pattern-xyz",
+		Output:   focusedOutput,
+	}
+
+	err := cli.Run(flags)
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(buf.String()).To(
+		ContainSubstring("focus pattern matched no tasks; showing full graph"),
+	)
+
+	expectedCLI := CLI{
+		Taskfile: taskfile,
+		Output:   fullOutput,
+	}
+
+	err = expectedCLI.Run(&Flags{
+		Config: config.New(),
+		Log: slog.New(slog.NewTextHandler(
+			&bytes.Buffer{},
+			&slog.HandlerOptions{Level: slog.LevelWarn},
+		)),
+	})
+
+	g.Expect(err).NotTo(HaveOccurred())
+
+	focusedGraph, err := os.ReadFile(focusedOutput)
+	g.Expect(err).NotTo(HaveOccurred())
+
+	fullGraph, err := os.ReadFile(fullOutput)
+	g.Expect(err).NotTo(HaveOccurred())
+
+	g.Expect(focusedGraph).To(Equal(fullGraph))
 }
 
 // TestApplyFocus
