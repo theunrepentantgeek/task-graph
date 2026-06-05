@@ -23,12 +23,7 @@ func CollectSortedNodes(g *graph.Graph) []*graph.Node {
 }
 
 // SplitByKind partitions nodes into task nodes and variable nodes.
-func SplitByKind(nodes []*graph.Node) ([]*graph.Node, []*graph.Node) {
-	var (
-		taskNodes []*graph.Node
-		varNodes  []*graph.Node
-	)
-
+func SplitByKind(nodes []*graph.Node) (taskNodes []*graph.Node, varNodes []*graph.Node) {
 	for _, n := range nodes {
 		if n.Kind == graph.NodeKindVariable {
 			varNodes = append(varNodes, n)
