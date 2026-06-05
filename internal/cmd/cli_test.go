@@ -645,6 +645,22 @@ func TestApplyFocus_MultiplePatternsSeparatedByComma(t *testing.T) {
 	g.Expect(ids).To(ConsistOf("build", "test"))
 }
 
+func TestApplyFocus_InvalidPattern_ReturnsError(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	// Arrange
+	gr := graph.New()
+	gr.AddNode("build")
+
+	// Act — "[z-a]" is an invalid character class range; CompileMatchPattern returns an error
+	_, err := applyFocus(gr, "[z-a]")
+
+	// Assert
+	g.Expect(err).To(HaveOccurred())
+	g.Expect(err.Error()).To(ContainSubstring("invalid focus pattern"))
+}
+
 // collectNodeIDs returns all node IDs from a graph as a slice.
 func collectNodeIDs(gr *graph.Graph) []string {
 	var ids []string
