@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-06-05T15:38:53Z",
-  "last_run_id": "27024415559",
+  "last_run": "2026-06-06T04:40:41Z",
+  "last_run_id": "27052791667",
   "monthly_activity_issue": 139,
   "comments_made": {
     "88": "2026-05-02T04:02:54Z",
@@ -12,20 +12,18 @@
     "88": {"pr": 89, "status": "merged", "date": "2026-05-01"}
   },
   "open_repo_assist_prs": [
-    {"branch": "repo-assist/improve-mermaid-defaults-2026-06-05", "pr": 149, "status": "open", "date": "2026-06-05", "desc": "refactor(mermaid): move variable node defaults into newMermaid() config factory"},
-    {"branch": "repo-assist/perf-sort-namespaces-2026-06-05", "pr": 148, "status": "open", "date": "2026-06-05", "desc": "perf: pre-compute namespace depths for sort; simplify Depth loop"},
-    {"branch": "repo-assist/improve-coverage-and-docs-2026-06-05", "pr": 147, "status": "open", "date": "2026-06-05"},
-    {"branch": "repo-assist/improve-focus-warning-2026-06-04-dba94fbfb50430a6", "pr": 145, "status": "open", "date": "2026-06-04"},
-    {"branch": "repo-assist/improve-mermaid-style-2026-06-03-9366fc1-b81f1d93ae867c7d", "pr": 143, "status": "open", "date": "2026-06-03"},
-    {"branch": "repo-assist/test-coverage-cmd-2026-06-02-8c8014541c741611", "pr": 141, "status": "open", "date": "2026-06-02"},
+    {"branch": "repo-assist/improve-mermaid-defaults-2026-06-05-2b5863bb8aa0549f", "pr": 150, "status": "open", "date": "2026-06-05", "desc": "refactor(mermaid): move variable node defaults into newMermaid() config factory"},
+    {"branch": "repo-assist/perf-sort-namespaces-2026-06-05", "pr": 149, "status": "open", "date": "2026-06-05", "desc": "perf: pre-compute namespace depths for sort; simplify Depth loop"},
+    {"branch": "repo-assist/improve-mermaid-style-2026-06-03-9366fc1-b81f1d93ae867c7d", "pr": 143, "status": "open", "date": "2026-06-03", "desc": "feat(mermaid): translate NodeStyleRule.Style to Mermaid CSS in classDef"},
+    {"branch": "repo-assist/test-coverage-cmd-2026-06-02-8c8014541c741611", "pr": 141, "status": "open", "date": "2026-06-02", "desc": "test: improve cmd coverage 60.3%->68.8%; docs: add godoc to config types; fixes test compilation error in main (applyFocus 3 returns)"},
     {"branch": "repo-assist/feat-footer-issue-134-abcb5927d32990fe", "pr": 140, "status": "open", "date": "2026-06-01"},
     {"branch": "repo-assist/test-coverage-taskgraph-2026-06-01-cf9c61b022daea6b", "pr": 138, "status": "open", "date": "2026-06-01"},
     {"branch": "repo-assist/improve-graphviz-font-config-2026-06-01-2f9f32de86a9799a", "pr": 137, "status": "open", "date": "2026-06-01"}
   ],
-  "notes": "9 open PRs. PR #141 lint fix pushed (wsl_v5). Issues #114/#115/#119/#121/#128/#130/#142 are failed-push artifacts awaiting closure. PR #146 closed by maintainer. PR #144 (Dependabot) closed.",
+  "notes": "7 open PRs. PR #141 lint fix pushed (nonamedreturns). PR #141 also fixes test compilation error in main (TestApplyFocus_InvalidPattern_ReturnsError uses _, err but applyFocus returns 3 values). Issues #114/#115/#119/#121/#128/#130/#142/#146/#148 are failed-push artifacts awaiting closure. PRs #145/#147 merged in last run.",
   "backlog_cursor": {
     "issues": 139,
-    "prs": 149
+    "prs": 150
   },
   "eng_topics_done": ["testreport", "bundle-dependabot", "remove-unused-nolint", "task-tool-v3.50.0", "gomega-v1.40.0", "race-flag-unit-tests", "ci-concurrency-group", "bundle-deps-task-v3.51.1-gomega-v1.41.0-ghawactions-v0.74.4", "bundle-deps-task-v3.51.1-gomega-v1.41.0-2026-05-20", "ci-concurrency-group-test-depends-devcontainer", "golang-x-security-deps-2026-06-05"],
   "coding_improvements_done": ["graphviz-duplicate-comment", "split-patterns-refactor", "edge-class-constants", "readme-flags-fix", "extract-graphns-helpers", "collect-sorted-nodes", "collect-task-strings-nonempty", "collect-task-strings-status-filter", "collect-node-ids-graphns", "graphviz-doc-comments", "collectnodeids-helper", "registry-map-presize", "loader-godoc-comments", "dot-exe-fallback-test", "safe-label-replacer", "namespace-deduplicate-delimiter-logic", "record-escaper-replacer", "graphviz-font-config", "mermaid-style-rule-translation", "focus-warning-no-match", "taskgraph-new-godoc", "applyFocus-invalid-pattern-test", "mermaid-defaults-newMermaid"],
