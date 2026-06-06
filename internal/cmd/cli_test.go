@@ -718,7 +718,7 @@ func TestApplyFocus_InvalidPattern_ReturnsError(t *testing.T) {
 	gr.AddNode("build")
 
 	// Act — "[z-a]" is an invalid character class range; CompileMatchPattern returns an error
-	_, err := applyFocus(gr, "[z-a]")
+	_, _, err := applyFocus(gr, "[z-a]")
 
 	// Assert
 	g.Expect(err).To(MatchError(ContainSubstring("invalid focus pattern")))
