@@ -108,7 +108,7 @@ func writeFontAttributesTo(
 		return
 	}
 
-	if cfg.Graphviz.Font == "" && cfg.Graphviz.FontSize == 0 {
+	if cfg.Graphviz.Font == "" && cfg.Graphviz.FontSize <= 0 {
 		return
 	}
 
