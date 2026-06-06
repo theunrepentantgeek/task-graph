@@ -78,9 +78,17 @@ func (c *CLI) Run( //nolint:revive // Cognitive complexity is acceptable for a t
 	gr := builder.Build()
 
 	if c.Focus != "" {
-		gr, err = applyFocus(gr, c.Focus)
+		var matched bool
+
+		gr, matched, err = applyFocus(gr, c.Focus)
 		if err != nil {
 			return eris.Wrap(err, "failed to apply focus filter")
+		}
+
+		if !matched {
+			flags.Log.Warn(
+				"focus pattern matched no tasks; showing full graph",
+				"focus", c.Focus)
 		}
 	}
 
@@ -364,13 +372,13 @@ func (c *CLI) loadConfigFile(cfg *config.Config) error {
 func applyFocus( //nolint:revive // Cognitive complexity is acceptable for this self-contained helper.
 	gr *graph.Graph,
 	focusPatterns string,
-) (*graph.Graph, error) {
+) (*graph.Graph, bool, error) {
 	seeds := make(map[string]bool)
 
 	for _, pattern := range splitPatterns(focusPatterns) {
 		re, err := namespace.CompileMatchPattern(pattern)
 		if err != nil {
-			return nil, eris.Wrapf(err, "invalid focus pattern %q", pattern)
+			return nil, false, eris.Wrapf(err, "invalid focus pattern %q", pattern)
 		}
 
 		for node := range gr.Nodes() {
@@ -381,10 +389,10 @@ func applyFocus( //nolint:revive // Cognitive complexity is acceptable for this 
 	}
 
 	if len(seeds) == 0 {
-		return gr, nil
+		return gr, false, nil
 	}
 
 	reachable := gr.ReachableFrom(seeds)
 
-	return gr.FilterNodes(reachable), nil
+	return gr.FilterNodes(reachable), true, nil
 }

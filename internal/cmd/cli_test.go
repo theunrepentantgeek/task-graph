@@ -555,10 +555,11 @@ func TestApplyFocus_NoMatchingPatterns_ReturnsSameGraph(t *testing.T) {
 	gr.AddNode("test")
 
 	// Act
-	result, err := applyFocus(gr, "deploy")
+	result, matched, err := applyFocus(gr, "deploy")
 
 	// Assert
 	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(matched).To(BeFalse())
 	g.Expect(result).To(Equal(gr))
 }
 
@@ -573,10 +574,11 @@ func TestApplyFocus_ExactMatch_ReturnsMatchedNode(t *testing.T) {
 	gr.AddNode("deploy")
 
 	// Act
-	result, err := applyFocus(gr, "build")
+	result, matched, err := applyFocus(gr, "build")
 
 	// Assert
 	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(matched).To(BeTrue())
 
 	ids := collectNodeIDs(result)
 	g.Expect(ids).To(ConsistOf("build"))
@@ -593,10 +595,11 @@ func TestApplyFocus_GlobPattern_MatchesMultipleNodes(t *testing.T) {
 	gr.AddNode("api:serve")
 
 	// Act
-	result, err := applyFocus(gr, "cmd:*")
+	result, matched, err := applyFocus(gr, "cmd:*")
 
 	// Assert
 	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(matched).To(BeTrue())
 
 	ids := collectNodeIDs(result)
 	g.Expect(ids).To(ConsistOf("cmd:build", "cmd:test"))
@@ -616,10 +619,11 @@ func TestApplyFocus_IncludesTransitiveDependencies(t *testing.T) {
 	testNode.AddEdge(deploy)
 
 	// Act — focus on "test"; should include "compile" (dependent) and "deploy" (dependency)
-	result, err := applyFocus(gr, "test")
+	result, matched, err := applyFocus(gr, "test")
 
 	// Assert
 	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(matched).To(BeTrue())
 
 	ids := collectNodeIDs(result)
 	g.Expect(ids).To(ConsistOf("compile", "test", "deploy"))
@@ -636,10 +640,11 @@ func TestApplyFocus_MultiplePatternsSeparatedByComma(t *testing.T) {
 	gr.AddNode("deploy")
 
 	// Act
-	result, err := applyFocus(gr, "build,test")
+	result, matched, err := applyFocus(gr, "build,test")
 
 	// Assert
 	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(matched).To(BeTrue())
 
 	ids := collectNodeIDs(result)
 	g.Expect(ids).To(ConsistOf("build", "test"))
