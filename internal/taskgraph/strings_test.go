@@ -266,3 +266,51 @@ func TestCollectTaskStrings_WithEmptyStatusEntry_SkipsEmpty(t *testing.T) {
 
 	g.Expect(result).To(ConsistOf("test -f output.txt", "test -d build"))
 }
+
+func TestCollectTaskStrings_WithSources_AppendsSourcGlobs(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	task := &ast.Task{
+		Sources: []*ast.Glob{
+			{Glob: "src/**/*.go"},
+			{Glob: "internal/**/*.go"},
+		},
+	}
+
+	result := collectTaskStrings(task)
+
+	g.Expect(result).To(ConsistOf("src/**/*.go", "internal/**/*.go"))
+}
+
+func TestCollectTaskStrings_WithGenerates_AppendsGenerateGlobs(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	task := &ast.Task{
+		Generates: []*ast.Glob{
+			{Glob: "build/task-graph"},
+			{Glob: "dist/*.bin"},
+		},
+	}
+
+	result := collectTaskStrings(task)
+
+	g.Expect(result).To(ConsistOf("build/task-graph", "dist/*.bin"))
+}
+
+func TestCollectTaskStrings_WithPreconditions_AppendsPreconditionStrings(t *testing.T) {
+	t.Parallel()
+	g := NewWithT(t)
+
+	task := &ast.Task{
+		Preconditions: []*ast.Precondition{
+			{Sh: "test -f go.mod", Msg: "go.mod not found"},
+			{Sh: "which go", Msg: "go not installed"},
+		},
+	}
+
+	result := collectTaskStrings(task)
+
+	g.Expect(result).To(ConsistOf("test -f go.mod", "go.mod not found", "which go", "go not installed"))
+}
