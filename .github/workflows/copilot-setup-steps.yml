@@ -27,7 +27,7 @@ jobs:
           submodules: "true"
 
       - name: Install gh-aw extension
-        uses: github/gh-aw-actions/setup-cli@73ed520ae4ecd087a485e1991605595978b32ac1 # v0.78.1
+        uses: github/gh-aw-actions/setup-cli@2ad2a516e432f0a0000cfaed33d262a380f9e58f # v0.82.0
         with:
           version: v0.76.1
 
