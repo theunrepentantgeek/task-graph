@@ -173,38 +173,72 @@ func TestBuilder_Build_IncludeGlobalVars_NilVars_ProducesNoVariableNodes(t *test
 	g.Expect(node.Edges()).To(BeEmpty(), "no edges expected when there are no global vars")
 }
 
-// TestAddEdgesForVarRefs_VarNodeMissing_SkipsEdge verifies that addEdgesForVarRefs
-// silently skips var references when the corresponding variable node is not in the graph.
-func TestAddEdgesForVarRefs_VarNodeMissing_SkipsEdge(t *testing.T) {
+// TestAddEdgesForVarRefs_MissingVarNode_SkipsEdge verifies that when a referenced
+// variable name has no corresponding node in the graph, no edge is created (defensive
+// guard on the varNode lookup).
+func TestAddEdgesForVarRefs_MissingVarNode_SkipsEdge(t *testing.T) {
 	t.Parallel()
 	g := NewWithT(t)
 
+	builder := &Builder{}
 	gr := graph.New()
-	taskNode := gr.AddNode("my-task")
+	gr.AddNode("task-a")
+	// No "var:X" node is added — varNode lookup will fail.
 
-	b := &Builder{}
-	refs := map[string]bool{"MISSING_VAR": true}
+	builder.addEdgesForVarRefs(gr, "task-a", map[string]bool{"X": true})
 
-	b.addEdgesForVarRefs(gr, "my-task", refs)
-
-	// No edge should be created because "var:MISSING_VAR" node does not exist.
-	g.Expect(taskNode.Edges()).To(BeEmpty())
+	node, ok := gr.Node("task-a")
+	g.Expect(ok).To(BeTrue())
+	g.Expect(node.Edges()).To(BeEmpty(), "no edge should be created when var node is missing")
 }
 
-// TestAddEdgesForVarRefs_TaskNodeMissing_SkipsEdge verifies that addEdgesForVarRefs
-// silently skips var references when the consuming task node is not in the graph.
-func TestAddEdgesForVarRefs_TaskNodeMissing_SkipsEdge(t *testing.T) {
+// TestAddEdgesForVarRefs_MissingTaskNode_SkipsEdge verifies that when the task
+// referenced by taskName has no node in the graph, no edge is created (defensive
+// guard on the taskNode lookup).
+func TestAddEdgesForVarRefs_MissingTaskNode_SkipsEdge(t *testing.T) {
 	t.Parallel()
 	g := NewWithT(t)
 
+	builder := &Builder{}
 	gr := graph.New()
-	varNode := gr.AddNode("var:MY_VAR")
+	varNode := gr.AddNode("var:X")
+	// "task-missing" is intentionally NOT added to the graph.
 
-	b := &Builder{}
-	refs := map[string]bool{"MY_VAR": true}
+	builder.addEdgesForVarRefs(gr, "task-missing", map[string]bool{"X": true})
 
-	b.addEdgesForVarRefs(gr, "nonexistent-task", refs)
+	g.Expect(varNode.Edges()).To(BeEmpty(), "no edge should be created when task node is missing")
+}
 
-	// No edge should be created because "nonexistent-task" node does not exist.
-	g.Expect(varNode.Edges()).To(BeEmpty())
+// TestAddEdgesForDependencies_MissingSourceNode_IsNoop verifies that calling
+// addEdgesForDependencies with a taskID that is not present in the graph is a no-op
+// (defensive guard — should not happen in normal Build flow, but must not panic).
+func TestAddEdgesForDependencies_MissingSourceNode_IsNoop(t *testing.T) {
+	t.Parallel()
+	// No assertion needed — we just verify that the function does not panic.
+	builder := &Builder{}
+	gr := graph.New()
+	// "nonexistent-task" is intentionally NOT added to the graph.
+	task := &ast.Task{
+		Deps: []*ast.Dep{{Task: "other-task"}},
+	}
+
+	builder.addEdgesForDependencies("nonexistent-task", task, gr)
+	// If we reach here, the defensive guard worked correctly.
+}
+
+// TestAddEdgesForCalls_MissingSourceNode_IsNoop verifies that calling
+// addEdgesForCalls with a taskID that is not present in the graph is a no-op
+// (defensive guard — should not happen in normal Build flow, but must not panic).
+func TestAddEdgesForCalls_MissingSourceNode_IsNoop(t *testing.T) {
+	t.Parallel()
+	// No assertion needed — we just verify that the function does not panic.
+	builder := &Builder{}
+	gr := graph.New()
+	// "nonexistent-task" is intentionally NOT added to the graph.
+	task := &ast.Task{
+		Cmds: []*ast.Cmd{{Task: "other-task"}},
+	}
+
+	builder.addEdgesForCalls("nonexistent-task", task, gr)
+	// If we reach here, the defensive guard worked correctly.
 }
