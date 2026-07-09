@@ -20,6 +20,7 @@ type Builder struct {
 	IncludeGlobalVars bool
 }
 
+// New creates a new Builder that builds a graph from the given Taskfile.
 func New(taskfile *ast.Taskfile) *Builder {
 	return &Builder{
 		taskfile: taskfile,
