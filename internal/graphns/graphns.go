@@ -23,6 +23,8 @@ func CollectSortedNodes(g *graph.Graph) []*graph.Node {
 }
 
 // SplitByKind partitions nodes into task nodes and variable nodes.
+//
+//nolint:revive // multiple returns are ok
 func SplitByKind(nodes []*graph.Node) ([]*graph.Node, []*graph.Node) {
 	var (
 		taskNodes []*graph.Node
