@@ -1,8 +1,8 @@
 {
-  "last_run": "2026-07-09T16:05:00Z",
-  "last_run_id": "29030654149",
-  "monthly_activity_issue": null,
-  "monthly_activity_note": "July 2026 issue created in run 29030654149 (temp_id #aw_july26) — search for '[repo-assist] Monthly Activity 2026-07' to find it",
+  "last_run": "2026-07-10",
+  "last_run_id": "29069412328",
+  "monthly_activity_issue": 168,
+  "monthly_activity_note": "July 2026 issue created in run 29030654149 (temp_id #aw_july26) \u2014 search for '[repo-assist] Monthly Activity 2026-07' to find it",
   "comments_made": {
     "88": "2026-05-02T04:02:54Z",
     "63": "2026-05-02T04:02:54Z",
@@ -10,24 +10,155 @@
     "134": "2026-06-04T16:03:53Z"
   },
   "fix_attempts": {
-    "88": {"pr": 89, "status": "merged", "date": "2026-05-01"}
+    "88": {
+      "pr": 89,
+      "status": "merged",
+      "date": "2026-05-01"
+    }
   },
   "open_repo_assist_prs": [
-    {"branch": "repo-assist/improve-mermaid-defaults-2026-06-05-2b5863bb8aa0549f", "pr": 150, "status": "open", "date": "2026-06-05", "desc": "refactor(mermaid): move variable node defaults into newMermaid() config factory"},
-    {"branch": "repo-assist/perf-sort-namespaces-2026-06-05-dfdf4a36bd233d47", "pr": 149, "status": "ci-fixed-2026-07-09", "date": "2026-06-05", "desc": "perf: pre-compute namespace depths for sort; simplify Depth loop — CI fix pushed 2026-07-09 (updated cli.go and cli_test.go to 3-return applyFocus)"},
-    {"branch": "repo-assist/improve-mermaid-style-2026-06-03-9366fc1-b81f1d93ae867c7d", "pr": 143, "status": "open", "date": "2026-06-03", "desc": "feat(mermaid): translate NodeStyleRule.Style to Mermaid CSS in classDef"},
-    {"branch": "repo-assist/test-coverage-cmd-2026-06-02-8c8014541c741611", "pr": 141, "status": "open", "date": "2026-06-02", "desc": "test: improve cmd package coverage 60.3%->68.8%; docs: add godoc to config types"},
-    {"branch": "repo-assist/feat-footer-issue-134-abcb5927d32990fe", "pr": 140, "status": "ci-fixed-2026-07-09", "date": "2026-06-01", "desc": "feat: add --footer flag (Closes #134) — CI fix pushed 2026-07-09 (updated nolint comment in graphns.go to 'multiple returns are ok')"},
-    {"branch": "repo-assist/improve-graphviz-font-config-2026-06-01-2f9f32de86a9799a", "pr": 137, "status": "open", "date": "2026-06-01", "desc": "feat: render Font and FontSize graphviz config settings in dot output — June CI failure was stale; branch compiles+tests OK"}
+    {
+      "branch": "repo-assist/improve-mermaid-defaults-2026-06-05-2b5863bb8aa0549f",
+      "pr": 150,
+      "status": "open",
+      "date": "2026-06-05",
+      "desc": "refactor(mermaid): move variable node defaults into newMermaid() config factory"
+    },
+    {
+      "branch": "repo-assist/perf-sort-namespaces-2026-06-05-dfdf4a36bd233d47",
+      "pr": 149,
+      "status": "ci-fixed-2026-07-09",
+      "date": "2026-06-05",
+      "desc": "perf: pre-compute namespace depths for sort; simplify Depth loop \u2014 CI fix pushed 2026-07-09 (updated cli.go and cli_test.go to 3-return applyFocus)"
+    },
+    {
+      "branch": "repo-assist/improve-mermaid-style-2026-06-03-9366fc1-b81f1d93ae867c7d",
+      "pr": 143,
+      "status": "open",
+      "date": "2026-06-03",
+      "desc": "feat(mermaid): translate NodeStyleRule.Style to Mermaid CSS in classDef"
+    },
+    {
+      "branch": "repo-assist/test-coverage-cmd-2026-06-02-8c8014541c741611",
+      "pr": 141,
+      "status": "open",
+      "date": "2026-06-02",
+      "desc": "test: improve cmd package coverage 60.3%->68.8%; docs: add godoc to config types"
+    },
+    {
+      "branch": "repo-assist/feat-footer-issue-134-abcb5927d32990fe",
+      "pr": 140,
+      "status": "ci-fixed-2026-07-09",
+      "date": "2026-06-01",
+      "desc": "feat: add --footer flag (Closes #134) \u2014 CI fix pushed 2026-07-09 (updated nolint comment in graphns.go to 'multiple returns are ok')"
+    },
+    {
+      "branch": "repo-assist/improve-graphviz-font-config-2026-06-01-2f9f32de86a9799a",
+      "pr": 137,
+      "status": "open",
+      "date": "2026-06-01",
+      "desc": "feat: render Font and FontSize graphviz config settings in dot output \u2014 June CI failure was stale; branch compiles+tests OK"
+    }
   ],
-  "merged_prs": [88, 89, 136, 138, 139, 141, 145, 147, 151, 152],
+  "merged_prs": [
+    88,
+    89,
+    136,
+    138,
+    139,
+    141,
+    145,
+    147,
+    151,
+    152
+  ],
   "notes": "6 open PRs. PRs #138 (test-taskgraph-coverage) and fix-applyFocus and test-taskgraph-strings branches were merged as PRs #151/#152. Issues #114/#115/#119/#121/#128/#130/#142/#146/#148 are failed-push artifacts awaiting closure by maintainer.",
   "backlog_cursor": {
     "issues": 139,
     "prs": 166
   },
-  "eng_topics_done": ["testreport", "bundle-dependabot", "remove-unused-nolint", "task-tool-v3.50.0", "gomega-v1.40.0", "race-flag-unit-tests", "ci-concurrency-group", "bundle-deps-task-v3.51.1-gomega-v1.41.0-ghawactions-v0.74.4", "bundle-deps-task-v3.51.1-gomega-v1.41.0-2026-05-20", "ci-concurrency-group-test-depends-devcontainer", "golang-x-security-deps-2026-06-05"],
-  "coding_improvements_done": ["graphviz-duplicate-comment", "split-patterns-refactor", "edge-class-constants", "readme-flags-fix", "extract-graphns-helpers", "collect-sorted-nodes", "collect-task-strings-nonempty", "collect-task-strings-status-filter", "collect-node-ids-graphns", "graphviz-doc-comments", "collectnodeids-helper", "registry-map-presize", "loader-godoc-comments", "dot-exe-fallback-test", "safe-label-replacer", "namespace-deduplicate-delimiter-logic", "record-escaper-replacer", "graphviz-font-config", "mermaid-style-rule-translation", "focus-warning-no-match", "taskgraph-new-godoc", "applyFocus-invalid-pattern-test", "mermaid-defaults-newMermaid"],
-  "perf_topics_done": ["buffered-output", "avoid-rune-alloc", "compile-match-pattern", "bfs-index-pointer", "extractVarRefs-fast-path", "registry-map-presize", "sort-namespaces-precompute-depth", "namespace-depth-direct-comparison"],
-  "test_coverage_done": ["dot", "loader", "taskgraph-builder", "indentwriter-addf", "mermaid", "taskgraph-vars", "cmd", "graphviz", "graphviz-2", "indentwriter-errors", "graph-edge-labels", "taskgraph-strings-and-varDescription", "mermaid-variableClassDefParts", "taskgraph-status-strings", "safe-numeric-fallback", "dot-exe-branch", "graphns-collectnodeids", "mermaid-flowchartDirection-nil", "taskgraph-addGlobalVars-nilVars", "safe-numeric-fallback-claim", "mermaid-saveto-errors", "mermaid-styleRule-invalid", "dot-exe-fallback-success", "graphviz-error-paths-nil-graphviz", "record-brace-quote-escaping", "taskgraph-collectTaskStrings-addEdgesForVarRefs", "cmd-coverage-2", "applyFocus-error-path-2026-06-05", "taskgraph-100pct-sources-generates-preconditions"]
+  "eng_topics_done": [
+    "testreport",
+    "bundle-dependabot",
+    "remove-unused-nolint",
+    "task-tool-v3.50.0",
+    "gomega-v1.40.0",
+    "race-flag-unit-tests",
+    "ci-concurrency-group",
+    "bundle-deps-task-v3.51.1-gomega-v1.41.0-ghawactions-v0.74.4",
+    "bundle-deps-task-v3.51.1-gomega-v1.41.0-2026-05-20",
+    "ci-concurrency-group-test-depends-devcontainer",
+    "golang-x-security-deps-2026-06-05"
+  ],
+  "coding_improvements_done": [
+    "graphviz-duplicate-comment",
+    "split-patterns-refactor",
+    "edge-class-constants",
+    "readme-flags-fix",
+    "extract-graphns-helpers",
+    "collect-sorted-nodes",
+    "collect-task-strings-nonempty",
+    "collect-task-strings-status-filter",
+    "collect-node-ids-graphns",
+    "graphviz-doc-comments",
+    "collectnodeids-helper",
+    "registry-map-presize",
+    "loader-godoc-comments",
+    "dot-exe-fallback-test",
+    "safe-label-replacer",
+    "namespace-deduplicate-delimiter-logic",
+    "record-escaper-replacer",
+    "graphviz-font-config",
+    "mermaid-style-rule-translation",
+    "focus-warning-no-match",
+    "taskgraph-new-godoc",
+    "applyFocus-invalid-pattern-test",
+    "mermaid-defaults-newMermaid",
+    {
+      "pr": "aw_pr1",
+      "desc": "fix(graphviz): apply NodeStyleRules when Graphviz config is nil",
+      "date": "2026-07-10"
+    }
+  ],
+  "perf_topics_done": [
+    "buffered-output",
+    "avoid-rune-alloc",
+    "compile-match-pattern",
+    "bfs-index-pointer",
+    "extractVarRefs-fast-path",
+    "registry-map-presize",
+    "sort-namespaces-precompute-depth",
+    "namespace-depth-direct-comparison"
+  ],
+  "test_coverage_done": [
+    "dot",
+    "loader",
+    "taskgraph-builder",
+    "indentwriter-addf",
+    "mermaid",
+    "taskgraph-vars",
+    "cmd",
+    "graphviz",
+    "graphviz-2",
+    "indentwriter-errors",
+    "graph-edge-labels",
+    "taskgraph-strings-and-varDescription",
+    "mermaid-variableClassDefParts",
+    "taskgraph-status-strings",
+    "safe-numeric-fallback",
+    "dot-exe-branch",
+    "graphns-collectnodeids",
+    "mermaid-flowchartDirection-nil",
+    "taskgraph-addGlobalVars-nilVars",
+    "safe-numeric-fallback-claim",
+    "mermaid-saveto-errors",
+    "mermaid-styleRule-invalid",
+    "dot-exe-fallback-success",
+    "graphviz-error-paths-nil-graphviz",
+    "record-brace-quote-escaping",
+    "taskgraph-collectTaskStrings-addEdgesForVarRefs",
+    "cmd-coverage-2",
+    "applyFocus-error-path-2026-06-05",
+    "taskgraph-100pct-sources-generates-preconditions"
+  ]
 }
