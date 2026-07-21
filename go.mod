@@ -3,7 +3,7 @@ module github.com/theunrepentantgeek/task-graph
 go 1.25.10
 
 require (
-	github.com/alecthomas/kong v1.15.0
+	github.com/alecthomas/kong v1.16.0
 	github.com/go-task/task/v3 v3.52.0
 	github.com/onsi/gomega v1.42.1
 	github.com/phsym/console-slog v0.3.1
