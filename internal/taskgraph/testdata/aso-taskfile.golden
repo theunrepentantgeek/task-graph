@@ -1,4 +1,8 @@
 digraph {
+  node [
+    fontname="Verdana"
+    fontsize="16"
+  ]
   "asoctl_build" [
     color="black"
     label="{asoctl:build | Generate the \{\{.ASOCTL_APP\}\} \nbinary.}"
