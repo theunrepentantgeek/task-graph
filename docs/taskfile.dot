@@ -48,15 +48,48 @@ digraph {
   
   "ci" [
     color="black"
+    fillcolor="lightgreen"
     label="{ci | Run continuous integration \ntasks}"
     shape="Mrecord"
+    style="filled"
   ]
-  "ci" -> "test" [
+  "ci" -> "ci_clean-cache" [
     color="black"
     penwidth="1"
     style="solid"
   ]
-  "ci" -> "build_sbom" [
+  "ci" -> "lint" [
+    color="blue"
+    penwidth="1"
+    style="dashed"
+  ]
+  "ci" -> "ci_run" [
+    color="blue"
+    penwidth="1"
+    style="dashed"
+  ]
+  
+  "ci_clean-cache" [
+    color="black"
+    fillcolor="lightgreen"
+    label="{ci:clean-cache | Clear Go build and lint caches to ensure \nreproducible CI results}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  
+  "ci_run" [
+    color="black"
+    fillcolor="lightgreen"
+    label="{ci:run | Run build and test tasks \nafter linting}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  "ci_run" -> "unit-test" [
+    color="black"
+    penwidth="1"
+    style="solid"
+  ]
+  "ci_run" -> "build_sbom" [
     color="black"
     penwidth="1"
     style="solid"
@@ -80,7 +113,7 @@ digraph {
   
   "docs" [
     color="black"
-    fillcolor="lightgreen"
+    fillcolor="lightyellow"
     label="{docs | Generate documentation}"
     shape="Mrecord"
     style="filled"
@@ -93,7 +126,7 @@ digraph {
   
   "docs_build" [
     color="black"
-    fillcolor="lightgreen"
+    fillcolor="lightyellow"
     label="{docs:build | Document the Taskfile graph and \ngenerate an image}"
     shape="Mrecord"
     style="filled"
@@ -145,17 +178,22 @@ digraph {
   
   "tidy" [
     color="black"
-    fillcolor="lightyellow"
+    fillcolor="lightsalmon"
     label="{tidy | Tidy up source}"
     shape="Mrecord"
     style="filled"
   ]
-  "tidy" -> "tidy_gofumpt" [
+  "tidy" -> "tidy_gofix" [
     color="blue"
     penwidth="1"
     style="dashed"
   ]
   "tidy" -> "tidy_mod" [
+    color="blue"
+    penwidth="1"
+    style="dashed"
+  ]
+  "tidy" -> "tidy_gofumpt" [
     color="blue"
     penwidth="1"
     style="dashed"
@@ -166,9 +204,17 @@ digraph {
     style="dashed"
   ]
   
+  "tidy_gofix" [
+    color="black"
+    fillcolor="lightsalmon"
+    label="{tidy:gofix | Run go fix to reformat \nsource code}"
+    shape="Mrecord"
+    style="filled"
+  ]
+  
   "tidy_gofumpt" [
     color="black"
-    fillcolor="lightyellow"
+    fillcolor="lightsalmon"
     label="{tidy:gofumpt | Run gofumpt to reformat \nsource code}"
     shape="Mrecord"
     style="filled"
@@ -176,7 +222,7 @@ digraph {
   
   "tidy_lint" [
     color="black"
-    fillcolor="lightyellow"
+    fillcolor="lightsalmon"
     label="{tidy:lint | Run golangci-lint in fix \nmode}"
     shape="Mrecord"
     style="filled"
@@ -184,7 +230,7 @@ digraph {
   
   "tidy_mod" [
     color="black"
-    fillcolor="lightyellow"
+    fillcolor="lightsalmon"
     label="{tidy:mod | Run go mod tidy}"
     shape="Mrecord"
     style="filled"
@@ -192,7 +238,7 @@ digraph {
   
   "unit-test" [
     color="black"
-    fillcolor="lightsalmon"
+    fillcolor="lightpink"
     label="{unit-test | Run unit tests}"
     shape="Mrecord"
     style="filled"
@@ -205,7 +251,7 @@ digraph {
   
   "update-golden-files" [
     color="black"
-    fillcolor="lavender"
+    fillcolor="peachpuff"
     label="{update-golden-files | Update golden files with \ncurrent output}"
     shape="Mrecord"
     style="filled"
@@ -213,7 +259,7 @@ digraph {
   
   "var_BUILD_DIR" [
     color="#666666"
-    fillcolor="lightgray"
+    fillcolor="lavender"
     label="{BUILD_DIR | \{\{ list .ROOT_DIR \"build\" \| join \n\"/\" \| osClean \}\}}"
     shape="record"
     style="filled"
@@ -246,7 +292,7 @@ digraph {
   
   "var_DOCS_DIR" [
     color="#666666"
-    fillcolor="lightgray"
+    fillcolor="lavender"
     label="{DOCS_DIR | \{\{ list .ROOT_DIR \"docs\" \| join \n\"/\" \| osClean \}\}}"
     shape="record"
     style="filled"
@@ -259,7 +305,7 @@ digraph {
   
   "var_TOOLS_DIR" [
     color="#666666"
-    fillcolor="lightgray"
+    fillcolor="lavender"
     label="{TOOLS_DIR | \{\{ list .ROOT_DIR \"tools\" \| join \n\"/\" \| osClean \}\}}"
     shape="record"
     style="filled"

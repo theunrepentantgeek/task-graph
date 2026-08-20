@@ -79,6 +79,7 @@ tasks:
     deps:
       - ci:clean-cache
     cmds:
+      - task: lint
       - task: ci:run
 
   ci:clean-cache:
@@ -89,10 +90,10 @@ tasks:
       - golangci-lint-custom cache clean
 
   ci:run:
-    desc: Run CI tasks after cache is cleared
+    desc: Run build and test tasks after linting
     internal: true
     deps:
-      - test
+      - unit-test
       - build:sbom
 
   tidy:
