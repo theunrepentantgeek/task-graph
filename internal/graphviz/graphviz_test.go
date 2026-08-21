@@ -320,6 +320,32 @@ func TestWriteTo_WithNilGraphvizConfig_WritesNodesWithoutGraphvizStyling(t *test
 	g.Expect(buf.String()).NotTo(gomega.ContainSubstring(`color="black"`))
 }
 
+// TestWriteTo_WithNilGraphvizConfig_StyleRulesAreStillApplied verifies that
+// NodeStyleRules are applied to task nodes even when cfg.Graphviz is nil.
+// This mirrors the behaviour of applyVariableNodeConfig, which always applies
+// NodeStyleRules regardless of whether the Graphviz sub-config is present.
+func TestWriteTo_WithNilGraphvizConfig_StyleRulesAreStillApplied(t *testing.T) {
+	t.Parallel()
+	g := gomega.NewWithT(t)
+
+	// Arrange
+	buf := bytes.Buffer{}
+	gr := buildSampleGraph(t)
+
+	cfg := &config.Config{ // Graphviz is nil
+		NodeStyleRules: []config.NodeStyleRule{
+			{Match: "alpha", FillColor: "lightblue", Style: "filled"},
+		},
+	}
+
+	// Act
+	err := WriteTo(&buf, gr, cfg)
+
+	// Assert
+	g.Expect(err).NotTo(gomega.HaveOccurred())
+	g.Expect(buf.String()).To(gomega.ContainSubstring(`fillcolor="lightblue"`))
+}
+
 func TestWriteTo_WithTaskNodesAndInvalidStyleRulePattern_ReturnsError(t *testing.T) {
 	t.Parallel()
 	g := gomega.NewWithT(t)
