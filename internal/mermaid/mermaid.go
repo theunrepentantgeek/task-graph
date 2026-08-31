@@ -338,14 +338,18 @@ func writeVariableClassDef(
 	root.Addf("class %s varStyle", strings.Join(ids, ","))
 }
 
+// defaultVariableStyle is the fallback classDef used when no VariableNodes styling
+// is configured. It matches the default set in config.newMermaid().
+var defaultVariableStyle = []string{"fill:#e8e8e8", "stroke:#666"}
+
 func variableClassDefParts(cfg *config.Config) []string {
 	if cfg == nil || cfg.Mermaid == nil || cfg.Mermaid.VariableNodes == nil {
-		return []string{"fill:#e8e8e8", "stroke:#666"}
+		return defaultVariableStyle
 	}
 
 	vs := cfg.Mermaid.VariableNodes
 
-	var parts []string
+	parts := make([]string, 0, 3)
 
 	if vs.Fill != "" {
 		parts = append(parts, "fill:"+vs.Fill)
@@ -363,5 +367,5 @@ func variableClassDefParts(cfg *config.Config) []string {
 		return parts
 	}
 
-	return []string{"fill:#e8e8e8", "stroke:#666"}
+	return defaultVariableStyle
 }

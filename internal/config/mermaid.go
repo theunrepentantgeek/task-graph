@@ -26,5 +26,9 @@ type MermaidStyle struct {
 func newMermaid() *Mermaid {
 	return &Mermaid{
 		Direction: "TD",
+		VariableNodes: &MermaidStyle{
+			Fill:   "#e8e8e8",
+			Stroke: "#666",
+		},
 	}
 }
