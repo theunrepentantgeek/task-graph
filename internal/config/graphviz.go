@@ -1,5 +1,6 @@
 package config
 
+// Graphviz holds configuration specific to Graphviz dot output.
 type Graphviz struct {
 	// Font is the font used for labels in the Graphviz output. It can be any valid Graphviz font.
 	// https://graphviz.org/docs/attrs/fontname/
@@ -25,6 +26,7 @@ type Graphviz struct {
 	VariableEdges *GraphvizEdge `json:"variableEdges,omitempty" yaml:"variableEdges,omitempty"`
 }
 
+// GraphvizNode holds visual style properties for a node in Graphviz dot output.
 type GraphvizNode struct {
 	// Color is the color of the node border. It can be any valid Graphviz color.
 	// https://graphviz.org/docs/attrs/color/
@@ -43,6 +45,7 @@ type GraphvizNode struct {
 	FontColor string `json:"fontColor,omitempty" yaml:"fontColor,omitempty"`
 }
 
+// GraphvizEdge holds visual style properties for an edge in Graphviz dot output.
 type GraphvizEdge struct {
 	// Color is the color of the edge. It can be any valid Graphviz color.
 	// https://graphviz.org/docs/attrs/color/
