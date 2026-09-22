@@ -40,6 +40,8 @@ func SaveTo(
 }
 
 // WriteTo writes the Graphviz dot representation of the graph to the given writer.
+//
+//nolint:revive // Complexity is acceptable
 func WriteTo(
 	w io.Writer,
 	g *graph.Graph,
@@ -60,6 +62,10 @@ func WriteTo(
 
 	iw := indentwriter.New()
 	root := iw.Add("digraph {")
+
+	if cfg != nil && cfg.Footer {
+		writeFooterTo(root)
+	}
 
 	err := writeAllNodesTo(root, taskNodes, cfg, reg)
 	if err != nil {
@@ -349,4 +355,13 @@ func applyVariableNodeConfig(props *nodeProperties, node *graph.Node, cfg *confi
 	}
 
 	return nil
+}
+
+// writeFooterTo emits graph-level attributes that render a "Created by task-graph" caption
+// at the bottom-right of the Graphviz output.
+func writeFooterTo(root *indentwriter.Line) {
+	root.Add("label=\"Created by task-graph (https://github.com/theunrepentantgeek/task-graph)\"")
+	root.Add("labelloc=b")
+	root.Add("labeljust=r")
+	root.Add("fontsize=9")
 }

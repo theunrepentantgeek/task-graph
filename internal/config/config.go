@@ -38,6 +38,10 @@ type Config struct {
 	// Mermaid is the configuration for the Mermaid flowchart output.
 	Mermaid *Mermaid `json:"mermaid,omitempty" yaml:"mermaid,omitempty"`
 
+	// Footer controls whether a "Created by task-graph" footer is added to the generated graph.
+	// For Graphviz dot output, the footer appears as a bottom-right graph label.
+	Footer bool `json:"footer,omitempty" yaml:"footer,omitempty"`
+
 	// DotPath is the path to the dot executable, or the folder containing it.
 	// If not specified, dot will be looked up on the PATH.
 	DotPath string `json:"dotPath,omitempty" yaml:"dotPath,omitempty"`
