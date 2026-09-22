@@ -1,4 +1,8 @@
 digraph {
+  node [
+    fontname="Verdana"
+    fontsize="16"
+  ]
   "alpha" [
     color="red"
     fillcolor="lightyellow"
