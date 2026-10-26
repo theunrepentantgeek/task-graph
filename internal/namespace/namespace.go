@@ -60,7 +60,7 @@ func Depth(ns string) int {
 	count := 0
 
 	for _, c := range ns {
-		if strings.ContainsRune(informalDelimiters, c) {
+		if c == '-' || c == '.' {
 			count++
 		}
 	}
