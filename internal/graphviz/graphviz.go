@@ -210,11 +210,13 @@ func writeNodeDefinitionTo(
 }
 
 func applyNodeConfig(props *nodeProperties, node *graph.Node, cfg *config.Config) error {
-	if cfg == nil || cfg.Graphviz == nil {
+	if cfg == nil {
 		return nil
 	}
 
-	props.AddAttributes(cfg.Graphviz.TaskNodes)
+	if cfg.Graphviz != nil {
+		props.AddAttributes(cfg.Graphviz.TaskNodes)
+	}
 
 	for _, rule := range cfg.NodeStyleRules {
 		err := props.AddStyleRuleAttributes(node.ID(), rule)
